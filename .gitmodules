@@ -1,0 +1,4 @@
+[submodule "substrate"]
+	path = substrate
+	url = git@github.com:paritytech/substrate.git
+	branch = master
