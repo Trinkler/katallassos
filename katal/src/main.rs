@@ -11,13 +11,13 @@ pub use substrate_cli::{VersionInfo, IntoExit, error};
 
 fn run() -> cli::error::Result<()> {
 	let version = VersionInfo {
-		name: "Substrate Node",
+		name: "Katal Node",
 		commit: env!("VERGEN_SHA_SHORT"),
 		version: env!("CARGO_PKG_VERSION"),
 		executable_name: "katal",
-		author: "Anonymous",
-		description: "Template Node",
-		support_url: "support.anonymous.an",
+		author: "Trinkler Software <company@trinkler.software>",
+		description: "A Standard Framework for Finance",
+		support_url: "support.katal.io",
 	};
 	cli::run(::std::env::args(), cli::Exit, version)
 }
