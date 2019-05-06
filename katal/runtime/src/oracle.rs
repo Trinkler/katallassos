@@ -40,15 +40,18 @@ decl_module! {
 
 			<DataFeeds<T>>::insert(key, value);
 
+			Self::deposit_event(RawEvent::Updated(key, price, time));
+
 			Ok(())
 		}
 	}
 }
 
-// Can't get events to work if AccountId is removed. I kept it as is so that the module compiles.
+// If you do not use AccountId in a event, it will complain that AccountId trait is not being used. If you also delete the importing of the trait ('where AccountId = <T as system::Trait>::AccountId'), it will also not compile. The only solution then seems to be to have an event that uses AccountId but is simply never used. That is why we have the Nothing event.
 decl_event!(
 	pub enum Event<T> where AccountId = <T as system::Trait>::AccountId {
-		Updated(AccountId, u64),
+		Nothing(AccountId),
+		Updated(u64, i64, u64),
 	}
 );
 
