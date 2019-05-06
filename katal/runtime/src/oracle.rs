@@ -40,7 +40,7 @@ decl_module! {
 
 			<DataFeeds<T>>::insert(key, value);
 
-			Self::deposit_event(RawEvent::Updated(key, price, time));
+			Self::deposit_event(RawEvent::Updated(key));
 
 			Ok(())
 		}
@@ -51,7 +51,7 @@ decl_module! {
 decl_event!(
 	pub enum Event<T> where AccountId = <T as system::Trait>::AccountId {
 		Nothing(AccountId),
-		Updated(u64, i64, u64),
+		Updated(u64),
 	}
 );
 
