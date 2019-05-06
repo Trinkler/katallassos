@@ -1,12 +1,12 @@
 [package]
-name = "node-template"
+name = "katal"
 version = "1.0.0"
 authors = ["Anonymous"]
 build = "build.rs"
 edition = "2018"
 
 [[bin]]
-name = "node-template"
+name = "katal"
 path = "src/main.rs"
 
 [dependencies]
@@ -30,7 +30,7 @@ network = { package = "substrate-network", path = "../substrate/core/network" }
 consensus = { package = "substrate-consensus-aura", path = "../substrate/core/consensus/aura" }
 substrate-client = {  path = "../substrate/core/client" }
 basic-authorship = { package = "substrate-basic-authorship", path = "../substrate/core/basic-authorship" }
-node-template-runtime = { path = "runtime" }
+katal-runtime = { path = "runtime" }
 
 [build-dependencies]
 vergen = "3"

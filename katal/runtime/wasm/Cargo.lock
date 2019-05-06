@@ -847,6 +847,40 @@ dependencies = [
 ]
 
 [[package]]
+name = "katal-runtime"
+version = "1.0.0"
+dependencies = [
+ "parity-codec 3.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "safe-mix 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sr-io 1.0.0",
+ "sr-primitives 1.0.0",
+ "sr-std 1.0.0",
+ "sr-version 1.0.0",
+ "srml-aura 1.0.0",
+ "srml-balances 1.0.0",
+ "srml-consensus 1.0.0",
+ "srml-executive 1.0.0",
+ "srml-indices 1.0.0",
+ "srml-sudo 1.0.0",
+ "srml-support 1.0.0",
+ "srml-system 1.0.0",
+ "srml-timestamp 1.0.0",
+ "substrate-client 1.0.0",
+ "substrate-consensus-aura-primitives 1.0.0",
+ "substrate-consensus-authorities 1.0.0",
+ "substrate-offchain-primitives 0.1.0",
+ "substrate-primitives 1.0.0",
+]
+
+[[package]]
+name = "katal-runtime-wasm"
+version = "1.0.0"
+dependencies = [
+ "katal-runtime 1.0.0",
+]
+
+[[package]]
 name = "keccak"
 version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1350,40 +1384,6 @@ dependencies = [
  "cfg-if 0.1.7 (registry+https://github.com/rust-lang/crates.io-index)",
  "libc 0.2.50 (registry+https://github.com/rust-lang/crates.io-index)",
  "winapi 0.3.6 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
-name = "node-template-runtime"
-version = "1.0.0"
-dependencies = [
- "parity-codec 3.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "safe-mix 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
- "sr-io 1.0.0",
- "sr-primitives 1.0.0",
- "sr-std 1.0.0",
- "sr-version 1.0.0",
- "srml-aura 1.0.0",
- "srml-balances 1.0.0",
- "srml-consensus 1.0.0",
- "srml-executive 1.0.0",
- "srml-indices 1.0.0",
- "srml-sudo 1.0.0",
- "srml-support 1.0.0",
- "srml-system 1.0.0",
- "srml-timestamp 1.0.0",
- "substrate-client 1.0.0",
- "substrate-consensus-aura-primitives 1.0.0",
- "substrate-consensus-authorities 1.0.0",
- "substrate-offchain-primitives 0.1.0",
- "substrate-primitives 1.0.0",
-]
-
-[[package]]
-name = "node-template-runtime-wasm"
-version = "1.0.0"
-dependencies = [
- "node-template-runtime 1.0.0",
 ]
 
 [[package]]
