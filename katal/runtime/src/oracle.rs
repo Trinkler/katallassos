@@ -40,7 +40,7 @@ decl_module! {
 
 			<DataFeeds<T>>::insert(key, value);
 
-			Self::deposit_event(RawEvent::Updated(key));
+			Self::deposit_event(RawEvent::Updated(key, price, time));
 
 			Ok(())
 		}
@@ -51,7 +51,8 @@ decl_module! {
 decl_event!(
 	pub enum Event<T> where AccountId = <T as system::Trait>::AccountId {
 		Nothing(AccountId),
-		Updated(u64),
+		// Updated event serves both as trigger for front-end apps and as a way of storing the price history of the data feed.
+		Updated(u64, i64, u64),
 	}
 );
 
@@ -103,9 +104,9 @@ mod tests {
 	}
 
 	#[test]
-	fn it_works_for_default_value() {
+	fn it_can_update_and_get_random_values() {
 		with_externalities(&mut new_test_ext(), || {
-			// TODO: Add revelant tests.
+			
 		});
 	}
 }
