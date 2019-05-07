@@ -848,7 +848,7 @@ dependencies = [
 
 [[package]]
 name = "katal-runtime"
-version = "1.0.0"
+version = "0.0.1"
 dependencies = [
  "parity-codec 3.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "safe-mix 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -877,7 +877,7 @@ dependencies = [
 name = "katal-runtime-wasm"
 version = "1.0.0"
 dependencies = [
- "katal-runtime 1.0.0",
+ "katal-runtime 0.0.1",
 ]
 
 [[package]]
