@@ -26,6 +26,7 @@ client = { package = "substrate-client", path = "../../substrate/core/client", d
 consensus-aura = { package = "substrate-consensus-aura-primitives", path = "../../substrate/core/consensus/aura/primitives", default_features = false }
 offchain-primitives = { package = "substrate-offchain-primitives", path = "../../substrate/core/offchain/primitives", default-features = false }
 consensus_authorities = { package = "substrate-consensus-authorities", path = "../../substrate/core/consensus/authorities", default-features = false }
+rand = "0.6.5"
 
 [features]
 default = ["std"]
