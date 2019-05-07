@@ -54,8 +54,11 @@ pub type BlockNumber = u64;
 /// Index of an account's extrinsic in the chain.
 pub type Nonce = u64;
 
-/// Used for the module oracle in './oracle.rs'
+/// Used for the module oracle
 mod oracle;
+
+/// Used for the module actus which contains all contract types
+mod actus;
 
 /// Opaque types. These are used by the CLI to instantiate machinery that don't need to know
 /// the specifics of the runtime. They can then be made to be agnostic over specific formats
@@ -186,8 +189,11 @@ impl sudo::Trait for Runtime {
 	type Proposal = Call;
 }
 
-/// Used for the module oracle in './oracle.rs'
 impl oracle::Trait for Runtime {
+	type Event = Event;
+}
+
+impl actus::Trait for Runtime {
 	type Event = Event;
 }
 
@@ -204,8 +210,8 @@ construct_runtime!(
 		Indices: indices,
 		Balances: balances,
 		Sudo: sudo,
-		//Used for the module oracle in './oracle.rs'
 		Oracle: oracle::{Module, Call, Storage, Event<T>},
+		ACTUS: actus::{Module, Call, Storage, Event<T>},
 	}
 );
 
