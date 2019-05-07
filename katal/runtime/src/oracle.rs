@@ -1,7 +1,6 @@
 use support::{decl_module, decl_storage, decl_event, StorageMap, dispatch::Result};
 use system::ensure_root;
 use parity_codec::{Encode, Decode};
-use rand;
 
 /// The module's configuration trait.
 pub trait Trait: system::Trait {
@@ -18,8 +17,8 @@ pub struct Data {
 
 // This module's storage items.
 decl_storage! {
-	trait Store for Module<T: Trait> as OracleModule {
-		DataFeeds: map u64 => Data;
+	trait Store for Module<T: Trait> as Oracle {
+		DataFeeds get(lookup): map u64 => Data;
 	}
 }
 
@@ -96,7 +95,7 @@ mod tests {
 	impl Trait for Test {
 		type Event = ();
 	}
-	type OracleModule = Module<Test>;
+	type Oracle = Module<Test>;
 
 	// This function basically just builds a genesis storage key/value store according to
 	// our desired mockup.
@@ -105,9 +104,15 @@ mod tests {
 	}
 
 	#[test]
-	fn it_can_update_and_get_random_values() {
+	fn it_can_update_and_get_predefined_values() {
 		with_externalities(&mut new_test_ext(), || {
+			let key : u64= 1;
+			let price : i64 = -1;
+			let time : u64 = 2;
 
+			assert_ok!(Oracle::update(Origin::ROOT, key, price, time));
+			assert_eq!(Oracle::lookup(key).price, price);
+			assert_eq!(Oracle::lookup(key).time, time);
 		});
 	}
 }
