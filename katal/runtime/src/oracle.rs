@@ -1,6 +1,7 @@
 use support::{decl_module, decl_storage, decl_event, StorageMap, dispatch::Result};
 use system::ensure_root;
 use parity_codec::{Encode, Decode};
+use rand;
 
 /// The module's configuration trait.
 pub trait Trait: system::Trait {
@@ -106,7 +107,7 @@ mod tests {
 	#[test]
 	fn it_can_update_and_get_random_values() {
 		with_externalities(&mut new_test_ext(), || {
-			
+
 		});
 	}
 }
