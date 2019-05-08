@@ -9,6 +9,35 @@ pub trait Trait: system::Trait {
     type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
 }
 
+// The following enum contains all possible event types.
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum EventType {
+    IED,
+    IPCI,
+    IP,
+    FP,
+    PR,
+    PI,
+    PRF,
+    PY,
+    PP,
+    CD,
+    RRF,
+    RR,
+    DV,
+    PRD,
+    IMP,
+    MP,
+    TD,
+    SC,
+    IPCB,
+    XD,
+    STD,
+    MD,
+    AD,
+}
+
 // All the following enums are used for the contracts attributes.
 #[derive(Encode, Decode, Clone, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
@@ -366,6 +395,15 @@ pub struct MetaData {
     OracleObjectID: Option<u64>,
     GovernanceObjectID: Option<u64>,
     // If necessary we can add more fields.
+}
+
+// This struct contains all the information that defines a contract state.
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub struct ContractState {
+    MetaData: MetaData,
+    Attributes: Attributes,
+    Variables: Variables,
 }
 
 // This module's storage items.
