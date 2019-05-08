@@ -14,7 +14,214 @@ pub trait Trait: system::Trait {
 pub enum Calendar {
     NoCalendar,
     MondayToFriday,
-    Calendar(Vec<u8>),
+    Calendar(u64),
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum BusinessDayConvention {
+    SCF,
+    SCMF,
+    CSF,
+    CSMF,
+    SCP,
+    SCMP,
+    CSP,
+    CSMP,
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum EndOfMonthConvention {
+    EOM,
+    SD,
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum ContractType {
+    PAM,
+    ANN,
+    NAM,
+    LAM,
+    LAX,
+    CLM,
+    UMP,
+    CSH,
+    STK,
+    COM,
+    SWAPS,
+    SWPPV,
+    FXOUT,
+    CAPFL,
+    FUTUR,
+    OPTNS,
+    CEG,
+    CEC,
+    MRGNG,
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum ContractRole {
+    RPA,
+    RPL,
+    LG,
+    ST,
+    RFL,
+    PFL,
+    BUYER,
+    SELLER,
+    GUARANTOR,
+    OBLIGEE,
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum ContractStatus {
+    PF,
+    DL,
+    DQ,
+    DF,
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum Seniority {
+    S,
+    J,
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum Period {
+    Days(u32),
+    Weeks(u32),
+    Months(u32),
+    Quarters(u32),
+    Halfyears(u32),
+    Years(u32),
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum GuaranteedExposure {
+    NO,
+    NI,
+    MV,
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum Cycle {
+    Days(u32, bool),
+    Weeks(u32, bool),
+    Months(u32, bool),
+    Quarters(u32, bool),
+    Halfyears(u32, bool),
+    Years(u32, bool),
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum FeeBasis {
+    A,
+    N,
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum DayCountConvention {
+    _AAISDA,
+    _A360,
+    _A365,
+    _30E360ISDA,
+    _30E360,
+    _30360,
+    _BUS252,
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum InterestCalculationBase {
+    NT,
+    NTIED,
+    NTL,
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum CyclePointOfInterestPayment {
+    B,
+    E,
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum ClearingHouse {
+    Y,
+    N,
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum IncreaseDecrease {
+    INC,
+    DEC,
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum OptionExecutionType {
+    E,
+    B,
+    A,
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum OptionType {
+    C,
+    P,
+    CP,
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum PenaltyType {
+    O,
+    A,
+    N,
+    I,
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum PrepaymentEffect {
+    N,
+    A,
+    M,
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum ArrayFixedVariable {
+    F,
+    V,
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum CyclePointOfRateReset {
+    B,
+    E,
+}
+
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum DeliverySettlement {
+    S,
+    D,
 }
 
 // All ACTUS contract attributes as specifed in the data dictionary
@@ -23,6 +230,115 @@ pub enum Calendar {
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct Attributes {
     Calendar: Option<Calendar>,
+    BusinessDayConvention: Option<BusinessDayConvention>,
+    EndOfMonthConvention: Option<EndOfMonthConvention>,
+    ContractType: Option<ContractType>,
+    StatusDate: Option<u64>,
+    ContractRole: Option<ContractRole>,
+    LegalEntityIDRecordCreator: Option<u64>,
+    ContractID: Option<u64>,
+    LegalEntityIDCounterparty: Option<u64>,
+    ContractStatus: Option<ContractStatus>,
+    Seniority: Option<Seniority>,
+    NonPerformingDate: Option<u64>,
+    PrepaymentPeriod: Option<Period>,
+    GracePeriod: Option<Period>,
+    DelinquencyPeriod: Option<Period>,
+    DelinquencyRate: Option<u64>,
+    GuaranteedExposure: Option<GuaranteedExposure>,
+    CoverageOfCreditEnhancement: Option<u64>,
+    CoveredContracts: Option<Vec<u64>>,
+    CoveringContracts: Option<Vec<u64>>,
+    CoveredLegalEntity: Option<u64>,
+    CycleAnchorDateOfDividend: Option<u64>,
+    CycleOfDividend: Option<Period>,
+    NextDividendPaymentAmount: Option<u64>,
+    ExDividendPayment: Option<u64>,
+    CycleAnchorDateOfFee: Option<u64>,
+    CycleOfFee: Option<Cycle>,
+    FeeBasis: Option<FeeBasis>,
+    FeeRate: Option<i64>,
+    FeeAccrued: Option<i64>,
+    CycleAnchorDateOfInterestPayment: Option<u64>,
+    ArrayCycleAnchorDateOfInterestPayment: Option<Vec<u64>>,
+    CycleOfInterestPayment: Option<Cycle>,
+    ArrayCycleOfInterestPayment: Option<Vec<Cycle>>,
+    NominalInterestRate: Option<i64>,
+    NominalInterestRate2: Option<i64>,
+    DayCountConvention: Option<DayCountConvention>,
+    AccruedInterest: Option<i64>,
+    CapitalizationEndDate: Option<u64>,
+    CycleAnchorDateOfInterestCalculationBase: Option<u64>,
+    CycleOfInterestCalculationBase: Option<Cycle>,
+    InterestCalculationBase: Option<InterestCalculationBase>,
+    InterestCalculationBaseAmount: Option<u64>,
+    CyclePointOfInterestPayment: Option<CyclePointOfInterestPayment>,
+    ClearingHouse: Option<ClearingHouse>,
+    InitialMargin: Option<u64>,
+    MaintenanceMarginLowerBound: Option<u64>,
+    MaintenanceMarginUpperBound: Option<u64>,
+    CycleAnchorDateOfMargining: Option<u64>,
+    CycleOfMargining: Option<Cycle>,
+    VariationMargin: Option<u64>,
+    Currency: Option<u64>,
+    Currency2: Option<u64>,
+    AmortizationDate: Option<u64>,
+    ContractDealDate: Option<u64>,
+    InitialExchangeDate: Option<u64>,
+    PremiumDiscountAtIED: Option<i64>,
+    MaturityDate: Option<u64>,
+    NotionalPrincipal: Option<u64>,
+    NotionalPrincipal2: Option<u64>,
+    Quantity: Option<u64>,
+    Unit: Option<Vec<u8>>,
+    CycleAnchorDateOfPrincipalRedemption: Option<u64>,
+    ArrayCycleAnchorDateOfPrincipalRedemption: Option<Vec<u64>>,
+    CycleOfPrincipalRedemption: Option<Cycle>,
+    ArrayCycleOfPrincipalRedemption: Option<Vec<Cycle>>,
+    NextPrincipalRedemptionPayment: Option<u64>,
+    ArrayNextPrincipalRedemptionPayment: Option<Vec<u64>>,
+    ArrayIncreaseDecrease: Option<Vec<IncreaseDecrease>>,
+    PurchaseDate: Option<u64>,
+    PriceAtPurchaseDate: Option<i64>,
+    TerminationDate: Option<u64>,
+    PriceAtTerminationDate: Option<u64>,
+    XDayNotice: Option<Period>,
+    MarketObjectCodeOfScalingIndex: Option<u64>,
+    ScalingIndexAtStatusDate: Option<u64>,
+    CycleAnchorDateOfScalingIndex: Option<u64>,
+    CycleOfScalingIndex: Option<Cycle>,
+    ScalingEffect: Option<(bool, bool, bool)>,
+    MarketValueObserved: Option<i64>,
+    OptionExecutionType: Option<OptionExecutionType>,
+    OptionExerciseEndDate: Option<u64>,
+    OptionStrike1: Option<u64>,
+    OptionStrike2: Option<u64>,
+    OptionType: Option<OptionType>,
+    CycleAnchorDateOfOptionality: Option<u64>,
+    CycleOfOptionality: Option<Cycle>,
+    PenaltyType: Option<PenaltyType>,
+    PenaltyRate: Option<u64>,
+    PrepaymentEffect: Option<PrepaymentEffect>,
+    MaximumPenaltyFreeDisbursement: Option<u64>,
+    CycleAnchorDateOfRateReset: Option<u64>,
+    ArrayCycleAnchorDateOfRateReset: Option<Vec<u64>>,
+    CycleOfRateReset: Option<Cycle>,
+    ArrayCycleOfRateReset: Option<Vec<Cycle>>,
+    RateSpread: Option<i64>,
+    ArrayRate: Option<Vec<i64>>,
+    ArrayFixedVariable: Option<ArrayFixedVariable>,
+    MarketObjectCodeRateReset: Option<u64>,
+    LifeCap: Option<i64>,
+    LifeFloor: Option<i64>,
+    PeriodCap: Option<u64>,
+    PeriodFloor: Option<u64>,
+    CyclePointOfRateReset: Option<CyclePointOfRateReset>,
+    FixingDays: Option<Period>,
+    NextResetRate: Option<i64>,
+    RateMultiplier: Option<i64>,
+    SettlementDate: Option<u64>,
+    DeliverySettlement: Option<DeliverySettlement>,
+    FuturesPrice: Option<i64>,
 }
 
 // This module's storage items.
