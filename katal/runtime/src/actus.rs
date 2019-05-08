@@ -9,6 +9,7 @@ pub trait Trait: system::Trait {
     type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
 }
 
+// All the following enums are used for the contracts attributes.
 #[derive(Encode, Decode, Clone, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub enum Calendar {
@@ -339,6 +340,24 @@ pub struct Attributes {
     SettlementDate: Option<u64>,
     DeliverySettlement: Option<DeliverySettlement>,
     FuturesPrice: Option<i64>,
+}
+
+// All ACTUS contract attributes as specifed in the data dictionary
+// https://www.actusfrf.org/data-dictionary
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub struct Variables {
+    Performance: Option<i64>,
+    LastEventDate: Option<u64>,
+    NominalValue1: Option<u64>,
+    NominalValue2: Option<u64>,
+    NominalRate: Option<i64>,
+    NominalAccrued: Option<i64>,
+    InterestCalculationBase: Option<u64>,
+    NotionalScalingMultiplier: Option<i64>,
+    InterestScalingMultiplier: Option<i64>,
+    NextPrincipalRedemptionPayment: Option<u64>,
+    PayoffAtSettlement: Option<i64>,
 }
 
 // This module's storage items.
