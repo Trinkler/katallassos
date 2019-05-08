@@ -342,8 +342,7 @@ pub struct Attributes {
     FuturesPrice: Option<i64>,
 }
 
-// All ACTUS contract attributes as specifed in the data dictionary
-// https://www.actusfrf.org/data-dictionary
+// All ACTUS contract variables as specifed in the ACTUS paper.
 #[derive(Encode, Decode, Clone, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct Variables {
@@ -358,6 +357,15 @@ pub struct Variables {
     InterestScalingMultiplier: Option<i64>,
     NextPrincipalRedemptionPayment: Option<u64>,
     PayoffAtSettlement: Option<i64>,
+}
+
+// Contract Metadata, necessary for operation of the contract.
+#[derive(Encode, Decode, Clone, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub struct MetaData {
+    OracleObjectID: Option<u64>,
+    GovernanceObjectID: Option<u64>,
+    // If necessary we can add more fields.
 }
 
 // This module's storage items.
