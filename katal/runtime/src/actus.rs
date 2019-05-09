@@ -386,6 +386,12 @@ pub struct Variables {
     InterestScalingMultiplier: Option<i64>,
     NextPrincipalRedemptionPayment: Option<u64>,
     PayoffAtSettlement: Option<i64>,
+    // Variables that are missing from the variables list. Awaiting for the full names and types.
+    Tmd: Option<u64>,
+    Fac: Option<u64>,
+    Npr: Option<u64>,
+    Nac1: Option<u64>,
+    Nac2: Option<u64>,
 }
 
 // Contract Metadata, necessary for operation of the contract.
