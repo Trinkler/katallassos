@@ -255,7 +255,7 @@ pub enum DeliverySettlement {
 
 // All ACTUS contract attributes as specifed in the data dictionary
 // https://www.actusfrf.org/data-dictionary
-#[derive(Encode, Decode, Clone, PartialEq)]
+#[derive(Encode, Decode, Default, Clone, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct Attributes {
     Calendar: Option<Calendar>,
@@ -371,7 +371,7 @@ pub struct Attributes {
 }
 
 // All ACTUS contract variables as specifed in the ACTUS paper.
-#[derive(Encode, Decode, Clone, PartialEq)]
+#[derive(Encode, Decode, Default, Clone, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct Variables {
     Performance: Option<i64>,
@@ -394,7 +394,7 @@ pub struct Variables {
 }
 
 // Contract Metadata, necessary for operation of the contract.
-#[derive(Encode, Decode, Clone, PartialEq)]
+#[derive(Encode, Decode, Default, Clone, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct MetaData {
     OracleObjectID: Option<u64>,
@@ -403,7 +403,7 @@ pub struct MetaData {
 }
 
 // This struct contains all the information that defines a contract state.
-#[derive(Encode, Decode, Clone, PartialEq)]
+#[derive(Encode, Decode, Default, Clone, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct ContractState {
     MetaData: MetaData,
@@ -426,8 +426,42 @@ decl_module! {
         // this is needed only if you are using events in your module
         fn deposit_event<T>() = default;
 
-        fn deploy (origin, terms: ContractState) -> Result {
+        fn deploy (origin, meta_data: MetaData, attributes: Attributes) -> Result {
             let sender = ensure_signed(origin)?;
+
+            let key = attributes.ContractID.ok_or("The ContractID can't be None when deploying a new contract")?;
+
+            // TODO: Assert correctness of attributes and metadata, for each contract type.
+            // TODO: Assert uniqueness of ContractID in case of none empty user input.
+
+            // TODO: Initialize state variables.
+
+            let variables_mock = Variables {
+                Performance: None,
+                LastEventDate: None,
+                NominalValue1: None,
+                NominalValue2: None,
+                NominalRate: None,
+                NominalAccrued: None,
+                InterestCalculationBase: None,
+                NotionalScalingMultiplier: None,
+                InterestScalingMultiplier: None,
+                NextPrincipalRedemptionPayment: None,
+                PayoffAtSettlement: None,
+                Tmd: None,
+                Fac: None,
+                Npr: None,
+                Nac1: None,
+                Nac2: None,
+            };
+
+            let contract_state = ContractState {
+                MetaData: meta_data,
+                Attributes: attributes,
+                Variables: variables_mock,
+            };
+
+            <ContractStates<T>>::insert(key, contract_state);
 
             Ok(())
         }
