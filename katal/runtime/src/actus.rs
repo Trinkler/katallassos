@@ -1,7 +1,6 @@
 use parity_codec::{Decode, Encode};
 use rstd::prelude::*;
-use support::{decl_event, decl_module, decl_storage, dispatch::Result, StorageValue};
-#[cfg(feature = "std")]
+use support::{decl_event, decl_module, decl_storage, dispatch::Result, StorageMap};
 use system::ensure_signed;
 
 /// The module's configuration trait.
@@ -415,6 +414,7 @@ pub struct ContractState {
 // This module's storage items.
 decl_storage! {
     trait Store for Module<T: Trait> as ACTUS {
+        ContractStates: map u64 => ContractState;
     }
 }
 
@@ -425,6 +425,12 @@ decl_module! {
         // Initializing events
         // this is needed only if you are using events in your module
         fn deposit_event<T>() = default;
+
+        fn deploy (origin, terms: ContractState) -> Result {
+            let sender = ensure_signed(origin)?;
+
+            Ok(())
+        }
 
     }
 }
