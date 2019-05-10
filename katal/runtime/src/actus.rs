@@ -2,9 +2,10 @@ use parity_codec::{Decode, Encode};
 use rstd::prelude::*;
 use support::{decl_event, decl_module, decl_storage, dispatch::Result, ensure, StorageMap};
 use system::ensure_signed;
+use timestamp;
 
 /// The module's configuration trait.
-pub trait Trait: system::Trait {
+pub trait Trait: system::Trait + timestamp::Trait {
     type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
 }
 
@@ -444,9 +445,6 @@ decl_module! {
 
             let contract_type = attributes.ContractType.ok_or("ContractType can't be None when deploying a contract")?;
 
-
-
-
             Ok(())
         }
 
@@ -460,6 +458,7 @@ impl<T: Trait> Module<T> {
         meta_data: MetaData,
         attributes: Attributes,
     ) -> Result {
+        let _now = <timestamp::Module<T>>::get();
         // TODO: Assert correctness of attributes and metadata, for each contract type.
 
         // TODO: Initialize state variables.
@@ -476,9 +475,11 @@ impl<T: Trait> Module<T> {
             InterestScalingMultiplier: None,
             NextPrincipalRedemptionPayment: None,
             PayoffAtSettlement: None,
-            Tmd: Attributes
-                .MaturityDate
-                .ok_or("MaturityDate can't be None when deploying a contract")?,
+            Tmd: Some(
+                attributes
+                    .MaturityDate
+                    .ok_or("MaturityDate can't be None when deploying a contract")?,
+            ),
             Fac: None,
             Npr: None,
             Nac1: None,
@@ -492,6 +493,8 @@ impl<T: Trait> Module<T> {
         };
 
         <ContractStates<T>>::insert(key, contract_state);
+
+        Ok(())
     }
 }
 
