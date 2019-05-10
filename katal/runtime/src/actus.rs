@@ -1,6 +1,6 @@
 use parity_codec::{Decode, Encode};
 use rstd::prelude::*;
-use support::{decl_event, decl_module, decl_storage, dispatch::Result, StorageMap};
+use support::{decl_event, decl_module, decl_storage, dispatch::Result, ensure, StorageMap};
 use system::ensure_signed;
 
 /// The module's configuration trait.
@@ -8,7 +8,16 @@ pub trait Trait: system::Trait {
     type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
 }
 
-// The following enum contains all possible event types.
+decl_event!(
+    pub enum Event<T>
+    where
+        AccountId = <T as system::Trait>::AccountId,
+    {
+        Nothing(AccountId),
+    }
+);
+
+// The following enum contains all possible contract event types.
 #[derive(Encode, Decode, Clone, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub enum EventType {
@@ -429,39 +438,14 @@ decl_module! {
         fn deploy (origin, meta_data: MetaData, attributes: Attributes) -> Result {
             let sender = ensure_signed(origin)?;
 
-            let key = attributes.ContractID.ok_or("The ContractID can't be None when deploying a new contract")?;
+            let key = attributes.ContractID.ok_or("ContractID can't be None when deploying a contract")?;
 
-            // TODO: Assert correctness of attributes and metadata, for each contract type.
-            // TODO: Assert uniqueness of ContractID in case of none empty user input.
+            ensure!(!<ContractStates<T>>::exists(key), "This ContractID already exists");
 
-            // TODO: Initialize state variables.
+            let contract_type = attributes.ContractType.ok_or("ContractType can't be None when deploying a contract")?;
 
-            let variables_mock = Variables {
-                Performance: None,
-                LastEventDate: None,
-                NominalValue1: None,
-                NominalValue2: None,
-                NominalRate: None,
-                NominalAccrued: None,
-                InterestCalculationBase: None,
-                NotionalScalingMultiplier: None,
-                InterestScalingMultiplier: None,
-                NextPrincipalRedemptionPayment: None,
-                PayoffAtSettlement: None,
-                Tmd: None,
-                Fac: None,
-                Npr: None,
-                Nac1: None,
-                Nac2: None,
-            };
 
-            let contract_state = ContractState {
-                MetaData: meta_data,
-                Attributes: attributes,
-                Variables: variables_mock,
-            };
 
-            <ContractStates<T>>::insert(key, contract_state);
 
             Ok(())
         }
@@ -469,14 +453,47 @@ decl_module! {
     }
 }
 
-decl_event!(
-    pub enum Event<T>
-    where
-        AccountId = <T as system::Trait>::AccountId,
-    {
-        Nothing(AccountId),
+impl<T: Trait> Module<T> {
+    fn deploy_PAM(
+        sender: T::AccountId,
+        key: u64,
+        meta_data: MetaData,
+        attributes: Attributes,
+    ) -> Result {
+        // TODO: Assert correctness of attributes and metadata, for each contract type.
+
+        // TODO: Initialize state variables.
+
+        let variables_mock = Variables {
+            Performance: None,
+            LastEventDate: None,
+            NominalValue1: None,
+            NominalValue2: None,
+            NominalRate: None,
+            NominalAccrued: None,
+            InterestCalculationBase: None,
+            NotionalScalingMultiplier: None,
+            InterestScalingMultiplier: None,
+            NextPrincipalRedemptionPayment: None,
+            PayoffAtSettlement: None,
+            Tmd: Attributes
+                .MaturityDate
+                .ok_or("MaturityDate can't be None when deploying a contract")?,
+            Fac: None,
+            Npr: None,
+            Nac1: None,
+            Nac2: None,
+        };
+
+        let contract_state = ContractState {
+            MetaData: meta_data,
+            Attributes: attributes,
+            Variables: variables_mock,
+        };
+
+        <ContractStates<T>>::insert(key, contract_state);
     }
-);
+}
 
 /// tests for this module
 #[cfg(test)]
