@@ -385,7 +385,7 @@ pub struct Attributes {
 #[derive(Encode, Decode, Default, Clone, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct Variables {
-    Performance: Option<i64>,
+    Performance: Option<ContractStatus>,
     LastEventDate: Option<i64>,
     NominalValue1: Option<i64>,
     NominalValue2: Option<i64>,
@@ -462,13 +462,6 @@ impl<T: Trait> Module<T> {
         let now = <timestamp::Module<T>>::get();
         // TODO: Assert correctness of attributes and metadata, for each contract type.
 
-        // TODO: Initialize state variables.
-        let tmd = Some(
-            attributes
-                .MaturityDate
-                .ok_or("MaturityDate can't be None when deploying a contract")?,
-        );
-
         let initial_exchange_date: i64 = attributes
             .InitialExchangeDate
             .ok_or("InitialExchangeDate can't be None when deploying a contract")?;
@@ -489,6 +482,12 @@ impl<T: Trait> Module<T> {
             .NominalInterestRate
             .ok_or("NominalInterestRate can't be None when deploying a contract")?;
 
+        let tmd = Some(
+            attributes
+                .MaturityDate
+                .ok_or("MaturityDate can't be None when deploying a contract")?,
+        );
+
         // TODO: Assert initial_exchange_date to be larger than 0
         // The outstanding nominal value
         let notional_value_1: Option<i64> = if T::Moment::sa(initial_exchange_date as u64) > now {
@@ -498,7 +497,7 @@ impl<T: Trait> Module<T> {
         };
 
         // The applicable nominal rate
-        let notional_rate: Option<i64> = if T::Moment::sa(initial_exchange_date as u64) > now {
+        let notional_rate: Option<i64> = if initial_exchange_date as u64 > now.as_() {
             Some(0)
         } else {
             Some(nominal_interest_rate)
@@ -510,7 +509,7 @@ impl<T: Trait> Module<T> {
         } else if attributes.AccruedInterest != None {
             attributes.AccruedInterest
         } else {
-            // TODO: implment actual function
+            // TODO: implement actual function
             Some(
                 Self::utility_function_Y(
                     0, // TODO: Substitute with actual time s
@@ -521,20 +520,75 @@ impl<T: Trait> Module<T> {
             )
         };
 
+        // So far the purpose of this variable is unknown.
+        let fac: Option<i64> = if attributes.FeeRate == None {
+            Some(0)
+        } else if attributes.FeeAccrued != None {
+            attributes.FeeAccrued
+        } else if attributes.FeeBasis != None && attributes.FeeBasis.unwrap() == FeeBasis::N {
+            Some(
+                Self::utility_function_Y(
+                    0, // TODO: Substitute with actual time s
+                    1, // TODO: Substitute with actual time t
+                    &day_count_convention,
+                ) * notional_value_1.ok_or("")?
+                    * attributes.FeeRate.unwrap(),
+            )
+        } else {
+            Some(
+                Self::utility_function_Y(
+                    0, // TODO: Substitute with actual time s
+                    1, // TODO: Substitute with actual time t
+                    &day_count_convention,
+                ) / Self::utility_function_Y(
+                    2, // TODO: Substitute with actual time s
+                    3, // TODO: Substitute with actual time t
+                    &day_count_convention,
+                ) * attributes.FeeRate.unwrap(),
+            )
+        };
+
+        // The multiplier being applied to Notional/Principal related cashflows
+        let notional_scaling_multiplier =
+            if attributes.ScalingEffect != None && attributes.ScalingEffect.unwrap().1 == true {
+                attributes.ScalingIndexAtStatusDate
+            } else {
+                Some(1)
+            };
+
+        // The multiplier being applied to Interest related cash-flows
+        let interest_scaling_multiplier =
+            if attributes.ScalingEffect != None && attributes.ScalingEffect.unwrap().0 == true {
+                attributes.ScalingIndexAtStatusDate
+            } else {
+                Some(1)
+            };
+
+        // The Contract performance
+        let performance = Some(
+            attributes
+                .ContractStatus
+                .ok_or("ContractStatus can't be None when deploying a contract")?,
+        );
+
+        // The date of the most recent Contract Event
+        let now = <timestamp::Module<T>>::get();
+        let last_event_date = Some(now.as_() as i64);
+
         let variables_initial = Variables {
-            Performance: None,
-            LastEventDate: None,
+            Performance: performance,
+            LastEventDate: last_event_date,
             NominalValue1: notional_value_1,
             NominalValue2: None,
             NominalRate: notional_rate,
-            NominalAccrued: None,
+            NominalAccrued: nominal_accrued,
             InterestCalculationBase: None,
-            NotionalScalingMultiplier: None,
-            InterestScalingMultiplier: None,
+            NotionalScalingMultiplier: notional_scaling_multiplier,
+            InterestScalingMultiplier: interest_scaling_multiplier,
             NextPrincipalRedemptionPayment: None,
             PayoffAtSettlement: None,
             Tmd: tmd,
-            Fac: None,
+            Fac: fac,
             Npr: None,
             Nac1: None,
             Nac2: None,
