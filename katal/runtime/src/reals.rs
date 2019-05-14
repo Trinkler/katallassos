@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 // 'None' is smaller than any number!
 use parity_codec::{Decode, Encode};
+=======
+// None is smaller than any number!
+
+>>>>>>> 04d338fabb984619bd2f501187c88d23e7128197
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 // The scale factor
@@ -9,7 +14,11 @@ const SF: i128 = 1000000000;
 const MAX: i128 = i64::max_value() as i128;
 const MIN: i128 = i64::min_value() as i128;
 
+<<<<<<< HEAD
 #[derive(Decode, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]
+=======
+#[derive(Default, PartialEq, Eq, PartialOrd, Ord, Debug)]
+>>>>>>> 04d338fabb984619bd2f501187c88d23e7128197
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct Real(pub Option<i64>);
 
