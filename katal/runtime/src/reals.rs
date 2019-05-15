@@ -15,6 +15,7 @@ pub struct Real(pub Option<i64>);
 
 impl Real {
     pub fn from(x: i64) -> Real {
+        // TODO: Multiply with SF and check for overflow
         Real(Some(x))
     }
 
