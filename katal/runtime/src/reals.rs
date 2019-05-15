@@ -107,6 +107,11 @@ impl Div for Real {
             let a: i128 = self.0.unwrap() as i128;
             let b: i128 = rhs.0.unwrap() as i128;
 
+            // Checking for division by zero
+            if b == 0 {
+                return Real(None);
+            }
+
             // Multiplying the dividend by the scale factor
             let mut c = a * SF;
 
