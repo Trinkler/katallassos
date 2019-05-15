@@ -56,14 +56,16 @@ impl Div for Real {
             // Multiplying the dividend by the scale factor
             let mut c = a * SF;
 
-            // Dividing by the divisor and calculating (double of) the remainder
-            let r = (c % b) * 2;
+            // Calculating the remainder
+            let r = (c % b);
+
+            // Dividing by the divisor
             c /= b;
 
             // Rounding away from zero
-            if r >= SF {
+            if 2 * r >= SF {
                 c += 1;
-            } else if r <= -SF {
+            } else if 2 * r <= -SF {
                 c -= 1;
             }
 
@@ -91,14 +93,16 @@ impl Mul for Real {
             // Multiplying both numbers
             let mut c = a * b;
 
-            // Dividing by the scale factor and calculating (double of) the remainder
-            let r = (c % SF) * 2;
+            // Calculating the remainder
+            let r = (c % SF);
+
+            // Dividing by the scale factor
             c /= SF;
 
             // Rounding away from zero
-            if r >= SF {
+            if 2 * r >= SF {
                 c += 1;
-            } else if r <= -SF {
+            } else if 2 * r <= -SF {
                 c -= 1;
             }
 
