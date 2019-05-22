@@ -37,6 +37,11 @@ const MIN: i128 = i64::min_value() as i128;
 pub struct Real(pub Option<i64>);
 
 impl Real {
+    // Transforms an u32 into a real. It scales the input by the scale factor.
+    pub fn from(x: u32) -> Real {
+        Real(x * (SF as u32))
+    }
+
     // Transforms an i64 into a real. It scales the input by the scale factor.
     pub fn from(x: i64) -> Real {
         Real(x.checked_mul(SF as i64))
