@@ -56,12 +56,6 @@ pub type BlockNumber = u64;
 /// Index of an account's extrinsic in the chain.
 pub type Nonce = u64;
 
-/// Oracle module, which is used to get off-chain data on-chain.
-mod oracle;
-
-/// Schedule module, which is used to trigger contract events
-mod schedule;
-
 /// ACTUS module which contains all contract types
 mod actus;
 
@@ -198,14 +192,6 @@ impl sudo::Trait for Runtime {
     type Proposal = Call;
 }
 
-impl oracle::Trait for Runtime {
-    type Event = Event;
-}
-
-impl schedule::Trait for Runtime {
-    type Event = Event;
-}
-
 impl actus::Trait for Runtime {
     type Event = Event;
 }
@@ -223,8 +209,6 @@ construct_runtime!(
 		Indices: indices,
 		Balances: balances,
 		Sudo: sudo,
-		Oracle: oracle::{Module, Call, Storage, Event<T>},
-		Schedule: schedule::{Module, Call, Storage, Event<T>},
 		ACTUS: actus::{Module, Call, Storage, Event<T>},
 	}
 );

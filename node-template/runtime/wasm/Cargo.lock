@@ -851,6 +851,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "krml-reals"
+version = "0.1.0"
+dependencies = [
+ "parity-codec 3.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",
+ "sr-std 2.0.0",
+ "srml-support 2.0.0",
+ "srml-system 2.0.0",
+]
+
+[[package]]
 name = "kvdb"
 version = "0.1.0"
 source = "git+https://github.com/paritytech/parity-common?rev=b0317f649ab2c665b7987b8475878fc4d2e1f81d#b0317f649ab2c665b7987b8475878fc4d2e1f81d"
@@ -1362,6 +1373,7 @@ dependencies = [
 name = "node-template-runtime"
 version = "2.0.0"
 dependencies = [
+ "krml-reals 0.1.0",
  "parity-codec 3.5.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "safe-mix 1.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.89 (registry+https://github.com/rust-lang/crates.io-index)",

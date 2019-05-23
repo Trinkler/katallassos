@@ -21,6 +21,7 @@
 // These are necessary to work with Substrate.
 use parity_codec::{Decode, Encode};
 // These are necessary to do operator overloading.
+// #[cfg(feature = "std")]
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 // The scale factor.

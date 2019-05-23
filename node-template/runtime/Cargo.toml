@@ -30,7 +30,7 @@ system = { package = "srml-system", path = "../../srml/system", default_features
 timestamp = { package = "srml-timestamp", path = "../../srml/timestamp", default_features = false }
 sudo = { package = "srml-sudo", path = "../../srml/sudo", default_features = false }
 # KRML crates
-
+reals = { package = "krml-reals", path = "../../krml/reals", default_features = false }
 
 [features]
 default = ["std"]
@@ -55,4 +55,5 @@ std = [
 	"consensus-aura/std",
 	"offchain-primitives/std",
 	"consensus_authorities/std",
+	"reals/std",
 ]
