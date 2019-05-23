@@ -1,0 +1,12 @@
+/home/bruno/Github/katallassos/node-template/target/release/deps/libparity_crypto-bdc20aa1551b28e3.rlib: /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/lib.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/aes.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/aes_gcm.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/error.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/scrypt.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/digest.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/hmac/mod.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/pbkdf2/mod.rs
+
+/home/bruno/Github/katallassos/node-template/target/release/deps/parity_crypto-bdc20aa1551b28e3.d: /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/lib.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/aes.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/aes_gcm.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/error.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/scrypt.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/digest.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/hmac/mod.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/pbkdf2/mod.rs
+
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/lib.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/aes.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/aes_gcm.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/error.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/scrypt.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/digest.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/hmac/mod.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/parity-crypto-0.3.1/src/pbkdf2/mod.rs:

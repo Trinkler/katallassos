@@ -1,0 +1,1 @@
+{"rustc":8727041129544277308,"features":"[]","target":1048308928592656025,"profile":2574335274271406459,"path":17988998429490400042,"deps":[["parity-codec v3.5.1","parity_codec",10270628040815265689]],"local":[{"MtimeBased":[[1558582569,182671563],".fingerprint/fork-tree-5f08ffd8d92c2fdf/dep-lib-fork_tree-5f08ffd8d92c2fdf"]}],"rustflags":[],"edition":"Edition2018"}

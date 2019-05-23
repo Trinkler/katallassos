@@ -1,0 +1,1 @@
+{"rustc":8727041129544277308,"features":"[\"byteorder\", \"std\"]","target":7186712321727413710,"profile":2574335274271406459,"path":11682693031354561936,"deps":[["byteorder v1.3.1","byteorder",1048482776621682839]],"local":[{"Precalculated":"0.31.3"}],"rustflags":[],"edition":"Edition2015"}

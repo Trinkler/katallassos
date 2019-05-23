@@ -1,0 +1,10 @@
+/home/bruno/Github/katallassos/node-template/target/release/deps/libjsonrpc_ws_server-c5aff8d3964899e0.rlib: /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/jsonrpc-ws-server-10.1.0/src/lib.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/jsonrpc-ws-server-10.1.0/src/error.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/jsonrpc-ws-server-10.1.0/src/metadata.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/jsonrpc-ws-server-10.1.0/src/server.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/jsonrpc-ws-server-10.1.0/src/server_builder.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/jsonrpc-ws-server-10.1.0/src/session.rs
+
+/home/bruno/Github/katallassos/node-template/target/release/deps/jsonrpc_ws_server-c5aff8d3964899e0.d: /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/jsonrpc-ws-server-10.1.0/src/lib.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/jsonrpc-ws-server-10.1.0/src/error.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/jsonrpc-ws-server-10.1.0/src/metadata.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/jsonrpc-ws-server-10.1.0/src/server.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/jsonrpc-ws-server-10.1.0/src/server_builder.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/jsonrpc-ws-server-10.1.0/src/session.rs
+
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/jsonrpc-ws-server-10.1.0/src/lib.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/jsonrpc-ws-server-10.1.0/src/error.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/jsonrpc-ws-server-10.1.0/src/metadata.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/jsonrpc-ws-server-10.1.0/src/server.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/jsonrpc-ws-server-10.1.0/src/server_builder.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/jsonrpc-ws-server-10.1.0/src/session.rs:

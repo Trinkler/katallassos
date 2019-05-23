@@ -1,0 +1,11 @@
+/home/bruno/Github/katallassos/node-template/target/release/deps/libed25519_dalek-edc5226e845949f5.rlib: /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/lib.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/constants.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/ed25519.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/errors.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/public.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/secret.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/signature.rs
+
+/home/bruno/Github/katallassos/node-template/target/release/deps/ed25519_dalek-edc5226e845949f5.d: /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/lib.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/constants.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/ed25519.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/errors.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/public.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/secret.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/signature.rs
+
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/lib.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/constants.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/ed25519.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/errors.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/public.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/secret.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ed25519-dalek-1.0.0-pre.1/src/signature.rs:

@@ -1,0 +1,1 @@
+{"rustc":8727041129544277308,"features":"[\"default\", \"std\"]","target":1965603492049156446,"profile":2574335274271406459,"path":10963494670569330248,"deps":[["block-cipher-trait v0.6.2","block_cipher_trait",10479136877015323761],["block-padding v0.1.4","block_padding",7702239958018573717]],"local":[{"Precalculated":"0.3.3"}],"rustflags":[],"edition":"Edition2015"}

@@ -1,0 +1,1 @@
+{"rustc":8727041129544277308,"features":"[]","target":17464949547895606849,"profile":2574335274271406459,"path":4324158882352580180,"deps":[["aes-soft v0.3.3","aes_soft",7147420478226874348],["block-cipher-trait v0.6.2","block_cipher_trait",10479136877015323761]],"local":[{"Precalculated":"0.3.2"}],"rustflags":[],"edition":"Edition2015"}

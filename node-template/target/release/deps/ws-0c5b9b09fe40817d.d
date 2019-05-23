@@ -1,0 +1,17 @@
+/home/bruno/Github/katallassos/node-template/target/release/deps/libws-0c5b9b09fe40817d.rlib: /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/lib.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/communication.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/connection.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/factory.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/frame.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/handler.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/handshake.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/io.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/message.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/protocol.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/result.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/stream.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/util.rs
+
+/home/bruno/Github/katallassos/node-template/target/release/deps/ws-0c5b9b09fe40817d.d: /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/lib.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/communication.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/connection.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/factory.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/frame.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/handler.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/handshake.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/io.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/message.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/protocol.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/result.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/stream.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/util.rs
+
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/lib.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/communication.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/connection.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/factory.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/frame.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/handler.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/handshake.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/io.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/message.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/protocol.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/result.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/stream.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/ws-0.7.9/src/util.rs:

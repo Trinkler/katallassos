@@ -1,0 +1,1 @@
+{"rustc":8727041129544277308,"features":"[]","target":10056294986303280849,"profile":2574335274271406459,"path":10462596752790695646,"deps":[["futures v0.1.27","futures",14017894251964470055],["libp2p-core v0.8.1","libp2p_core",955640601990939185],["void v1.0.2","void",10750349877588306026]],"local":[{"Precalculated":"0.8.0"}],"rustflags":[],"edition":"Edition2018"}

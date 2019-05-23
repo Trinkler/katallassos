@@ -1,0 +1,12 @@
+/home/bruno/Github/katallassos/node-template/target/release/deps/libhashbrown-846d75170072edbf.rlib: /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/lib.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/external_trait_impls/mod.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/fx.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/map.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/raw/mod.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/raw/sse2.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/raw/bitmask.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/set.rs
+
+/home/bruno/Github/katallassos/node-template/target/release/deps/hashbrown-846d75170072edbf.d: /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/lib.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/external_trait_impls/mod.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/fx.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/map.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/raw/mod.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/raw/sse2.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/raw/bitmask.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/set.rs
+
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/lib.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/external_trait_impls/mod.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/fx.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/map.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/raw/mod.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/raw/sse2.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/raw/bitmask.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/hashbrown-0.1.8/src/set.rs:

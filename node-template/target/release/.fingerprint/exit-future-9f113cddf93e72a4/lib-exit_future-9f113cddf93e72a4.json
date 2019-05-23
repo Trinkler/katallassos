@@ -1,0 +1,1 @@
+{"rustc":8727041129544277308,"features":"[]","target":1867366811899666200,"profile":2574335274271406459,"path":17169318610660316771,"deps":[["futures v0.1.27","futures",14017894251964470055],["parking_lot v0.7.1","parking_lot",670565220226542783]],"local":[{"Precalculated":"0.1.4"}],"rustflags":[],"edition":"Edition2015"}

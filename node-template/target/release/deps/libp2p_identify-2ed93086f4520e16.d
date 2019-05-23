@@ -1,0 +1,11 @@
+/home/bruno/Github/katallassos/node-template/target/release/deps/liblibp2p_identify-2ed93086f4520e16.rlib: /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/lib.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/listen_handler.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/periodic_id_handler.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/protocol.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/identify.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/id_transport.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/structs_proto.rs
+
+/home/bruno/Github/katallassos/node-template/target/release/deps/libp2p_identify-2ed93086f4520e16.d: /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/lib.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/listen_handler.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/periodic_id_handler.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/protocol.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/identify.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/id_transport.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/structs_proto.rs
+
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/lib.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/listen_handler.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/periodic_id_handler.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/protocol.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/identify.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/id_transport.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/libp2p-identify-0.8.0/src/structs_proto.rs:

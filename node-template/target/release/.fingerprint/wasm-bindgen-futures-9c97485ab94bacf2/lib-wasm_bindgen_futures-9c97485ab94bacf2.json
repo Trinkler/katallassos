@@ -1,0 +1,1 @@
+{"rustc":8727041129544277308,"features":"[]","target":4655455482238912687,"profile":2574335274271406459,"path":18332078220579401680,"deps":[["futures v0.1.27","futures",14017894251964470055],["js-sys v0.3.22","js_sys",8620323107314955768],["wasm-bindgen v0.2.45","wasm_bindgen",16286919560955935038]],"local":[{"Precalculated":"0.3.22"}],"rustflags":[],"edition":"Edition2018"}

@@ -1,0 +1,15 @@
+/home/bruno/Github/katallassos/node-template/target/release/deps/libblake2-87b1240be8aa68d2.rlib: /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/lib.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/consts.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/as_bytes.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/simd/mod.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/simd/simdty.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/simd/simdint.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/simd/simdop.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/simd/simd_opt/mod.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/blake2.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/blake2b.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/blake2s.rs
+
+/home/bruno/Github/katallassos/node-template/target/release/deps/blake2-87b1240be8aa68d2.d: /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/lib.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/consts.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/as_bytes.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/simd/mod.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/simd/simdty.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/simd/simdint.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/simd/simdop.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/simd/simd_opt/mod.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/blake2.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/blake2b.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/blake2s.rs
+
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/lib.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/consts.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/as_bytes.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/simd/mod.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/simd/simdty.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/simd/simdint.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/simd/simdop.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/simd/simd_opt/mod.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/blake2.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/blake2b.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/blake2-0.8.0/src/blake2s.rs:

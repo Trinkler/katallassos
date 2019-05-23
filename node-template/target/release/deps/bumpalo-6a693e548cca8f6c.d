@@ -1,0 +1,12 @@
+/home/bruno/Github/katallassos/node-template/target/release/deps/libbumpalo-6a693e548cca8f6c.rlib: /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/lib.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/collections/mod.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/collections/raw_vec.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/collections/vec.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/collections/str/mod.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/collections/str/lossy.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/collections/string.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/alloc.rs
+
+/home/bruno/Github/katallassos/node-template/target/release/deps/bumpalo-6a693e548cca8f6c.d: /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/lib.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/collections/mod.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/collections/raw_vec.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/collections/vec.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/collections/str/mod.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/collections/str/lossy.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/collections/string.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/alloc.rs
+
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/lib.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/collections/mod.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/collections/raw_vec.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/collections/vec.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/collections/str/mod.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/collections/str/lossy.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/collections/string.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/bumpalo-2.4.3/src/alloc.rs:

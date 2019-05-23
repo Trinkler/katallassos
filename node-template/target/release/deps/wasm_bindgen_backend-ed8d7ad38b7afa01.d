@@ -1,0 +1,11 @@
+/home/bruno/Github/katallassos/node-template/target/release/deps/libwasm_bindgen_backend-ed8d7ad38b7afa01.rlib: /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/lib.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/error.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/ast.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/codegen.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/defined.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/encode.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/util.rs
+
+/home/bruno/Github/katallassos/node-template/target/release/deps/wasm_bindgen_backend-ed8d7ad38b7afa01.d: /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/lib.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/error.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/ast.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/codegen.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/defined.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/encode.rs /home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/util.rs
+
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/lib.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/error.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/ast.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/codegen.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/defined.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/encode.rs:
+/home/bruno/.cargo/registry/src/github.com-1ecc6299db9ec823/wasm-bindgen-backend-0.2.45/src/util.rs:
