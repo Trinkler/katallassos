@@ -10,6 +10,7 @@ name = "node-template"
 path = "src/main.rs"
 
 [dependencies]
+# External crates
 error-chain = "0.12"
 futures = "0.1"
 ctrlc = { version = "3.0", features = ["termination"] }
@@ -19,6 +20,7 @@ exit-future = "0.1"
 parking_lot = "0.7.1"
 parity-codec = "3.3"
 trie-root = "0.12.2"
+# Core crates
 sr-io = { path = "../core/sr-io" }
 substrate-cli = { path = "../core/cli" }
 primitives = { package = "substrate-primitives", path = "../core/primitives" }
@@ -30,6 +32,7 @@ network = { package = "substrate-network", path = "../core/network" }
 consensus = { package = "substrate-consensus-aura", path = "../core/consensus/aura" }
 substrate-client = {  path = "../core/client" }
 basic-authorship = { package = "substrate-basic-authorship", path = "../core/basic-authorship" }
+# The runtime crate
 node-template-runtime = { path = "runtime" }
 
 [build-dependencies]
