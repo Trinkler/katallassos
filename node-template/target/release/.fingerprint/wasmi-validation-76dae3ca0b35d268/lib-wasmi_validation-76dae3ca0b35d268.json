@@ -1,1 +1,0 @@
-{"rustc":8727041129544277308,"features":"[\"parity-wasm\", \"std\"]","target":4923661221755343201,"profile":2574335274271406459,"path":10015876301093005727,"deps":[["parity-wasm v0.31.3","parity_wasm",5663274001290238114]],"local":[{"Precalculated":"0.1.0"}],"rustflags":[],"edition":"Edition2018"}

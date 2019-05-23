@@ -1,1 +1,0 @@
-{"rustc":8727041129544277308,"features":"[\"default\", \"hash-db\", \"std\"]","target":17983096093702658623,"profile":2574335274271406459,"path":1312088217031457787,"deps":[["hash-db v0.12.2","hash_db",1673171655566785156]],"local":[{"Precalculated":"0.12.2"}],"rustflags":[],"edition":"Edition2015"}

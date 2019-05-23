@@ -1,1 +1,0 @@
-{"rustc":8727041129544277308,"features":"[]","target":11705237048900615585,"profile":2574335274271406459,"path":3226075838607310278,"deps":[["byteorder v1.3.1","byteorder",1048482776621682839],["crunchy v0.1.6","crunchy",4471198235332435714]],"local":[{"Precalculated":"4.4.1"}],"rustflags":[],"edition":"Edition2015"}

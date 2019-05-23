@@ -1,1 +1,0 @@
-{"rustc":8727041129544277308,"features":"[]","target":7383799178193875448,"profile":2574335274271406459,"path":916056393443053536,"deps":[["tokio-timer v0.2.11","tokio_timer",11699773151268963909]],"local":[{"Precalculated":"0.1.1"}],"rustflags":[],"edition":"Edition2018"}

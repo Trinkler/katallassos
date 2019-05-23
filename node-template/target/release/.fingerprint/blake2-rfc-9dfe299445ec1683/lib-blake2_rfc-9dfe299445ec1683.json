@@ -1,1 +1,0 @@
-{"rustc":8727041129544277308,"features":"[\"default\", \"std\"]","target":8614665390655387273,"profile":2574335274271406459,"path":4882470812395622077,"deps":[["arrayvec v0.4.10","arrayvec",2254424223812554205],["constant_time_eq v0.1.3","constant_time_eq",16165800142435271214]],"local":[{"Precalculated":"0.2.18"}],"rustflags":[],"edition":"Edition2015"}

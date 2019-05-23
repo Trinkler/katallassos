@@ -1,1 +1,0 @@
-{"rustc":8727041129544277308,"features":"[]","target":10988496223312124377,"profile":2574335274271406459,"path":17732471500413555746,"deps":[["crypto-mac v0.4.0","crypto_mac",371519599567610],["digest v0.6.2","digest",1958090309416712685],["generic-array v0.8.3","generic_array",7129931667894546066]],"local":[{"Precalculated":"0.4.2"}],"rustflags":[],"edition":"Edition2015"}

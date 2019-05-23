@@ -1,9 +1,0 @@
-cargo:rustc-env=VERGEN_COMMIT_DATE=2019-05-22
-cargo:rustc-env=VERGEN_BUILD_DATE=2019-05-23
-cargo:rustc-env=VERGEN_SEMVER_LIGHTWEIGHT=2.0.0
-cargo:rustc-env=VERGEN_TARGET_TRIPLE=x86_64-unknown-linux-gnu
-cargo:rustc-env=VERGEN_SEMVER=2.0.0
-cargo:rustc-env=VERGEN_BUILD_TIMESTAMP=2019-05-23T03:42:33.252674388+00:00
-cargo:rustc-env=VERGEN_SHA_SHORT=9d27113
-cargo:rustc-env=VERGEN_SHA=9d271133a2d4509a4e62b89d37aafcdfc8cd1019
-cargo:rerun-if-changed=.git/HEAD
