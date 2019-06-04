@@ -1,9 +1,13 @@
+//! # Reals module
+//!
+//! ## Overview
 //! The Reals library implements a new data type for safe fixed-point arithmetic. It works by creating
 //! a struct containing only an option of an i64 and then doing operator overloading for the most
 //! common arithmetic operations (addition, subtraction, multiplication, division). It also implements
 //! some convenience functions like negation, absolute value and creating from an i64. It also allows
 //! comparisons by deriving the Eq and Ord traits.
 //!
+//! ## Fixed-point arithmetic
 //! Fixed point arithmetic works similarly to normal integer arithmetic but every number is scaled
 //! by the same number, which we call the scale factor. This library allows to change the scale factor
 //! by simply changing the constant SF. By default it is set to 1 billion, which gives reals with 9
@@ -13,6 +17,7 @@
 //! range allowed by a real (for the default SF) is [-9223372036.854775808, 9223372036.854775807],
 //! which is simply the range of an i64 but rescaled.
 //!
+//! ## Safe arithmetic
 //! This library also implements safe math. All reals are an option of an i64, so a real can have the
 //! value 'None'. And all operations check for over/underflow and will return a 'None' as a result when
 //! that happens. A quirk is that, when comparing two reals, 'None' is considered smaller than any
@@ -24,7 +29,7 @@ use parity_codec::{Decode, Encode};
 // #[cfg(feature = "std")]
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
-// The scale factor.
+/// The scale factor.
 const SF: i128 = 1000000000;
 
 // The maximum and minimum values supported by i64, as a i128. They are used for over/underflow
@@ -32,7 +37,8 @@ const SF: i128 = 1000000000;
 const MAX: i128 = i64::max_value() as i128;
 const MIN: i128 = i64::min_value() as i128;
 
-// This creates the Real data type and derives several traits for it.
+/// The struct that implements the real data type. It is a tuple containing a single Option of
+/// an i64.
 #[derive(Decode, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct Real(pub Option<i64>);
