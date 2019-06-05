@@ -26,7 +26,6 @@
 // These are necessary to work with Substrate.
 use parity_codec::{Decode, Encode};
 // These are necessary to do operator overloading.
-// #[cfg(feature = "std")]
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 /// The scale factor.
@@ -49,7 +48,8 @@ impl Real {
         Real(x.checked_mul(SF as i64))
     }
 
-    /// Returns the absolute value of a real. If input is 'None', it returns 'None'.
+    /// Returns the absolute value of a real. If input is 'None' (or the result
+    /// overflows which is possible if the input is -2^63/SF), it returns 'None'.
     pub fn abs(self) -> Real {
         if self.0.is_some() {
             Real(self.0.unwrap().checked_abs())
@@ -187,6 +187,53 @@ impl Sub for Real {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
+
     #[test]
-    fn it_works() {}
+    fn from_works() {
+        let x: i64 = 1;
+        let s = SF as i64;
+        // Checking basic case.
+        assert_eq!(Real(Some(x * s)), Real::from(x));
+        // Checking overflow.
+        assert_eq!(Real(None), Real::from(i64::max_value()));
+    }
+
+    #[test]
+    fn abs_works() {
+        // Check positive case.
+        let x = Real(Some(1));
+        assert_eq!(Real(Some(1)), x.abs());
+        // Check negative case.
+        let x = Real(Some(-1));
+        assert_eq!(Real(Some(1)), x.abs());
+        // Check zero case.
+        let x = Real(Some(0));
+        assert_eq!(Real(Some(0)), x.abs());
+        // Check None case.
+        let x = Real(None);
+        assert_eq!(Real(None), x.abs());
+        // Check overflow.
+        let x = Real(Some(i64::min_value()));
+        assert_eq!(Real(None), x.abs());
+    }
+
+    #[test]
+    fn neg_works() {
+        // Check positive case.
+        let x = Real(Some(1));
+        assert_eq!(Real(Some(-1)), -x);
+        // Check negative case.
+        let x = Real(Some(-1));
+        assert_eq!(Real(Some(1)), -x);
+        // Check zero case.
+        let x = Real(Some(0));
+        assert_eq!(Real(Some(0)), -x);
+        // Check None case.
+        let x = Real(None);
+        assert_eq!(Real(None), -x);
+        // Check overflow.
+        let x = Real(Some(i64::min_value()));
+        assert_eq!(Real(None), -x);
+    }
 }
