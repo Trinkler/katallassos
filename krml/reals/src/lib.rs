@@ -38,7 +38,7 @@ const MIN: i128 = i64::min_value() as i128;
 
 /// The struct that implements the real data type. It is a tuple containing a single Option of
 /// an i64.
-#[derive(Decode, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Decode, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct Real(pub Option<i64>);
 
@@ -197,6 +197,8 @@ mod tests {
         assert_eq!(Real(Some(x * s)), Real::from(x));
         // Checking overflow.
         assert_eq!(Real(None), Real::from(i64::max_value()));
+        // Checking underflow.
+        assert_eq!(Real(None), Real::from(i64::min_value()));
     }
 
     #[test]
@@ -235,5 +237,132 @@ mod tests {
         // Check overflow.
         let x = Real(Some(i64::min_value()));
         assert_eq!(Real(None), -x);
+    }
+
+    #[test]
+    fn add_works() {
+        // Check case where both are None.
+        let x = Real(None);
+        let y = Real(None);
+        assert_eq!(Real(None), x + y);
+        // Check case where one is None.
+        let y = Real(Some(1));
+        assert_eq!(Real(None), x + y);
+        assert_eq!(Real(None), y + x);
+        // Check regular case.
+        let x = Real(Some(2));
+        let y = Real(Some(2));
+        assert_eq!(Real(Some(4)), x + y);
+        // Check chaining of different cases.
+        let x = Real(Some(3));
+        let y = Real(Some(0));
+        let z = Real(Some(-1));
+        assert_eq!(Real(Some(2)), x + y + z);
+        // Check overflow and underflow.
+        let x = Real(Some(10));
+        let y = Real(Some(-10));
+        assert_eq!(Real(None), x + Real(Some(i64::max_value())));
+        assert_eq!(Real(None), y + Real(Some(i64::min_value())));
+    }
+
+    #[test]
+    fn sub_works() {
+        // Check case where both are None.
+        let x = Real(None);
+        let y = Real(None);
+        assert_eq!(Real(None), x - y);
+        // Check case where one is None.
+        let y = Real(Some(1));
+        assert_eq!(Real(None), x - y);
+        assert_eq!(Real(None), y - x);
+        // Check regular case.
+        let x = Real(Some(4));
+        let y = Real(Some(2));
+        assert_eq!(Real(Some(2)), x - y);
+        // Check chaining of different cases.
+        let x = Real(Some(2));
+        let y = Real(Some(0));
+        let z = Real(Some(-1));
+        assert_eq!(Real(Some(3)), x - y - z);
+        // Check overflow and underflow.
+        let x = Real(Some(10));
+        let y = Real(Some(-10));
+        assert_eq!(Real(None), x - Real(Some(i64::min_value())));
+        assert_eq!(Real(None), y - Real(Some(i64::max_value())));
+    }
+
+    #[test]
+    fn mul_works() {
+        let s = SF as i64;
+        // Check case where both are None.
+        let x = Real(None);
+        let y = Real(None);
+        assert_eq!(Real(None), x * y);
+        // Check case where one is None.
+        let y = Real(Some(5));
+        assert_eq!(Real(None), x * y);
+        assert_eq!(Real(None), y * x);
+        // Check regular case.
+        let x = Real(Some(2 * s));
+        let y = Real(Some(2 * s));
+        assert_eq!(Real(Some(4 * s)), x * y);
+        // Check chaining of different cases.
+        let x = Real(Some(3 * s));
+        let y = Real(Some(0 * s));
+        let z = Real(Some(-1 * s));
+        assert_eq!(Real(Some(0)), x * y * z);
+        // Check the rounding.
+        let w = Real(Some(-1));
+        let x = Real(Some(1));
+        let y = Real(Some(s / 2));
+        let z = Real(Some(s / 4));
+        assert_eq!(Real(Some(1)), x * y);
+        assert_eq!(Real(Some(0)), x * z);
+        assert_eq!(Real(Some(-1)), w * y);
+        assert_eq!(Real(Some(0)), w * z);
+        // Check overflow and underflow.
+        let x = Real(Some(2 * s));
+        assert_eq!(Real(None), x * Real(Some(i64::max_value())));
+        assert_eq!(Real(None), x * Real(Some(i64::min_value())));
+    }
+
+    #[test]
+    fn div_works() {
+        let s = SF as i64;
+        // Check case where both are None.
+        let x = Real(None);
+        let y = Real(None);
+        assert_eq!(Real(None), x / y);
+        // Check case where one is None.
+        let y = Real(Some(5));
+        assert_eq!(Real(None), x / y);
+        assert_eq!(Real(None), y / x);
+        // Check division by zero.
+        let x = Real(Some(2 * s));
+        let y = Real(Some(0));
+        assert_eq!(Real(None), x / y);
+        // Check regular case.
+        let x = Real(Some(4 * s));
+        let y = Real(Some(2 * s));
+        assert_eq!(Real(Some(2 * s)), x / y);
+        // Check chaining of different cases.
+        let x = Real(Some(12 * s));
+        let y = Real(Some(3 * s));
+        let z = Real(Some(-2 * s));
+        assert_eq!(Real(Some(-2 * s)), x / y / z);
+        // Check the rounding.
+        let w = Real(Some(-1));
+        let x = Real(Some(1));
+        let y = Real(Some(2 * s));
+        let z = Real(Some(40000000 * s));
+        assert_eq!(Real(Some(1)), x / y);
+        //assert_eq!(Real(Some(0)), x / z);
+        assert_eq!(Real(Some(-1)), w / y);
+        //assert_eq!(Real(Some(0)), w / z);
+        assert_eq!(0, 3 % 4);
+        // Check overflow and underflow.
+        let x = Real(Some(2 * s));
+        assert_eq!(Real(None), x * Real(Some(i64::max_value())));
+        assert_eq!(Real(None), x * Real(Some(i64::min_value())));
     }
 }
