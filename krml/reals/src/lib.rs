@@ -28,7 +28,7 @@ use parity_codec::{Decode, Encode};
 // These are necessary to do operator overloading.
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
-/// The scale factor.
+/// The scale factor (must be positive).
 const SF: i128 = 1000000000;
 
 // The maximum and minimum values supported by i64, as a i128. They are used for over/underflow
@@ -99,10 +99,9 @@ impl Div for Real {
             c /= b;
 
             // Rounding depending on the remainder. It uses the 'round half away from zero' method.
-            if 2 * r >= SF {
-                c += 1;
-            } else if 2 * r <= -SF {
-                c -= 1;
+            if 2 * r.abs() >= b.abs() {
+                //We can't use c.signum because c may be zero.
+                c += a.signum() * b.signum();
             }
 
             // Verifying if it over/underflows and then returning the appropriate answer.
@@ -138,10 +137,9 @@ impl Mul for Real {
             c /= SF;
 
             // Rounding depending on the remainder. It uses the 'round half away from zero' method.
-            if 2 * r >= SF {
-                c += 1;
-            } else if 2 * r <= -SF {
-                c -= 1;
+            if 2 * r.abs() >= SF {
+                //We can't use c.signum because c may be zero.
+                c += a.signum() * b.signum();
             }
 
             // Verifying if it over/underflows and then returning the appropriate answer.
@@ -354,15 +352,14 @@ mod tests {
         let w = Real(Some(-1));
         let x = Real(Some(1));
         let y = Real(Some(2 * s));
-        let z = Real(Some(40000000 * s));
+        let z = Real(Some(3 * s));
         assert_eq!(Real(Some(1)), x / y);
-        //assert_eq!(Real(Some(0)), x / z);
+        assert_eq!(Real(Some(0)), x / z);
         assert_eq!(Real(Some(-1)), w / y);
-        //assert_eq!(Real(Some(0)), w / z);
-        assert_eq!(0, 3 % 4);
+        assert_eq!(Real(Some(0)), w / z);
         // Check overflow and underflow.
-        let x = Real(Some(2 * s));
-        assert_eq!(Real(None), x * Real(Some(i64::max_value())));
-        assert_eq!(Real(None), x * Real(Some(i64::min_value())));
+        let x = Real(Some(s / 10));
+        assert_eq!(Real(None), Real(Some(i64::max_value())) / x);
+        assert_eq!(Real(None), Real(Some(i64::min_value())) / x);
     }
 }
