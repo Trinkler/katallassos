@@ -2,10 +2,11 @@ use parity_codec::{Decode, Encode};
 use reals::Real;
 use rstd::prelude::*;
 use srml_support::{decl_event, decl_module, decl_storage, dispatch::Result, ensure, StorageMap};
-use system::ensure_signed;
+use system::{ensure_signed, AccountId};
 use timestamp;
 
 mod attributes;
+mod variables;
 
 /// The module's configuration trait.
 pub trait Trait: system::Trait + timestamp::Trait {
@@ -50,35 +51,12 @@ pub enum EventType {
     AD,
 }
 
-// All ACTUS contract variables as specifed in the ACTUS paper.
-#[derive(Encode, Decode, Default, Clone, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
-pub struct Variables {
-    Performance: Option<ContractStatus>,
-    LastEventDate: Option<i64>,
-    NominalValue1: Option<i64>,
-    NominalValue2: Option<i64>,
-    NominalRate: Option<i64>,
-    NominalAccrued: Option<i64>,
-    InterestCalculationBase: Option<i64>,
-    NotionalScalingMultiplier: Option<i64>,
-    InterestScalingMultiplier: Option<i64>,
-    NextPrincipalRedemptionPayment: Option<i64>,
-    PayoffAtSettlement: Option<i64>,
-    // Variables that are missing from the variables list. Awaiting for the full names and types.
-    Tmd: Option<i64>,
-    Fac: Option<i64>,
-    Npr: Option<i64>,
-    Nac1: Option<i64>,
-    Nac2: Option<i64>,
-}
-
 // Contract Metadata, necessary for operation of the contract.
 #[derive(Encode, Decode, Default, Clone, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct MetaData {
-    OracleObjectID: Option<i64>,
-    GovernanceObjectID: Option<i64>,
+    OracleObjectID: Option<AccountId>,
+    GovernanceObjectID: Option<AccountId>,
     // If necessary we can add more fields.
 }
 

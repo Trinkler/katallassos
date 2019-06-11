@@ -1,5 +1,4 @@
 use super::*;
-use system::AccountId;
 
 // All ACTUS contract attributes as specifed in the data dictionary
 // https://www.actusfrf.org/data-dictionary
