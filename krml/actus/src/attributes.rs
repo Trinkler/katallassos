@@ -196,19 +196,23 @@ pub enum ContractType {
     MRGNG,
 }
 
+// This specific attribute is according to the ACTUS paper and not the Data Dictionary.
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub enum ContractRole {
     RPA,
     RPL,
+    CLO,
+    CNO,
+    COL,
     LG,
     ST,
+    BUY,
+    SEL,
     RFL,
     PFL,
-    BUYER,
-    SELLER,
-    GUARANTOR,
-    OBLIGEE,
+    RF,
+    PF,
 }
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]

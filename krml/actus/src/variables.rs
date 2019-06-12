@@ -1,4 +1,3 @@
-use super::attributes::ContractStatus;
 use super::*;
 
 // All ACTUS contract variables as specifed in the ACTUS paper.

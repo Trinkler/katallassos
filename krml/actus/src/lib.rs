@@ -2,11 +2,18 @@ use parity_codec::{Decode, Encode};
 use reals::Real;
 use rstd::prelude::*;
 use srml_support::{decl_event, decl_module, decl_storage, dispatch::Result, ensure, StorageMap};
-use system::{ensure_signed, AccountId};
-use timestamp;
+use system::ensure_signed;
+use timestamp::*;
 
-mod attributes;
+//
+mod utilities;
+use self::utilities::*;
+//
 mod variables;
+use self::variables::*;
+//
+mod attributes;
+use self::attributes::*;
 
 /// The module's configuration trait.
 pub trait Trait: system::Trait + timestamp::Trait {
@@ -109,39 +116,6 @@ impl<T: Trait> Module<T> {
         let now = <timestamp::Module<T>>::get();
 
         Ok(())
-    }
-
-    // Contract Role Sign Convention
-    fn utility_function_R(contract_role: &ContractRole) -> i64 {
-        match contract_role {
-            ContractRole::RPA => 1,
-            ContractRole::RPL => -1,
-            ContractRole::LG => 1,
-            ContractRole::ST => -1,
-            ContractRole::RFL => 1,
-            ContractRole::PFL => -1,
-            ContractRole::BUYER => 1,
-            ContractRole::SELLER => -1,
-            // TODO: Verify that guarantor maps to -1
-            ContractRole::GUARANTOR => -1,
-            // TODO: Verify that obligee maps to 1
-            ContractRole::OBLIGEE => 1,
-        }
-    }
-
-    // Year Fraction Convention
-    // TODO: Implement actual function
-    // TODO: Adjust retun to be a float
-    fn utility_function_Y(s: i64, t: i64, day_cont_convention: &DayCountConvention) -> i64 {
-        match day_cont_convention {
-            DayCountConvention::_AAISDA => 1,
-            DayCountConvention::_A360 => 1,
-            DayCountConvention::_A365 => 1,
-            DayCountConvention::_30E360ISDA => 1,
-            DayCountConvention::_30E360 => 1,
-            DayCountConvention::_30360 => 1,
-            DayCountConvention::_BUS252 => 1,
-        }
     }
 }
 
