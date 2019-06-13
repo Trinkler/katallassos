@@ -62,8 +62,8 @@ pub enum EventType {
 #[derive(Encode, Decode, Default, Clone, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct MetaData {
-    OracleObjectID: Option<AccountId>,
-    GovernanceObjectID: Option<AccountId>,
+    OracleObjectID: Option<u128>,
+    GovernanceObjectID: Option<u128>,
     // If necessary we can add more fields.
 }
 

@@ -48,6 +48,13 @@ impl Real {
         Real(x.checked_mul(SF as i64))
     }
 
+    /// Transforms a real into an i64. It divides the input by the scale factor.
+    /// This function does not apply safe arithmetic. Care must be had to not feed Reals
+    /// that are None, otherwise this function will just return zero.
+    pub fn to(x: Real) -> i64 {
+        x.0.unwrap_or(0) / (SF as i64)
+    }
+
     /// Returns the absolute value of a real. If input is 'None' (or the result
     /// overflows which is possible if the input is -2^63/SF), it returns 'None'.
     pub fn abs(self) -> Real {
@@ -197,6 +204,15 @@ mod tests {
         assert_eq!(Real(None), Real::from(i64::max_value()));
         // Checking underflow.
         assert_eq!(Real(None), Real::from(i64::min_value()));
+    }
+
+    #[test]
+    fn to_works() {
+        let x: i64 = 2;
+        let s = SF as i64;
+        let r = Real(Some(x * s));
+        // Checking basic case.
+        assert_eq!(x, Real::to(r));
     }
 
     #[test]

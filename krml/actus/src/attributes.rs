@@ -12,8 +12,8 @@ pub struct Attributes {
     StatusDate: Real,
     ContractRole: Option<ContractRole>,
     LegalEntityIDRecordCreator: Option<i64>,
-    ContractID: AccountId,
-    LegalEntityIDCounterparty: Option<AccountId>,
+    ContractID: u128,
+    LegalEntityIDCounterparty: Option<u128>,
     ContractStatus: Option<ContractStatus>,
     Seniority: Option<Seniority>,
     NonPerformingDate: Real,
@@ -23,9 +23,9 @@ pub struct Attributes {
     DelinquencyRate: Real,
     GuaranteedExposure: Option<GuaranteedExposure>,
     CoverageOfCreditEnhancement: Real,
-    CoveredContracts: Vec<Option<AccountId>>,
-    CoveringContracts: Vec<Option<AccountId>>,
-    CoveredLegalEntity: Option<AccountId>,
+    CoveredContracts: Vec<Option<u128>>,
+    CoveringContracts: Vec<Option<u128>>,
+    CoveredLegalEntity: Option<u128>,
     CycleAnchorDateOfDividend: Real,
     CycleOfDividend: Option<Period>,
     NextDividendPaymentAmount: Real,
@@ -56,8 +56,8 @@ pub struct Attributes {
     CycleAnchorDateOfMargining: Real,
     CycleOfMargining: Option<Cycle>,
     VariationMargin: Real,
-    Currency: Option<AccountId>,
-    Currency2: Option<AccountId>,
+    Currency: Option<u128>,
+    Currency2: Option<u128>,
     AmortizationDate: Real,
     ContractDealDate: Real,
     InitialExchangeDate: Real,
@@ -79,7 +79,7 @@ pub struct Attributes {
     TerminationDate: Real,
     PriceAtTerminationDate: Real,
     XDayNotice: Option<Period>,
-    MarketObjectCodeOfScalingIndex: Option<AccountId>, //Not sure of this type
+    MarketObjectCodeOfScalingIndex: Option<u128>, //Not sure of this type
     ScalingIndexAtStatusDate: Real,
     CycleAnchorDateOfScalingIndex: Real,
     CycleOfScalingIndex: Option<Cycle>,
@@ -103,7 +103,7 @@ pub struct Attributes {
     RateSpread: Real,
     ArrayRate: Vec<Real>,
     ArrayFixedVariable: Option<ArrayFixedVariable>,
-    MarketObjectCodeRateReset: Option<AccountId>, // Not sure about this type
+    MarketObjectCodeRateReset: Option<u128>, // Not sure about this type
     LifeCap: Real,
     LifeFloor: Real,
     PeriodCap: Real,
@@ -137,7 +137,7 @@ pub enum Period {
     Weeks(u32),
     Months(u32),
     Quarters(u32),
-    Halfyears(u32),
+    HalfYears(u32),
     Years(u32),
 }
 
