@@ -1,9 +1,13 @@
+//! # Reals module
+//!
+//! ## Overview
 //! The Reals library implements a new data type for safe fixed-point arithmetic. It works by creating
 //! a struct containing only an option of an i64 and then doing operator overloading for the most
 //! common arithmetic operations (addition, subtraction, multiplication, division). It also implements
 //! some convenience functions like negation, absolute value and creating from an i64. It also allows
 //! comparisons by deriving the Eq and Ord traits.
 //!
+//! ## Fixed-point arithmetic
 //! Fixed point arithmetic works similarly to normal integer arithmetic but every number is scaled
 //! by the same number, which we call the scale factor. This library allows to change the scale factor
 //! by simply changing the constant SF. By default it is set to 1 billion, which gives reals with 9
@@ -13,6 +17,7 @@
 //! range allowed by a real (for the default SF) is [-9223372036.854775808, 9223372036.854775807],
 //! which is simply the range of an i64 but rescaled.
 //!
+//! ## Safe arithmetic
 //! This library also implements safe math. All reals are an option of an i64, so a real can have the
 //! value 'None'. And all operations check for over/underflow and will return a 'None' as a result when
 //! that happens. A quirk is that, when comparing two reals, 'None' is considered smaller than any
@@ -21,10 +26,9 @@
 // These are necessary to work with Substrate.
 use parity_codec::{Decode, Encode};
 // These are necessary to do operator overloading.
-// #[cfg(feature = "std")]
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
-// The scale factor.
+/// The scale factor (must be positive).
 const SF: i128 = 1000000000;
 
 // The maximum and minimum values supported by i64, as a i128. They are used for over/underflow
@@ -32,8 +36,9 @@ const SF: i128 = 1000000000;
 const MAX: i128 = i64::max_value() as i128;
 const MIN: i128 = i64::min_value() as i128;
 
-// This creates the Real data type and derives several traits for it.
-#[derive(Decode, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]
+/// The struct that implements the real data type. It is a tuple containing a single Option of
+/// an i64.
+#[derive(Copy, Clone, Decode, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct Real(pub Option<i64>);
 
@@ -43,7 +48,8 @@ impl Real {
         Real(x.checked_mul(SF as i64))
     }
 
-    /// Returns the absolute value of a real. If input is 'None', it returns 'None'.
+    /// Returns the absolute value of a real. If input is 'None' (or the result
+    /// overflows which is possible if the input is -2^63/SF), it returns 'None'.
     pub fn abs(self) -> Real {
         if self.0.is_some() {
             Real(self.0.unwrap().checked_abs())
@@ -93,10 +99,9 @@ impl Div for Real {
             c /= b;
 
             // Rounding depending on the remainder. It uses the 'round half away from zero' method.
-            if 2 * r >= SF {
-                c += 1;
-            } else if 2 * r <= -SF {
-                c -= 1;
+            if 2 * r.abs() >= b.abs() {
+                //We can't use c.signum because c may be zero.
+                c += a.signum() * b.signum();
             }
 
             // Verifying if it over/underflows and then returning the appropriate answer.
@@ -132,10 +137,9 @@ impl Mul for Real {
             c /= SF;
 
             // Rounding depending on the remainder. It uses the 'round half away from zero' method.
-            if 2 * r >= SF {
-                c += 1;
-            } else if 2 * r <= -SF {
-                c -= 1;
+            if 2 * r.abs() >= SF {
+                //We can't use c.signum because c may be zero.
+                c += a.signum() * b.signum();
             }
 
             // Verifying if it over/underflows and then returning the appropriate answer.
@@ -176,5 +180,186 @@ impl Sub for Real {
         } else {
             Real(None)
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn from_works() {
+        let x: i64 = 1;
+        let s = SF as i64;
+        // Checking basic case.
+        assert_eq!(Real(Some(x * s)), Real::from(x));
+        // Checking overflow.
+        assert_eq!(Real(None), Real::from(i64::max_value()));
+        // Checking underflow.
+        assert_eq!(Real(None), Real::from(i64::min_value()));
+    }
+
+    #[test]
+    fn abs_works() {
+        // Check positive case.
+        let x = Real(Some(1));
+        assert_eq!(Real(Some(1)), x.abs());
+        // Check negative case.
+        let x = Real(Some(-1));
+        assert_eq!(Real(Some(1)), x.abs());
+        // Check zero case.
+        let x = Real(Some(0));
+        assert_eq!(Real(Some(0)), x.abs());
+        // Check None case.
+        let x = Real(None);
+        assert_eq!(Real(None), x.abs());
+        // Check overflow.
+        let x = Real(Some(i64::min_value()));
+        assert_eq!(Real(None), x.abs());
+    }
+
+    #[test]
+    fn neg_works() {
+        // Check positive case.
+        let x = Real(Some(1));
+        assert_eq!(Real(Some(-1)), -x);
+        // Check negative case.
+        let x = Real(Some(-1));
+        assert_eq!(Real(Some(1)), -x);
+        // Check zero case.
+        let x = Real(Some(0));
+        assert_eq!(Real(Some(0)), -x);
+        // Check None case.
+        let x = Real(None);
+        assert_eq!(Real(None), -x);
+        // Check overflow.
+        let x = Real(Some(i64::min_value()));
+        assert_eq!(Real(None), -x);
+    }
+
+    #[test]
+    fn add_works() {
+        // Check case where both are None.
+        let x = Real(None);
+        let y = Real(None);
+        assert_eq!(Real(None), x + y);
+        // Check case where one is None.
+        let y = Real(Some(1));
+        assert_eq!(Real(None), x + y);
+        assert_eq!(Real(None), y + x);
+        // Check regular case.
+        let x = Real(Some(2));
+        let y = Real(Some(2));
+        assert_eq!(Real(Some(4)), x + y);
+        // Check chaining of different cases.
+        let x = Real(Some(3));
+        let y = Real(Some(0));
+        let z = Real(Some(-1));
+        assert_eq!(Real(Some(2)), x + y + z);
+        // Check overflow and underflow.
+        let x = Real(Some(10));
+        let y = Real(Some(-10));
+        assert_eq!(Real(None), x + Real(Some(i64::max_value())));
+        assert_eq!(Real(None), y + Real(Some(i64::min_value())));
+    }
+
+    #[test]
+    fn sub_works() {
+        // Check case where both are None.
+        let x = Real(None);
+        let y = Real(None);
+        assert_eq!(Real(None), x - y);
+        // Check case where one is None.
+        let y = Real(Some(1));
+        assert_eq!(Real(None), x - y);
+        assert_eq!(Real(None), y - x);
+        // Check regular case.
+        let x = Real(Some(4));
+        let y = Real(Some(2));
+        assert_eq!(Real(Some(2)), x - y);
+        // Check chaining of different cases.
+        let x = Real(Some(2));
+        let y = Real(Some(0));
+        let z = Real(Some(-1));
+        assert_eq!(Real(Some(3)), x - y - z);
+        // Check overflow and underflow.
+        let x = Real(Some(10));
+        let y = Real(Some(-10));
+        assert_eq!(Real(None), x - Real(Some(i64::min_value())));
+        assert_eq!(Real(None), y - Real(Some(i64::max_value())));
+    }
+
+    #[test]
+    fn mul_works() {
+        let s = SF as i64;
+        // Check case where both are None.
+        let x = Real(None);
+        let y = Real(None);
+        assert_eq!(Real(None), x * y);
+        // Check case where one is None.
+        let y = Real(Some(5));
+        assert_eq!(Real(None), x * y);
+        assert_eq!(Real(None), y * x);
+        // Check regular case.
+        let x = Real(Some(2 * s));
+        let y = Real(Some(2 * s));
+        assert_eq!(Real(Some(4 * s)), x * y);
+        // Check chaining of different cases.
+        let x = Real(Some(3 * s));
+        let y = Real(Some(0 * s));
+        let z = Real(Some(-1 * s));
+        assert_eq!(Real(Some(0)), x * y * z);
+        // Check the rounding.
+        let w = Real(Some(-1));
+        let x = Real(Some(1));
+        let y = Real(Some(s / 2));
+        let z = Real(Some(s / 4));
+        assert_eq!(Real(Some(1)), x * y);
+        assert_eq!(Real(Some(0)), x * z);
+        assert_eq!(Real(Some(-1)), w * y);
+        assert_eq!(Real(Some(0)), w * z);
+        // Check overflow and underflow.
+        let x = Real(Some(2 * s));
+        assert_eq!(Real(None), x * Real(Some(i64::max_value())));
+        assert_eq!(Real(None), x * Real(Some(i64::min_value())));
+    }
+
+    #[test]
+    fn div_works() {
+        let s = SF as i64;
+        // Check case where both are None.
+        let x = Real(None);
+        let y = Real(None);
+        assert_eq!(Real(None), x / y);
+        // Check case where one is None.
+        let y = Real(Some(5));
+        assert_eq!(Real(None), x / y);
+        assert_eq!(Real(None), y / x);
+        // Check division by zero.
+        let x = Real(Some(2 * s));
+        let y = Real(Some(0));
+        assert_eq!(Real(None), x / y);
+        // Check regular case.
+        let x = Real(Some(4 * s));
+        let y = Real(Some(2 * s));
+        assert_eq!(Real(Some(2 * s)), x / y);
+        // Check chaining of different cases.
+        let x = Real(Some(12 * s));
+        let y = Real(Some(3 * s));
+        let z = Real(Some(-2 * s));
+        assert_eq!(Real(Some(-2 * s)), x / y / z);
+        // Check the rounding.
+        let w = Real(Some(-1));
+        let x = Real(Some(1));
+        let y = Real(Some(2 * s));
+        let z = Real(Some(3 * s));
+        assert_eq!(Real(Some(1)), x / y);
+        assert_eq!(Real(Some(0)), x / z);
+        assert_eq!(Real(Some(-1)), w / y);
+        assert_eq!(Real(Some(0)), w / z);
+        // Check overflow and underflow.
+        let x = Real(Some(s / 10));
+        assert_eq!(Real(None), Real(Some(i64::max_value())) / x);
+        assert_eq!(Real(None), Real(Some(i64::min_value())) / x);
     }
 }
