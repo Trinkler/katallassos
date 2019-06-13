@@ -2,7 +2,9 @@
 
 set -e
 
-PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null && pwd )"
+PROJECT_ROOT="$( git rev-parse --show-toplevel )"
+
+echo "${PROJECT_ROOT}"
 
 export CARGO_INCREMENTAL=0
 
