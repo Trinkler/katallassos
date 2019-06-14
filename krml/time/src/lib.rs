@@ -11,6 +11,7 @@ use parity_codec::{Decode, Encode};
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct UncheckedTime {
     pub year: u16,
+    // parity codec doesn't support u8.
     pub month: i8,
     pub day: i8,
     pub hour: i8,
@@ -124,12 +125,24 @@ impl Time {
         // hours
         hour += (unix_time % 24) as i8;
         unix_time /= 24;
-        // 1970 was not a leap year
-        let mut leap_days = 0;
+        // 400 years has 146097 days.
+        let t = unix_time / 146097;
+        year += t * 400 as u16;
+        unix_time -= t * 146097;
+        // 100 years has 36524 days.
+        let t = unix_time / 36524;
+        year += t * 100 as u16;
+        unix_time -= t * 36524;
+        // 4 years has 1461 days.
+        let t = unix_time / 1461;
+        year += t * 4 as u16;
+        unix_time -= t * 1461;
+        // casting a bool into a integer, true =1 false =0
+        let mut leap_days = Time::is_leap_year(year) as u64;
+        // At most this will be 3 years.
         while unix_time >= 365 + leap_days {
             year += 1;
             unix_time -= 365 + leap_days;
-            // casting a bool into a integer, true =1 false =0
             leap_days = Time::is_leap_year(year) as u64
         }
         // January has 31 days
