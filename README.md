@@ -18,5 +18,12 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 git clone git@github.com:Trinkler/katal-chain.git
 cd katal-chain/
 ./build.sh
-cargo build --release
+# Alternatively run: cargo build --release
+cargo build
+```
+
+### Run
+
+```sh
+./target/debug/katal
 ```
