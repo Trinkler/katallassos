@@ -9,7 +9,7 @@ proc-macro = true
 
 [dependencies]
 srml-support-procedural-tools = { path = "./tools" }
-sr-api-macros = { path = "../../../core/sr-api-macros" }
+sr-api-macros = { git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
 
 proc-macro2 = "0.4.27"
 quote = { version = "0.6.12" }

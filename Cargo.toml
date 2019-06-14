@@ -21,17 +21,17 @@ parking_lot = "0.7.1"
 parity-codec = "3.3"
 trie-root = "0.12.2"
 # Core crates
-sr-io = { path = "./core/sr-io" }
-substrate-cli = { path = "./core/cli" }
-primitives = { package = "substrate-primitives", path = "./core/primitives" }
-substrate-executor = { path = "./core/executor" }
-substrate-service = { path = "./core/service" }
-inherents = { package = "substrate-inherents", path = "./core/inherents" }
-transaction-pool = { package = "substrate-transaction-pool", path = "./core/transaction-pool" }
-network = { package = "substrate-network", path = "./core/network" }
-consensus = { package = "substrate-consensus-aura", path = "./core/consensus/aura" }
-substrate-client = {  path = "./core/client" }
-basic-authorship = { package = "substrate-basic-authorship", path = "./core/basic-authorship" }
+sr-io = { git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
+substrate-cli = { git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
+primitives = { package = "substrate-primitives", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
+substrate-executor = { git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
+substrate-service = { git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
+inherents = { package = "substrate-inherents", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
+transaction-pool = { package = "substrate-transaction-pool", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
+network = { package = "substrate-network", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
+consensus = { package = "substrate-consensus-aura", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
+substrate-client = {  git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
+basic-authorship = { package = "substrate-basic-authorship", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
 # The runtime crate
 katal-runtime = { path = "runtime" }
 
