@@ -121,24 +121,24 @@ pub struct Attributes {
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 enum Cycle {
-    Days(u32, bool),
-    Weeks(u32, bool),
-    Months(u32, bool),
-    Quarters(u32, bool),
-    Halfyears(u32, bool),
-    Years(u32, bool),
+    Days(u16, bool),
+    Weeks(u16, bool),
+    Months(u16, bool),
+    Quarters(u16, bool),
+    Halfyears(u16, bool),
+    Years(u16, bool),
 }
 
 ///
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub enum Period {
-    Days(u32),
-    Weeks(u32),
-    Months(u32),
-    Quarters(u32),
-    HalfYears(u32),
-    Years(u32),
+    Days(u16),
+    Weeks(u16),
+    Months(u16),
+    Quarters(u16),
+    HalfYears(u16),
+    Years(u16),
 }
 
 // All the following enums are used for the contracts attributes.
