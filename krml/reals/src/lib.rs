@@ -23,9 +23,9 @@
 //! that happens. A quirk is that, when comparing two reals, 'None' is considered smaller than any
 //! number.
 
-// These are necessary to work with Substrate.
+/// These are necessary to work with Substrate.
 use parity_codec::{Decode, Encode};
-// These are necessary to do operator overloading.
+/// These are necessary to do operator overloading.
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 /// The scale factor (must be positive).
