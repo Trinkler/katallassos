@@ -92,17 +92,17 @@ decl_module! {
         // this is needed only if you are using events in your module
         fn deposit_event<T>() = default;
 
-        fn deploy (origin, meta_data: MetaData, attributes: Attributes) -> Result {
-            let sender = ensure_signed(origin)?;
-
-            let key = attributes.ContractID.ok_or("ContractID can't be None when deploying a contract")?;
-
-            ensure!(!<ContractStates<T>>::exists(key), "This ContractID already exists");
-
-            let contract_type = attributes.ContractType.ok_or("ContractType can't be None when deploying a contract")?;
-
-            Ok(())
-        }
+        // fn deploy (origin, meta_data: MetaData, attributes: Attributes) -> Result {
+        //     let sender = ensure_signed(origin)?;
+        //
+        //     let key = attributes.ContractID.ok_or("ContractID can't be None when deploying a contract")?;
+        //
+        //     ensure!(!<ContractStates<T>>::exists(key), "This ContractID already exists");
+        //
+        //     let contract_type = attributes.ContractType.ok_or("ContractType can't be None when deploying a contract")?;
+        //
+        //     Ok(())
+        // }
 
     }
 }
