@@ -41,7 +41,7 @@ fn year_fraction(s: Time, t: Time, day_cont_convention: &DayCountConvention) -> 
             let mut year_1 = s.0.unwrap().year;
             let mut month_1 = s.0.unwrap().month;
             let day_1 = s.0.unwrap().day;
-            let mut year_2 = t.0.unwrap().year;
+            let year_2 = t.0.unwrap().year;
             let mut month_2 = t.0.unwrap().month;
             let day_2 = t.0.unwrap().day;
 
@@ -98,7 +98,7 @@ fn year_fraction(s: Time, t: Time, day_cont_convention: &DayCountConvention) -> 
             let mut year_1 = s.0.unwrap().year;
             let mut month_1 = s.0.unwrap().month;
             let day_1 = s.0.unwrap().day;
-            let mut year_2 = t.0.unwrap().year;
+            let year_2 = t.0.unwrap().year;
             let mut month_2 = t.0.unwrap().month;
             let day_2 = t.0.unwrap().day;
 
@@ -126,7 +126,7 @@ fn year_fraction(s: Time, t: Time, day_cont_convention: &DayCountConvention) -> 
             let mut year_1 = s.0.unwrap().year;
             let mut month_1 = s.0.unwrap().month;
             let day_1 = s.0.unwrap().day;
-            let mut year_2 = t.0.unwrap().year;
+            let year_2 = t.0.unwrap().year;
             let mut month_2 = t.0.unwrap().month;
             let day_2 = t.0.unwrap().day;
 

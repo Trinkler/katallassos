@@ -63,8 +63,8 @@ pub enum EventType {
 #[derive(Encode, Decode, Default, Clone, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct MetaData {
-    OracleObjectID: Option<u128>,
-    GovernanceObjectID: Option<u128>,
+    oracle_object_id: Option<u128>,
+    governance_object_id: Option<u128>,
     // If necessary we can add more fields.
 }
 
@@ -72,9 +72,9 @@ pub struct MetaData {
 #[derive(Encode, Decode, Default, Clone, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct ContractState {
-    MetaData: MetaData,
-    Attributes: Attributes,
-    Variables: Variables,
+    meta_data: MetaData,
+    attributes: Attributes,
+    variables: Variables,
 }
 
 // This module's storage items.
@@ -108,7 +108,7 @@ decl_module! {
 }
 
 impl<T: Trait> Module<T> {
-    fn deploy_PAM(
+    fn deploy_pam(
         sender: T::AccountId,
         key: i64,
         meta_data: MetaData,
