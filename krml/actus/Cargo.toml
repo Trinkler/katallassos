@@ -17,6 +17,7 @@ system = { package = "srml-system", path = "../../srml/system", default-features
 timestamp = { package = "srml-timestamp", path = "../../srml/timestamp", default-features = false }
 # KRML crates
 reals = { package = "krml-reals", path = "../reals", default-features = false }
+time = { package = "krml-time", path = "../time", default-features = false }
 
 [dev-dependencies]
 runtime_io = { package = "sr-io", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
@@ -33,4 +34,5 @@ std = [
 	"system/std",
 	"timestamp/std",
 	"reals/std",
+	"time/std",
 ]

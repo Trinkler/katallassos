@@ -1,0 +1,346 @@
+//! # Time module
+//!
+//! ## Overview
+//! The Time module implements a new data type to represent time in the ISO8601 format. This standard
+//! represents a date and a time using the format Year-Month-Day Hour:Minute:Second. The standard has
+//! optional support for time zones, but we choose not to use it so all the times represented using
+//! this data type are used to be in the Coordinated Universal Time (UTC). The standard also has
+//! support for leap seconds by allowing the seconds field to range from 0 to 60. We however feel
+//! that this is not necessary for our uses and may in fact cause issues, so this module does not
+//! support leap seconds and the seconds only range from 0 to 59.
+//!
+//! ## Technical description
+//! In more detail, the data type Time is a struct containing a single Option of the type UncheckedTime,
+//! which is a struct with the fields 'year', 'month', 'day', 'hour', 'minute' and 'second'. All the
+//! fields are i8, except for 'year' which is an u16. Equality and comparison operations are also
+//! implemented and work as is expected, the only quirk being that 'None' is considered smaller
+//! than any time.
+//!
+//! ## Methods
+//! This module also implements several methods to deal with times. The three most important are
+//! 'new', 'is_valid' and 'from_unix'.
+//!
+//! ### new
+//! This method creates a new instance of Time given the desired values (year, month, etc) as input.
+//! It also checks if the input values are a valid time, and if they are not it returns 'None'. Since
+//! this is a safe way of creating Time instances this method should always preferred instead of the
+//! default constructor.
+//!
+//! ### is_valid
+//! This method performs the same checks as the method 'new', but it does it on a reference of an
+//! already created instance of Time and returns a boolean. This is meant to be used after a Time
+//! instance is modified, to check that it's still valid.
+//!
+//! ### from_unix
+//! This method converts an unix time into a ISO8601 time and then creates a corresponding Time instance.
+//! If the input unix time exceeds the range of allowed ISO8601 times, it will return 'None'. When
+//! converting between the two formats leap seconds are ignored.
+
+/// These are necessary to work with Substrate.
+use parity_codec::{Decode, Encode};
+
+/// The struct that represents the ISO8601 time format.
+#[derive(Copy, Clone, Decode, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub struct UncheckedTime {
+    pub year: u16,
+    // i8 is used because 'parity_codec' doesn't support u8.
+    pub month: i8,
+    pub day: i8,
+    pub hour: i8,
+    pub minute: i8,
+    pub second: i8,
+}
+
+/// The struct that implements the Time data type. It is a tuple containing a single Option of
+/// the type UncheckedTime.
+#[derive(Copy, Clone, Decode, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub struct Time(pub Option<UncheckedTime>);
+
+impl Time {
+    /// It returns 'true' if the input year is a leap year and 'false' otherwise.
+    pub fn is_leap_year(year: u16) -> bool {
+        if year % 4 != 0 {
+            return false;
+        }
+        if year % 100 != 0 {
+            return true;
+        }
+        if year % 400 != 0 {
+            return false;
+        }
+        return true;
+    }
+
+    /// For a given year and month, it returns the number of days in that month.
+    pub fn days_in_month(year: u16, month: i8) -> i8 {
+        if month == 1
+            || month == 3
+            || month == 5
+            || month == 7
+            || month == 8
+            || month == 10
+            || month == 12
+        {
+            return 31;
+        } else if month == 4 || month == 6 || month == 9 || month == 11 {
+            return 30;
+        } else if Time::is_leap_year(year) {
+            return 29;
+        } else {
+            return 28;
+        }
+    }
+
+    /// A safe constructor for the Time type. If the input values do not represent a valid time
+    /// it returns 'None'.
+    pub fn new(year: u16, month: i8, day: i8, hour: i8, minute: i8, second: i8) -> Time {
+        if year > 9999
+            || month < 1
+            || month > 12
+            || day < 1
+            || day > Time::days_in_month(year, month)
+            || hour < 0
+            || hour > 23
+            || minute < 0
+            || minute > 59
+            || second < 0
+            || second > 59
+        {
+            Time(None)
+        } else {
+            Time(Some(UncheckedTime {
+                year: year,
+                month: month,
+                day: day,
+                hour: hour,
+                minute: minute,
+                second: second,
+            }))
+        }
+    }
+
+    /// It checks if a given Time instance represents a valid time and returns 'true' or 'false'
+    /// accordingly.
+    pub fn is_valid(&self) -> bool {
+        let year = self.0.unwrap().year;
+        let month = self.0.unwrap().month;
+        let day = self.0.unwrap().day;
+        let hour = self.0.unwrap().hour;
+        let minute = self.0.unwrap().minute;
+        let second = self.0.unwrap().second;
+        if year > 9999
+            || month < 1
+            || month > 12
+            || day < 1
+            || day > Time::days_in_month(year, month)
+            || hour < 0
+            || hour > 23
+            || minute < 0
+            || minute > 59
+            || second < 0
+            || second > 59
+        {
+            false
+        } else {
+            true
+        }
+    }
+
+    /// It converts an unix time (as an u64) to the corresponding ISO8601 time. The conversion ignores
+    /// leap seconds. If the input time is not a valid ISO8601 time it returns 'None'.
+    pub fn from_unix(mut unix_time: u64) -> Time {
+        // Checking for maximum. This time corresponds to 9999-12-31 23:59:59.
+        if unix_time > 253402300799 {
+            return Time(None);
+        }
+
+        // Initializing the variables with the unix epoch.
+        let mut year: u16 = 1970;
+        let mut month: i8 = 01;
+        let mut day: i8 = 01;
+        let mut hour: i8 = 00;
+        let mut minute: i8 = 00;
+        let mut second: i8 = 00;
+
+        // Converting the seconds.
+        second += (unix_time % 60) as i8;
+        unix_time /= 60;
+
+        // Converting the minutes.
+        minute += (unix_time % 60) as i8;
+        unix_time /= 60;
+
+        // Converting the hours.
+        hour += (unix_time % 24) as i8;
+        unix_time /= 24;
+
+        // Converting the years using leap year arithmetic.
+        // 400 years always has 146097 days when accounting for leap days.
+        let t = unix_time / 146097;
+        year += (t * 400) as u16;
+        unix_time -= t * 146097;
+        // 100 years always has 36524 days when accounting for leap days.
+        let t = unix_time / 36524;
+        year += (t * 100) as u16;
+        unix_time -= t * 36524;
+        // 4 years always has 1461 days when accounting for leap days.
+        let t = unix_time / 1461;
+        year += (t * 4) as u16;
+        unix_time -= t * 1461;
+        // This line casts a bool into a integer, true=1 false=0.
+        let mut leap_days = Time::is_leap_year(year) as u64;
+        // This loop will run at most three times since at this point 'unix_time'
+        // can't possibly be bigger than or equal to 4 years.
+        while unix_time >= 365 + leap_days {
+            year += 1;
+            unix_time -= 365 + leap_days;
+            leap_days = Time::is_leap_year(year) as u64
+        }
+
+        // Converting the months.
+        // First month is of course January, which has 31 days.
+        let mut number_days = 31;
+        while unix_time >= number_days {
+            month += 1;
+            unix_time -= number_days;
+            number_days = Time::days_in_month(year, month) as u64;
+        }
+
+        // Converting the days.
+        day += unix_time as i8;
+
+        // Create and return the Time instance.
+        Time(Some(UncheckedTime {
+            year: year,
+            month: month,
+            day: day,
+            hour: hour,
+            minute: minute,
+            second: second,
+        }))
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn is_leap_year_works() {
+        assert_eq!(Time::is_leap_year(1970), false);
+        assert_eq!(Time::is_leap_year(1972), true);
+        assert_eq!(Time::is_leap_year(1800), false);
+        assert_eq!(Time::is_leap_year(2000), true);
+    }
+
+    #[test]
+    fn days_in_month_works() {
+        assert_eq!(Time::days_in_month(2019, 6), 30);
+        assert_eq!(Time::days_in_month(2019, 7), 31);
+        assert_eq!(Time::days_in_month(2019, 2), 28);
+        assert_eq!(Time::days_in_month(2020, 2), 29);
+    }
+
+    #[test]
+    fn new_works() {
+        let a = Time(Some(UncheckedTime {
+            year: 1970,
+            month: 01,
+            day: 01,
+            hour: 00,
+            minute: 00,
+            second: 00,
+        }));
+        let b = Time(None);
+        assert_eq!(Time::new(1970, 01, 01, 00, 00, 00), a);
+        assert_eq!(Time::new(1970, 13, 01, 00, 00, 00), b);
+        assert_eq!(Time::new(1970, 01, 32, 00, 00, 00), b);
+        assert_eq!(Time::new(1970, 01, 01, 25, 00, 00), b);
+        assert_eq!(Time::new(1970, 01, 01, 00, 60, 00), b);
+        assert_eq!(Time::new(1970, 01, 01, 00, 00, 60), b);
+    }
+
+    #[test]
+    fn is_valid_works() {
+        let a = Time(Some(UncheckedTime {
+            year: 1970,
+            month: 01,
+            day: 01,
+            hour: 00,
+            minute: 00,
+            second: 00,
+        }));
+        let b = Time(Some(UncheckedTime {
+            year: 1970,
+            month: 13,
+            day: 01,
+            hour: 00,
+            minute: 00,
+            second: 00,
+        }));
+        let c = Time(Some(UncheckedTime {
+            year: 1970,
+            month: 01,
+            day: 32,
+            hour: 00,
+            minute: 00,
+            second: 00,
+        }));
+        let d = Time(Some(UncheckedTime {
+            year: 1970,
+            month: 01,
+            day: 01,
+            hour: 25,
+            minute: 00,
+            second: 00,
+        }));
+        let e = Time(Some(UncheckedTime {
+            year: 1970,
+            month: 01,
+            day: 01,
+            hour: 00,
+            minute: 60,
+            second: 00,
+        }));
+        let f = Time(Some(UncheckedTime {
+            year: 1970,
+            month: 01,
+            day: 01,
+            hour: 00,
+            minute: 00,
+            second: 60,
+        }));
+        assert_eq!(Time::is_valid(&a), true);
+        assert_eq!(Time::is_valid(&b), false);
+        assert_eq!(Time::is_valid(&c), false);
+        assert_eq!(Time::is_valid(&d), false);
+        assert_eq!(Time::is_valid(&e), false);
+        assert_eq!(Time::is_valid(&f), false);
+    }
+
+    #[test]
+    fn from_unix_works() {
+        let a = Time(Some(UncheckedTime {
+            year: 1970,
+            month: 01,
+            day: 01,
+            hour: 00,
+            minute: 00,
+            second: 00,
+        }));
+        let b = Time(Some(UncheckedTime {
+            year: 2019,
+            month: 06,
+            day: 15,
+            hour: 02,
+            minute: 34,
+            second: 56,
+        }));
+        assert_eq!(Time::from_unix(0), a);
+        assert_eq!(Time::from_unix(1560566096), b);
+        assert_ne!(Time::from_unix(514862620), b);
+    }
+
+}

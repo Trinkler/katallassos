@@ -23,9 +23,9 @@
 //! that happens. A quirk is that, when comparing two reals, 'None' is considered smaller than any
 //! number.
 
-// These are necessary to work with Substrate.
+/// These are necessary to work with Substrate.
 use parity_codec::{Decode, Encode};
-// These are necessary to do operator overloading.
+/// These are necessary to do operator overloading.
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 /// The scale factor (must be positive).
@@ -46,6 +46,13 @@ impl Real {
     /// Transforms an i64 into a real. It scales the input by the scale factor.
     pub fn from(x: i64) -> Real {
         Real(x.checked_mul(SF as i64))
+    }
+
+    /// Transforms a real into an i64. It divides the input by the scale factor.
+    /// This function does not apply safe arithmetic. Care must be had to not feed Reals
+    /// that are None, otherwise this function will just return zero.
+    pub fn to(x: Real) -> i64 {
+        x.0.unwrap_or(0) / (SF as i64)
     }
 
     /// Returns the absolute value of a real. If input is 'None' (or the result
@@ -197,6 +204,15 @@ mod tests {
         assert_eq!(Real(None), Real::from(i64::max_value()));
         // Checking underflow.
         assert_eq!(Real(None), Real::from(i64::min_value()));
+    }
+
+    #[test]
+    fn to_works() {
+        let x: i64 = 2;
+        let s = SF as i64;
+        let r = Real(Some(x * s));
+        // Checking basic case.
+        assert_eq!(x, Real::to(r));
     }
 
     #[test]
