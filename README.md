@@ -1,3 +1,5 @@
+<img src = "https://raw.githubusercontent.com/Trinkler/brand/master/assets/katal/banner.png" width = "100%">
+
 # katal-chain
 
 A Standard Framework for Finance.
