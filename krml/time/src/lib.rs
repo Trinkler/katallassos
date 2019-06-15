@@ -127,15 +127,15 @@ impl Time {
         unix_time /= 24;
         // 400 years has 146097 days.
         let t = unix_time / 146097;
-        year += t * 400 as u16;
+        year += (t * 400) as u16;
         unix_time -= t * 146097;
         // 100 years has 36524 days.
         let t = unix_time / 36524;
-        year += t * 100 as u16;
+        year += (t * 100) as u16;
         unix_time -= t * 36524;
         // 4 years has 1461 days.
         let t = unix_time / 1461;
-        year += t * 4 as u16;
+        year += (t * 4) as u16;
         unix_time -= t * 1461;
         // casting a bool into a integer, true =1 false =0
         let mut leap_days = Time::is_leap_year(year) as u64;
@@ -169,5 +169,121 @@ impl Time {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn is_leap_year_works() {
+        assert_eq!(Time::is_leap_year(1970), false);
+        assert_eq!(Time::is_leap_year(1972), true);
+        assert_eq!(Time::is_leap_year(1800), false);
+        assert_eq!(Time::is_leap_year(2000), true);
+    }
+
+    #[test]
+    fn days_in_month_works() {
+        assert_eq!(Time::days_in_month(2019, 6), 30);
+        assert_eq!(Time::days_in_month(2019, 7), 31);
+        assert_eq!(Time::days_in_month(2019, 2), 28);
+        assert_eq!(Time::days_in_month(2020, 2), 29);
+    }
+
+    #[test]
+    fn new_works() {
+        let a = Time(Some(UncheckedTime {
+            year: 1970,
+            month: 01,
+            day: 01,
+            hour: 00,
+            minute: 00,
+            second: 00,
+        }));
+        let b = Time(None);
+        assert_eq!(Time::new(1970, 01, 01, 00, 00, 00), a);
+        assert_eq!(Time::new(1970, 13, 01, 00, 00, 00), b);
+        assert_eq!(Time::new(1970, 01, 32, 00, 00, 00), b);
+        assert_eq!(Time::new(1970, 01, 01, 25, 00, 00), b);
+        assert_eq!(Time::new(1970, 01, 01, 00, 60, 00), b);
+        assert_eq!(Time::new(1970, 01, 01, 00, 00, 60), b);
+    }
+
+    #[test]
+    fn is_valid_works() {
+        let a = Time(Some(UncheckedTime {
+            year: 1970,
+            month: 01,
+            day: 01,
+            hour: 00,
+            minute: 00,
+            second: 00,
+        }));
+        let b = Time(Some(UncheckedTime {
+            year: 1970,
+            month: 13,
+            day: 01,
+            hour: 00,
+            minute: 00,
+            second: 00,
+        }));
+        let c = Time(Some(UncheckedTime {
+            year: 1970,
+            month: 01,
+            day: 32,
+            hour: 00,
+            minute: 00,
+            second: 00,
+        }));
+        let d = Time(Some(UncheckedTime {
+            year: 1970,
+            month: 01,
+            day: 01,
+            hour: 25,
+            minute: 00,
+            second: 00,
+        }));
+        let e = Time(Some(UncheckedTime {
+            year: 1970,
+            month: 01,
+            day: 01,
+            hour: 00,
+            minute: 60,
+            second: 00,
+        }));
+        let f = Time(Some(UncheckedTime {
+            year: 1970,
+            month: 01,
+            day: 01,
+            hour: 00,
+            minute: 00,
+            second: 60,
+        }));
+        assert_eq!(Time::is_valid(&a), true);
+        assert_eq!(Time::is_valid(&b), false);
+        assert_eq!(Time::is_valid(&c), false);
+        assert_eq!(Time::is_valid(&d), false);
+        assert_eq!(Time::is_valid(&e), false);
+        assert_eq!(Time::is_valid(&f), false);
+    }
+
+    #[test]
+    fn from_unix_works() {
+        let a = Time(Some(UncheckedTime {
+            year: 1970,
+            month: 01,
+            day: 01,
+            hour: 00,
+            minute: 00,
+            second: 00,
+        }));
+        let b = Time(Some(UncheckedTime {
+            year: 2019,
+            month: 06,
+            day: 15,
+            hour: 02,
+            minute: 34,
+            second: 56,
+        }));
+        assert_eq!(Time::from_unix(0), a);
+        assert_eq!(Time::from_unix(1560566096), b);
+        assert_ne!(Time::from_unix(514862620), b);
+    }
 
 }
