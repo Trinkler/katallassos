@@ -31,7 +31,7 @@ fn contract_default(contract_status: &ContractStatus) -> Real {
 }
 
 // Year Fraction Convention (https://en.wikipedia.org/wiki/Day_count_convention)
-fn utility_function_Y(&s: Real, &t: Real, day_cont_convention: &DayCountConvention) -> Real {
+fn utility_function_Y(s: &Time, t: &Time, day_cont_convention: &DayCountConvention) -> Real {
     match day_cont_convention {
         DayCountConvention::_AAISDA => Real::from(1),
         DayCountConvention::_A360 => Real::from(1),

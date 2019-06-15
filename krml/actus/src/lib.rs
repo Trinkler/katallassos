@@ -3,6 +3,7 @@ use reals::Real;
 use rstd::prelude::*;
 use srml_support::{decl_event, decl_module, decl_storage, dispatch::Result, ensure, StorageMap};
 use system::ensure_signed;
+use time::Time;
 use timestamp::*;
 
 //
@@ -79,7 +80,7 @@ pub struct ContractState {
 // This module's storage items.
 decl_storage! {
     trait Store for Module<T: Trait> as ACTUS {
-        ContractStates: map i64 => ContractState;
+        ContractStates: map u128 => ContractState;
     }
 }
 

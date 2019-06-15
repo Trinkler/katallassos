@@ -153,7 +153,7 @@ impl Time {
     pub fn from_unix(mut unix_time: u64) -> Time {
         // Checking for maximum. This time corresponds to 9999-12-31 23:59:59.
         if unix_time > 253402300799 {
-            Time(None)
+            return Time(None);
         }
 
         // Initializing the variables with the unix epoch.
