@@ -93,6 +93,22 @@ impl Time {
         }
     }
 
+    /// It returns the day of the week for a given date. The output is 1=Monday, 2=Tuesday, ... ,
+    /// 7=Sunday (which is the ISO week date). The calculation is done using Zeller's congruence
+    /// algorithm.
+    pub fn day_of_week(year: u16, month: i8, day: i8) -> i8 {
+        let q = day as u16;
+        if month == 1 || month == 2 {
+            let m = (month + 12) as u16;
+            let y = year - 1;
+        } else {
+            let m = month as u16;
+            let y = year;
+        }
+        let h = (q + 13 * (m + 1) / 5 + y + y / 4 - y / 100 + y / 400) % 7;
+        (((h + 5) % 7) + 1) as i8
+    }
+
     /// A safe constructor for the Time type. If the input values do not represent a valid time
     /// it returns 'None'.
     pub fn new(year: u16, month: i8, day: i8, hour: i8, minute: i8, second: i8) -> Time {

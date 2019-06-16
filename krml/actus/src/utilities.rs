@@ -1,36 +1,25 @@
 use super::*;
 
-/// All ACTUS utility functions
-/// Contract Role Sign Convention
-fn contract_role_sign(contract_role: &ContractRole) -> Real {
-    match contract_role {
-        ContractRole::RPA => Real::from(1),
-        ContractRole::RPL => Real::from(-1),
-        ContractRole::CLO => Real::from(1),
-        ContractRole::CNO => Real::from(1),
-        ContractRole::COL => Real::from(1),
-        ContractRole::LG => Real::from(1),
-        ContractRole::ST => Real::from(-1),
-        ContractRole::BUY => Real::from(1),
-        ContractRole::SEL => Real::from(-1),
-        ContractRole::RFL => Real::from(1),
-        ContractRole::PFL => Real::from(-1),
-        ContractRole::RF => Real::from(1),
-        ContractRole::PF => Real::from(-1),
+// 4.5 Business Day Calendar
+fn business_day(date: Time, calendar: &Calendar) -> bool {
+    match calendar {
+        Calendar::NC => true,
+        Calendar::MTF => {
+            let weekday = Time::day_of_week(
+                date.0.unwrap().year,
+                date.0.unwrap().month,
+                date.0.unwrap().day,
+            );
+            if weekday == 6 || weekday == 7 {
+                false
+            } else {
+                true
+            }
+        }
     }
 }
 
-// Contract Default Convention
-fn contract_default(contract_status: &ContractStatus) -> Real {
-    match contract_status {
-        ContractStatus::PF => Real::from(1),
-        ContractStatus::DL => Real::from(1),
-        ContractStatus::DQ => Real::from(1),
-        ContractStatus::DF => Real::from(0),
-    }
-}
-
-// Year Fraction Convention (https://en.wikipedia.org/wiki/Day_count_convention).
+// 4.6 Year Fraction Convention (https://en.wikipedia.org/wiki/Day_count_convention).
 // Need confirmation from Nils on every formula.
 fn year_fraction(s: Time, t: Time, day_cont_convention: &DayCountConvention) -> Real {
     if s == Time(None) || t == Time(None) || s < t {
@@ -185,5 +174,34 @@ fn year_fraction(s: Time, t: Time, day_cont_convention: &DayCountConvention) -> 
                 / Real::from(360)
         }
         DayCountConvention::_BUS252 => Real::from(0), // Needs to be implemented.
+    }
+}
+
+/// 4.7 Contract Role Sign Convention
+fn contract_role_sign(contract_role: &ContractRole) -> Real {
+    match contract_role {
+        ContractRole::RPA => Real::from(1),
+        ContractRole::RPL => Real::from(-1),
+        ContractRole::CLO => Real::from(1),
+        ContractRole::CNO => Real::from(1),
+        ContractRole::COL => Real::from(1),
+        ContractRole::LG => Real::from(1),
+        ContractRole::ST => Real::from(-1),
+        ContractRole::BUY => Real::from(1),
+        ContractRole::SEL => Real::from(-1),
+        ContractRole::RFL => Real::from(1),
+        ContractRole::PFL => Real::from(-1),
+        ContractRole::RF => Real::from(1),
+        ContractRole::PF => Real::from(-1),
+    }
+}
+
+// 4.8 Contract Default Convention
+fn contract_default(contract_status: &ContractStatus) -> Real {
+    match contract_status {
+        ContractStatus::PF => Real::from(1),
+        ContractStatus::DL => Real::from(1),
+        ContractStatus::DQ => Real::from(1),
+        ContractStatus::DF => Real::from(0),
     }
 }
