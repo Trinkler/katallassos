@@ -98,12 +98,11 @@ impl Time {
     /// algorithm.
     pub fn day_of_week(year: u16, month: i8, day: i8) -> i8 {
         let q = day as u16;
+        let mut m = month as u16;
+        let mut y = year;
         if month == 1 || month == 2 {
-            let m = (month + 12) as u16;
-            let y = year - 1;
-        } else {
-            let m = month as u16;
-            let y = year;
+            m += 12;
+            y -= 1;
         }
         let h = (q + 13 * (m + 1) / 5 + y + y / 4 - y / 100 + y / 400) % 7;
         (((h + 5) % 7) + 1) as i8
@@ -257,6 +256,14 @@ mod tests {
         assert_eq!(Time::days_in_month(2019, 7), 31);
         assert_eq!(Time::days_in_month(2019, 2), 28);
         assert_eq!(Time::days_in_month(2020, 2), 29);
+    }
+
+    #[test]
+    fn day_of_week_works() {
+        assert_eq!(Time::day_of_week(2100, 3, 1), 1);
+        assert_eq!(Time::day_of_week(2000, 2, 29), 2);
+        assert_eq!(Time::day_of_week(2019, 6, 15), 6);
+        assert_eq!(Time::day_of_week(1969, 7, 20), 7);
     }
 
     #[test]

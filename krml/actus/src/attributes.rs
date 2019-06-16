@@ -117,10 +117,10 @@ pub struct Attributes {
     x_day_notice: Option<Period>,
 }
 
-///
+/// the boolean represents the stub, true = long stub, false = short stub.
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
-enum Cycle {
+pub enum Cycle {
     Days(u16, bool),
     Weeks(u16, bool),
     Months(u16, bool),

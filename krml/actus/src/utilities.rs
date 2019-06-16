@@ -1,5 +1,33 @@
 use super::*;
 
+// 4.1 Schedule
+fn schedule(s: Time, t: Time, cycle: Option<Cycle>) -> Vec<Time> {
+    let mut vec: Vec<Time> = Vec::new();
+    if s >= t || (s == Time(None) && t == Time(None)) {
+        return vec;
+    }
+    if t == Time(None) {
+        vec.push(s);
+        return vec;
+    }
+    if cycle == None {
+        vec.push(s);
+        vec.push(t);
+        return vec;
+    }
+    let cycle = cycle.unwrap();
+    vec.push(s);
+    match cycle {
+        Cycle::Days(int, stub) => vec.push(t),
+        Cycle::Weeks(int, stub) => vec.push(t),
+        Cycle::Months(int, stub) => vec.push(t),
+        Cycle::Quarters(int, stub) => vec.push(t),
+        Cycle::Halfyears(int, stub) => vec.push(t),
+        Cycle::Years(int, stub) => vec.push(t),
+    }
+    vec
+}
+
 // 4.5 Business Day Calendar
 fn business_day(date: Time, calendar: &Calendar) -> bool {
     match calendar {
