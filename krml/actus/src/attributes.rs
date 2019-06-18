@@ -164,6 +164,7 @@ pub enum Calendar {
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub enum BusinessDayConvention {
+    NULL,
     SCF,
     SCMF,
     CSF,

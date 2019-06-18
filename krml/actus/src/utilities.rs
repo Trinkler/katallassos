@@ -1,8 +1,15 @@
 use super::*;
 
 // 4.1 Schedule
-fn schedule(s: Time, t: Time, cycle: Option<Cycle>) -> Vec<Time> {
+pub fn schedule(
+    s: Time,
+    t: Time,
+    cycle: Option<Cycle>,
+    end_of_month_convention: Option<EndOfMonthConvention>,
+    business_day_convention: Option<BusinessDayConvention>,
+) -> Vec<Time> {
     let mut vec: Vec<Time> = Vec::new();
+
     if s >= t || (s == Time(None) && t == Time(None)) {
         return vec;
     }
@@ -15,29 +22,38 @@ fn schedule(s: Time, t: Time, cycle: Option<Cycle>) -> Vec<Time> {
         vec.push(t);
         return vec;
     }
+
+    let s = s.0.unwrap();
+    let t = t.0.unwrap();
     let cycle = cycle.unwrap();
-    vec.push(s);
+    let end_of_month_convention = end_of_month_convention.unwrap_or(EndOfMonthConvention::SD);
+    let business_day_convention = business_day_convention.unwrap_or(BusinessDayConvention::NULL);
+
     match cycle {
         Cycle::Days(int, stub) => vec.push(t),
         Cycle::Weeks(int, stub) => vec.push(t),
         Cycle::Months(int, stub) => vec.push(t),
         Cycle::Quarters(int, stub) => vec.push(t),
         Cycle::Halfyears(int, stub) => vec.push(t),
-        Cycle::Years(int, stub) => vec.push(t),
+        Cycle::Years(int, stub) => {
+            let mut x = s;
+            vec.push(Time(Some(x)));
+            while s < t {
+                s.year += int;
+
+                vec.push(Time(Some(x)));
+            }
+        }
     }
     vec
 }
 
 // 4.5 Business Day Calendar
-fn business_day(date: Time, calendar: &Calendar) -> bool {
+fn business_day(date: UncheckedTime, calendar: &Calendar) -> bool {
     match calendar {
         Calendar::NC => true,
         Calendar::MTF => {
-            let weekday = Time::day_of_week(
-                date.0.unwrap().year,
-                date.0.unwrap().month,
-                date.0.unwrap().day,
-            );
+            let weekday = Time::day_of_week(date.year, date.month, date.day);
             if weekday == 6 || weekday == 7 {
                 false
             } else {
@@ -49,7 +65,7 @@ fn business_day(date: Time, calendar: &Calendar) -> bool {
 
 // 4.6 Year Fraction Convention (https://en.wikipedia.org/wiki/Day_count_convention).
 // Need confirmation from Nils on every formula.
-fn year_fraction(s: Time, t: Time, day_cont_convention: &DayCountConvention) -> Real {
+pub fn year_fraction(s: Time, t: Time, day_cont_convention: &DayCountConvention) -> Real {
     if s == Time(None) || t == Time(None) || s < t {
         return Real(None);
     }
@@ -206,7 +222,7 @@ fn year_fraction(s: Time, t: Time, day_cont_convention: &DayCountConvention) -> 
 }
 
 /// 4.7 Contract Role Sign Convention
-fn contract_role_sign(contract_role: &ContractRole) -> Real {
+pub fn contract_role_sign(contract_role: &ContractRole) -> Real {
     match contract_role {
         ContractRole::RPA => Real::from(1),
         ContractRole::RPL => Real::from(-1),
@@ -225,7 +241,7 @@ fn contract_role_sign(contract_role: &ContractRole) -> Real {
 }
 
 // 4.8 Contract Default Convention
-fn contract_default(contract_status: &ContractStatus) -> Real {
+pub fn contract_default(contract_status: &ContractStatus) -> Real {
     match contract_status {
         ContractStatus::PF => Real::from(1),
         ContractStatus::DL => Real::from(1),
