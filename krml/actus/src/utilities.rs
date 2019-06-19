@@ -27,7 +27,7 @@ pub fn schedule(
 
     let cycle = cycle.unwrap();
     let end_of_month_convention = end_of_month_convention.unwrap_or(EndOfMonthConvention::SD);
-    let business_day_convention = business_day_convention.unwrap_or(BusinessDayConvention::NULL);
+    //let business_day_convention = business_day_convention.unwrap_or(BusinessDayConvention::NULL);
 
     match cycle {
         Cycle::Days(int, stub) => vec.push(t),
@@ -36,13 +36,12 @@ pub fn schedule(
             vec.push(s);
             let mut x: UncheckedTime;
             while s < t {
-                s.year += (s.month + int) / 12;
-                s.month = (s.month - 1 + int) % 12 + 1;
+                s.year += (s.month as u16 + int) / 12;
+                s.month = (s.month - 1 + int as i8) % 12 + 1;
                 x = end_of_month_shift(s, end_of_month_convention);
-                x = business_day_shift(x, business_day_convention);
                 vec.push(x);
             }
-            if vec.get(vec.len() - 1).cloned().unwrap() > t && stub {
+            if x > t && stub {
                 vec.pop();
             }
         }
@@ -50,13 +49,12 @@ pub fn schedule(
             vec.push(s);
             let mut x: UncheckedTime;
             while s < t {
-                s.year += (s.month + 3 * int) / 12;
-                s.month = (s.month - 1 + 3 * int) % 12 + 1;
+                s.year += (s.month as u16 + 3 * int) / 12;
+                s.month = (s.month - 1 + 3 * int as i8) % 12 + 1;
                 x = end_of_month_shift(s, end_of_month_convention);
-                x = business_day_shift(x, business_day_convention);
                 vec.push(x);
             }
-            if vec.get(vec.len() - 1).cloned().unwrap() > t && stub {
+            if x > t && stub {
                 vec.pop();
             }
         }
@@ -64,13 +62,12 @@ pub fn schedule(
             vec.push(s);
             let mut x: UncheckedTime;
             while s < t {
-                s.year += (s.month + 6 * int) / 12;
-                s.month = (s.month - 1 + 6 * int) % 12 + 1;
+                s.year += (s.month as u16 + 6 * int) / 12;
+                s.month = (s.month - 1 + 6 * int as i8) % 12 + 1;
                 x = end_of_month_shift(s, end_of_month_convention);
-                x = business_day_shift(x, business_day_convention);
                 vec.push(x);
             }
-            if vec.get(vec.len() - 1).cloned().unwrap() > t && stub {
+            if x > t && stub {
                 vec.pop();
             }
         }
@@ -80,10 +77,9 @@ pub fn schedule(
             while s < t {
                 s.year += int;
                 x = end_of_month_shift(s, end_of_month_convention);
-                x = business_day_shift(x, business_day_convention);
                 vec.push(x);
             }
-            if vec.get(vec.len() - 1).cloned().unwrap() > t && stub {
+            if x > t && stub {
                 vec.pop();
             }
         }
