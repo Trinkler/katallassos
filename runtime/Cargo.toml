@@ -20,15 +20,15 @@ consensus-aura = { package = "substrate-consensus-aura-primitives", git = "https
 offchain-primitives = { package = "substrate-offchain-primitives", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea", default-features = false }
 consensus_authorities = { package = "substrate-consensus-authorities", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea", default-features = false }
 # SRML crates
-support = { package = "srml-support", path = "../srml/support", default_features = false }
-executive = { package = "srml-executive", path = "../srml/executive", default_features = false }
-balances = { package = "srml-balances", path = "../srml/balances", default_features = false }
-consensus = { package = "srml-consensus", path = "../srml/consensus", default_features = false }
-aura = { package = "srml-aura", path = "../srml/aura", default_features = false }
-indices = { package = "srml-indices", path = "../srml/indices", default_features = false }
-system = { package = "srml-system", path = "../srml/system", default_features = false }
-timestamp = { package = "srml-timestamp", path = "../srml/timestamp", default_features = false }
-sudo = { package = "srml-sudo", path = "../srml/sudo", default_features = false }
+support = { package = "srml-support", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea", default_features = false }
+executive = { package = "srml-executive", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea", default_features = false }
+balances = { package = "srml-balances", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea", default_features = false }
+consensus = { package = "srml-consensus", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea", default_features = false }
+aura = { package = "srml-aura", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea", default_features = false }
+indices = { package = "srml-indices", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea", default_features = false }
+system = { package = "srml-system", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea", default_features = false }
+timestamp = { package = "srml-timestamp", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea", default_features = false }
+sudo = { package = "srml-sudo", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea", default_features = false }
 # KRML crates
 reals = { package = "krml-reals", path = "../krml/reals", default_features = false }
 

@@ -12,9 +12,9 @@ parity-codec = { version = "3.3", default-features = false, features = ["derive"
 rstd = { package = "sr-std", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea", default-features = false }
 runtime_primitives = { package = "sr-primitives", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea", default-features = false }
 # SRML crates
-srml-support = { path = "../../srml/support", default-features = false }
-system = { package = "srml-system", path = "../../srml/system", default-features = false }
-timestamp = { package = "srml-timestamp", path = "../../srml/timestamp", default-features = false }
+srml-support = { git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea", default-features = false }
+system = { package = "srml-system", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea", default-features = false }
+timestamp = { package = "srml-timestamp", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea", default-features = false }
 # KRML crates
 reals = { package = "krml-reals", path = "../reals", default-features = false }
 time = { package = "krml-time", path = "../time", default-features = false }
