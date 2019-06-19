@@ -1,11 +1,9 @@
 use katal_runtime::{
-    AccountId, BalancesConfig, ConsensusConfig, GenesisConfig, IndicesConfig, SudoConfig,
-    TimestampConfig,
+    AccountId, AuraConfig, AuraId as AuthorityId, BalancesConfig, GenesisConfig, IndicesConfig,
+    SudoConfig, SystemConfig, TimestampConfig,
 };
 use primitives::{ed25519, sr25519, Pair};
 use substrate_service;
-
-use ed25519::Public as AuthorityId;
 
 // Note this is the URL for the telemetry server
 //const STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
@@ -97,11 +95,14 @@ fn testnet_genesis(
     root_key: AccountId,
 ) -> GenesisConfig {
     GenesisConfig {
-		consensus: Some(ConsensusConfig {
+		system: Some(SystemConfig {
 			code: include_bytes!("../runtime/wasm/target/wasm32-unknown-unknown/release/katal_runtime_wasm.compact.wasm").to_vec(),
+			changes_trie_config: Default::default(),
+			_genesis_phantom_data: Default::default(),
+		}),
+		aura: Some(AuraConfig {
 			authorities: initial_authorities.clone(),
 		}),
-		system: None,
 		timestamp: Some(TimestampConfig {
 			minimum_period: 5, // 10 second block time.
 		}),

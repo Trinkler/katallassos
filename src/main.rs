@@ -9,7 +9,7 @@ mod service;
 
 pub use substrate_cli::{error, IntoExit, VersionInfo};
 
-fn run() -> cli::error::Result<()> {
+fn main() {
     let version = VersionInfo {
         name: "Katal Chain",
         commit: env!("VERGEN_SHA_SHORT"),
@@ -19,7 +19,9 @@ fn run() -> cli::error::Result<()> {
         description: "Standard Framework for Finance.",
         support_url: "https://github.com/Trinkler/katal-chain/issues",
     };
-    cli::run(::std::env::args(), cli::Exit, version)
-}
 
-error_chain::quick_main!(run);
+    if let Err(e) = cli::run(::std::env::args(), cli::Exit, version) {
+        eprintln!("Error starting the node: {}\n\n{:?}", e, e);
+        std::process::exit(1)
+    }
+}

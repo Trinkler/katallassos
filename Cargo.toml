@@ -10,29 +10,26 @@ name = "katal"
 path = "src/main.rs"
 
 [dependencies]
-# External crates
-error-chain = "0.12"
+derive_more = "0.14.0"
 futures = "0.1"
 ctrlc = { version = "3.0", features = ["termination"] }
 log = "0.4"
 tokio = "0.1"
 exit-future = "0.1"
-parking_lot = "0.7.1"
+parking_lot = "0.8.0"
 parity-codec = "3.3"
 trie-root = "0.12.2"
-# Core crates
-sr-io = { git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
-substrate-cli = { git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
-primitives = { package = "substrate-primitives", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
-substrate-executor = { git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
-substrate-service = { git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
-inherents = { package = "substrate-inherents", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
-transaction-pool = { package = "substrate-transaction-pool", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
-network = { package = "substrate-network", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
-consensus = { package = "substrate-consensus-aura", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
-substrate-client = {  git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
-basic-authorship = { package = "substrate-basic-authorship", git = "https://github.com/paritytech/substrate.git", rev = "e7e53ea" }
-# The runtime crate
+sr-io = { git = "https://github.com/paritytech/substrate.git", rev = "dbf3226" }
+substrate-cli = { git = "https://github.com/paritytech/substrate.git", rev = "dbf3226" }
+primitives = { package = "substrate-primitives", git = "https://github.com/paritytech/substrate.git", rev = "dbf3226" }
+substrate-executor = { git = "https://github.com/paritytech/substrate.git", rev = "dbf3226" }
+substrate-service = { git = "https://github.com/paritytech/substrate.git", rev = "dbf3226" }
+inherents = { package = "substrate-inherents", git = "https://github.com/paritytech/substrate.git", rev = "dbf3226" }
+transaction-pool = { package = "substrate-transaction-pool", git = "https://github.com/paritytech/substrate.git", rev = "dbf3226" }
+network = { package = "substrate-network", git = "https://github.com/paritytech/substrate.git", rev = "dbf3226" }
+consensus = { package = "substrate-consensus-aura", git = "https://github.com/paritytech/substrate.git", rev = "dbf3226" }
+substrate-client = {  git = "https://github.com/paritytech/substrate.git", rev = "dbf3226" }
+basic-authorship = { package = "substrate-basic-authorship", git = "https://github.com/paritytech/substrate.git", rev = "dbf3226" }
 katal-runtime = { path = "runtime" }
 
 [build-dependencies]
