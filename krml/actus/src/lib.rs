@@ -3,7 +3,7 @@ use reals::Real;
 use rstd::prelude::*;
 use srml_support::{decl_event, decl_module, decl_storage, dispatch::Result, ensure, StorageMap};
 use system::ensure_signed;
-use time::Time;
+use time::{Time, UncheckedTime};
 use timestamp::*;
 
 //
