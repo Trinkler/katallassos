@@ -32,9 +32,48 @@ pub fn schedule(
     match cycle {
         Cycle::Days(int, stub) => vec.push(t),
         Cycle::Weeks(int, stub) => vec.push(t),
-        Cycle::Months(int, stub) => vec.push(t),
-        Cycle::Quarters(int, stub) => vec.push(t),
-        Cycle::Halfyears(int, stub) => {}
+        Cycle::Months(int, stub) => {
+            vec.push(s);
+            let mut x: UncheckedTime;
+            while s < t {
+                s.year += (s.month + int) / 12;
+                s.month = (s.month - 1 + int) % 12 + 1;
+                x = end_of_month_shift(s, end_of_month_convention);
+                x = business_day_shift(x, business_day_convention);
+                vec.push(x);
+            }
+            if vec.get(vec.len() - 1).cloned().unwrap() > t && stub {
+                vec.pop();
+            }
+        }
+        Cycle::Quarters(int, stub) => {
+            vec.push(s);
+            let mut x: UncheckedTime;
+            while s < t {
+                s.year += (s.month + 3 * int) / 12;
+                s.month = (s.month - 1 + 3 * int) % 12 + 1;
+                x = end_of_month_shift(s, end_of_month_convention);
+                x = business_day_shift(x, business_day_convention);
+                vec.push(x);
+            }
+            if vec.get(vec.len() - 1).cloned().unwrap() > t && stub {
+                vec.pop();
+            }
+        }
+        Cycle::Halfyears(int, stub) => {
+            vec.push(s);
+            let mut x: UncheckedTime;
+            while s < t {
+                s.year += (s.month + 6 * int) / 12;
+                s.month = (s.month - 1 + 6 * int) % 12 + 1;
+                x = end_of_month_shift(s, end_of_month_convention);
+                x = business_day_shift(x, business_day_convention);
+                vec.push(x);
+            }
+            if vec.get(vec.len() - 1).cloned().unwrap() > t && stub {
+                vec.pop();
+            }
+        }
         Cycle::Years(int, stub) => {
             vec.push(s);
             let mut x: UncheckedTime;
