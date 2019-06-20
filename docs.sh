@@ -7,6 +7,8 @@ bold=$(tput bold)
 normal=$(tput sgr0)
 
 echo "${bold}Building static doc site...${normal}"
+
+cd "$PROJECT_ROOT"
 # Build docs
 cargo doc
 # Move to docs folder to deploy
