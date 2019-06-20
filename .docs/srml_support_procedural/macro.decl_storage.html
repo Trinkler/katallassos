@@ -1,0 +1,97 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `decl_storage` macro in crate `srml_support_procedural`."><meta name="keywords" content="rust, rustlang, rust-lang, decl_storage"><title>srml_support_procedural::decl_storage - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="shortcut icon" href="../favicon.ico"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc macro"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../srml_support_procedural/index.html'><div class='logo-container'><img src='../rust-logo.png' alt='logo'></div></a><div class="sidebar-elems"><p class='location'><a href='index.html'>srml_support_procedural</a></p><script>window.sidebarCurrent = {name: 'decl_storage', ty: 'macro', relpath: ''};</script><script defer src="sidebar-items.js"></script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/srml_support_procedural/lib.rs.html#143-145' title='goto source code'>[src]</a></span><span class='in-band'>Macro <a href='index.html'>srml_support_procedural</a>::<wbr><a class="macro" href=''>decl_storage</a></span></h1><pre class='rust macro'>decl_storage!() { /* proc-macro */ }</pre><div class='docblock'><p>Declares strongly-typed wrappers around codec-compatible types in storage.</p>
+<h2 id="example" class="section-header"><a href="#example">Example</a></h2>
+<pre><code class="language-nocompile">decl_storage! {
+	trait Store for Module&lt;T: Trait&gt; as Example {
+		Foo get(foo) config(): u32=12;
+		Bar: map u32 =&gt; u32;
+		pub Zed build(|config| vec![(0, 0)]): linked_map u32 =&gt; u32;
+	}
+}
+</code></pre>
+<p>Declaration is set with the header <code>(pub) trait Store for Module&lt;T: Trait&gt; as Example</code>,
+with <code>Store</code> a (pub) trait generated associating each storage item to the <code>Module</code> and
+<code>as Example</code> setting the prefix used for storage items of this module. <code>Example</code> must be unique:
+another module with the same name and the same inner storage item name will conflict.</p>
+<p>Basic storage consists of a name and a type; supported types are:</p>
+<ul>
+<li>
+<p>Value: <code>Foo: type</code>: Implements the <a href="../srml_support/storage/trait.StorageValue.html"><code>StorageValue</code></a> trait.</p>
+</li>
+<li>
+<p>Map: <code>Foo: map hasher($hash) type =&gt; type</code>: Implements the
+<a href="../srml_support/storage/trait.StorageMap.html"><code>StorageMap</code></a> trait
+with <code>$hash</code> representing a choice of hashing algorithms available in the
+<a href="../srml_support/trait.Hashable.html"><code>Hashable</code></a> trait.</p>
+<p><code>hasher($hash)</code> is optional and its default is <code>blake2_256</code>.</p>
+<p>/!\ Be careful with each key in the map that is inserted in the trie
+<code>$hash(module_name ++ &quot; &quot; ++ storage_name ++ encoding(key))</code>.
+If the keys are not trusted (e.g. can be set by a user), a cryptographic <code>hasher</code> such as
+<code>blake2_256</code> must be used. Otherwise, other values in storage can be compromised.</p>
+</li>
+<li>
+<p>Linked map: <code>Foo: linked_map hasher($hash) type =&gt; type</code>: Same as <code>Map</code> but also implements
+the <a href="../srml_support/storage/trait.EnumerableStorageMap.html"><code>EnumerableStorageMap</code></a> trait.</p>
+</li>
+<li>
+<p>Double map: <code>Foo: double_map hasher($hash) u32, $hash2(u32) =&gt; u32</code>: Implements the
+<a href="../srml_support/storage/trait.StorageDoubleMap.html"><code>StorageDoubleMap</code></a> trait with
+<code>$hash</code> and <code>$hash2</code> representing choices of hashing algorithms available in the
+<a href="../srml_support/trait.Hashable.html"><code>Hashable</code></a> trait.</p>
+<p><code>hasher($hash)</code> is optional and its default is <code>blake2_256</code>.</p>
+<p>/!\ Be careful with each key pair in the double map that is inserted in the trie.
+The final key is calculated as follows:</p>
+<pre><code class="language-nocompile">$hash(module_name ++ &quot; &quot; ++ storage_name ++ encoding(first_key)) ++ $hash2(encoding(second_key))
+</code></pre>
+<p>If the first key is untrusted, a cryptographic <code>hasher</code> such as <code>blake2_256</code> must be used.
+Otherwise, other values of all storage items can be compromised.</p>
+<p>If the second key is untrusted, a cryptographic <code>hasher</code> such as <code>blake2_256</code> must be used.
+Otherwise, other items in storage with the same first key can be compromised.</p>
+</li>
+</ul>
+<p>Basic storage can be extended as such:</p>
+<p><code>#vis #name get(#getter) config(#field_name) build(#closure): #type = #default;</code></p>
+<ul>
+<li><code>#vis</code>: Set the visibility of the structure. <code>pub</code> or nothing.</li>
+<li><code>#name</code>: Name of the storage item, used as a prefix in storage.</li>
+<li>[optional] <code>get(#getter)</code>: Implements the function #getter to <code>Module</code>.</li>
+<li>[optional] <code>config(#field_name)</code>: <code>field_name</code> is optional if get is set.
+Will include the item in <code>GenesisConfig</code>.</li>
+<li>[optional] <code>build(#closure)</code>: Closure called with storage overlays.</li>
+<li><code>#type</code>: Storage type.</li>
+<li>[optional] <code>#default</code>: Value returned when none.</li>
+</ul>
+<p>Storage items are accessible in multiple ways:</p>
+<ul>
+<li>The structure: <code>Foo::&lt;T&gt;</code></li>
+<li>The <code>Store</code> trait structure: <code>&lt;Module&lt;T&gt; as Store&gt;::Foo</code></li>
+<li>The getter on the module that calls get on the structure: <code>Module::&lt;T&gt;::foo()</code></li>
+</ul>
+<h2 id="genesisconfig" class="section-header"><a href="#genesisconfig">GenesisConfig</a></h2>
+<p>An optional <code>GenesisConfig</code> struct for storage initialization can be defined, either
+when at least one storage field requires default initialization
+(both <code>get</code> and <code>config</code> or <code>build</code>), or specifically as in:</p>
+<pre><code class="language-nocompile">decl_storage! {
+	trait Store for Module&lt;T: Trait&gt; as Example {
+
+		// Your storage items
+	}
+	add_extra_genesis {
+		config(genesis_field): GenesisFieldType;
+		config(genesis_field2): GenesisFieldType;
+		...
+		build(|_: &amp;mut StorageOverlay, _: &amp;mut ChildrenStorageOverlay, _: &amp;GenesisConfig&lt;T&gt;| {
+			// Modification of storage
+		})
+	}
+}
+</code></pre>
+<p>This struct can be exposed as <code>Config</code> by the <code>decl_runtime!</code> macro.</p>
+<h3 id="module-with-instances" class="section-header"><a href="#module-with-instances">Module with Instances</a></h3>
+<p>The <code>decl_storage!</code> macro supports building modules with instances with the following syntax
+(<code>DefaultInstance</code> type is optional):</p>
+<pre><code class="language-nocompile">trait Store for Module&lt;T: Trait&lt;I&gt;, I: Instance=DefaultInstance&gt; as Example {}
+</code></pre>
+<p>Then the genesis config is generated with two generic parameters (i.e. <code>GenesisConfig&lt;T, I&gt;</code>)
+and storage items are accessible using two generic parameters, e.g.:
+<code>&lt;Dummy&lt;T, I&gt;&gt;::get()</code> or <code>Dummy::&lt;T, I&gt;::get()</code>.</p>
+</div></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../";window.currentCrate = "srml_support_procedural";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>

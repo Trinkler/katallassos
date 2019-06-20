@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["TransportUpgradeError","Error produced by a transport upgrade."]],"struct":[["DialUpgradeFuture",""],["ListenerStream",""],["ListenerUpgradeFuture",""],["Upgrade",""]]});

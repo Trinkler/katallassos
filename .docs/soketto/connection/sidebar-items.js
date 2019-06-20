@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Error","Connection error cases."],["Mode","Is the [`Connection`] used by a client or server?"]],"struct":[["Connection","A `Connection` implements [`Stream`] and [`Sink`] using the [`base::Codec`] to encode and decode data as websocket base frames."]]});

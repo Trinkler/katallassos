@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["base","A websocket [base] frame and accompanying tokio codec."],["connection","A [`futures::Stream`] + [`futures::Sink`] implementation which produces and consumes [`base::Data`] items."],["extension","Defines a trait for websocket extensions as per [RFC 6455][rfc6455]."],["handshake","Websocket [handshake] codecs."]],"type":[["BoxError",""]]});

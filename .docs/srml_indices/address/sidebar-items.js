@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Address","An indices-aware address, which can be either a direct `AccountId` or an index."]]});

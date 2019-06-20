@@ -10,5 +10,4 @@ echo "${bold}Building static doc site...${normal}"
 # Build docs
 cargo doc
 # Move to docs folder to deploy
-mkdir docs
-cp -r target/doc/* docs
+cp -r target/doc/* .docs

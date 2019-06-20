@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["DeriveError","An error when deriving a key."],["PublicError","An error type for SS58 decoding."]],"struct":[["LocalizedSignature","A localized signature also contains sender information."],["Pair","A key pair."],["Public","A public key."],["Signature","A signature (a 512-bit value)."]]});

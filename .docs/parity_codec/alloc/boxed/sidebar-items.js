@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Box","A pointer type for heap allocation."]],"trait":[["FnBox","`FnBox` is deprecated and will be removed. `Box<dyn FnOnce()>` can be called directly, since Rust 1.35.0."]]});

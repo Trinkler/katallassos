@@ -1,0 +1,1 @@
+initSidebarItems({"trait":[["OffchainWorkerApi","The offchain worker api."]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Node","Type of node in the trie and essential information thereof."],["OwnedNode","An owning node type. Useful for trie iterators."]],"struct":[["Branch","A Sparse (non mutable) owned vector struct to hold branch keys and value"]],"type":[["NodeKey","Partial node key type."]]});

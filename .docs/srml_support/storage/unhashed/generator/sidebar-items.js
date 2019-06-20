@@ -1,0 +1,1 @@
+initSidebarItems({"trait":[["StorageDoubleMap","An implementation of a map with a two keys."],["UnhashedStorage","Abstraction around storage with unhashed access."]]});

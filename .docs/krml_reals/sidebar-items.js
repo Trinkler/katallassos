@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Real","The struct that implements the real data type. It is a tuple containing a single Option of an i64."]]});

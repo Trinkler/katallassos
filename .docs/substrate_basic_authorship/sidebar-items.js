@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Proposer","The proposer logic."],["ProposerFactory","Proposer factory."]],"trait":[["AuthoringApi","Local client abstraction for the consensus."],["BlockBuilder","Build new blocks."]]});

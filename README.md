@@ -29,3 +29,10 @@ cargo build
 ```sh
 ./target/debug/katal
 ```
+
+### Checklist before RELEASE
+
+```sh
+# Build latest docs
+./docs.sh
+```

@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["well_known_keys","List of all well known keys and prefixes in storage."]],"struct":[["StorageChangeSet","Storage change set"],["StorageData","Contract storage entry data."],["StorageKey","Contract storage key."]]});

@@ -1,0 +1,293 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source to the Rust file `/home/x3/.cargo/git/checkouts/substrate-7e08433d4c370a21/dbf3226/srml/support/procedural/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs.html -- source</title><link rel="stylesheet" type="text/css" href="../../normalize.css"><link rel="stylesheet" type="text/css" href="../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../../dark.css"><link rel="stylesheet" type="text/css" href="../../light.css" id="themeStyle"><script src="../../storage.js"></script><noscript><link rel="stylesheet" href="../../noscript.css"></noscript><link rel="shortcut icon" href="../../favicon.ico"><style type="text/css">#crate-search{background-image:url("../../down-arrow.svg");}</style></head><body class="rustdoc source"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../../srml_support_procedural/index.html'><div class='logo-container'><img src='../../rust-logo.png' alt='logo'></div></a></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../../settings.html"><img src="../../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><pre class="line-numbers"><span id="1">  1</span>
+<span id="2">  2</span>
+<span id="3">  3</span>
+<span id="4">  4</span>
+<span id="5">  5</span>
+<span id="6">  6</span>
+<span id="7">  7</span>
+<span id="8">  8</span>
+<span id="9">  9</span>
+<span id="10"> 10</span>
+<span id="11"> 11</span>
+<span id="12"> 12</span>
+<span id="13"> 13</span>
+<span id="14"> 14</span>
+<span id="15"> 15</span>
+<span id="16"> 16</span>
+<span id="17"> 17</span>
+<span id="18"> 18</span>
+<span id="19"> 19</span>
+<span id="20"> 20</span>
+<span id="21"> 21</span>
+<span id="22"> 22</span>
+<span id="23"> 23</span>
+<span id="24"> 24</span>
+<span id="25"> 25</span>
+<span id="26"> 26</span>
+<span id="27"> 27</span>
+<span id="28"> 28</span>
+<span id="29"> 29</span>
+<span id="30"> 30</span>
+<span id="31"> 31</span>
+<span id="32"> 32</span>
+<span id="33"> 33</span>
+<span id="34"> 34</span>
+<span id="35"> 35</span>
+<span id="36"> 36</span>
+<span id="37"> 37</span>
+<span id="38"> 38</span>
+<span id="39"> 39</span>
+<span id="40"> 40</span>
+<span id="41"> 41</span>
+<span id="42"> 42</span>
+<span id="43"> 43</span>
+<span id="44"> 44</span>
+<span id="45"> 45</span>
+<span id="46"> 46</span>
+<span id="47"> 47</span>
+<span id="48"> 48</span>
+<span id="49"> 49</span>
+<span id="50"> 50</span>
+<span id="51"> 51</span>
+<span id="52"> 52</span>
+<span id="53"> 53</span>
+<span id="54"> 54</span>
+<span id="55"> 55</span>
+<span id="56"> 56</span>
+<span id="57"> 57</span>
+<span id="58"> 58</span>
+<span id="59"> 59</span>
+<span id="60"> 60</span>
+<span id="61"> 61</span>
+<span id="62"> 62</span>
+<span id="63"> 63</span>
+<span id="64"> 64</span>
+<span id="65"> 65</span>
+<span id="66"> 66</span>
+<span id="67"> 67</span>
+<span id="68"> 68</span>
+<span id="69"> 69</span>
+<span id="70"> 70</span>
+<span id="71"> 71</span>
+<span id="72"> 72</span>
+<span id="73"> 73</span>
+<span id="74"> 74</span>
+<span id="75"> 75</span>
+<span id="76"> 76</span>
+<span id="77"> 77</span>
+<span id="78"> 78</span>
+<span id="79"> 79</span>
+<span id="80"> 80</span>
+<span id="81"> 81</span>
+<span id="82"> 82</span>
+<span id="83"> 83</span>
+<span id="84"> 84</span>
+<span id="85"> 85</span>
+<span id="86"> 86</span>
+<span id="87"> 87</span>
+<span id="88"> 88</span>
+<span id="89"> 89</span>
+<span id="90"> 90</span>
+<span id="91"> 91</span>
+<span id="92"> 92</span>
+<span id="93"> 93</span>
+<span id="94"> 94</span>
+<span id="95"> 95</span>
+<span id="96"> 96</span>
+<span id="97"> 97</span>
+<span id="98"> 98</span>
+<span id="99"> 99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+</pre><div class="example-wrap"><pre class="rust ">
+<span class="comment">// Copyright 2017-2019 Parity Technologies (UK) Ltd.</span>
+<span class="comment">// This file is part of Substrate.</span>
+
+<span class="comment">// Substrate is free software: you can redistribute it and/or modify</span>
+<span class="comment">// it under the terms of the GNU General Public License as published by</span>
+<span class="comment">// the Free Software Foundation, either version 3 of the License, or</span>
+<span class="comment">// (at your option) any later version.</span>
+
+<span class="comment">// Substrate is distributed in the hope that it will be useful,</span>
+<span class="comment">// but WITHOUT ANY WARRANTY; without even the implied warranty of</span>
+<span class="comment">// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the</span>
+<span class="comment">// GNU General Public License for more details.</span>
+
+<span class="comment">// You should have received a copy of the GNU General Public License</span>
+<span class="comment">// along with Substrate.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</span>
+
+<span class="comment">// tag::description[]</span>
+<span class="doccomment">//! Proc macro of Support code for the runtime.</span>
+<span class="comment">// end::description[]</span>
+
+<span class="attribute">#![<span class="ident">recursion_limit</span><span class="op">=</span><span class="string">&quot;256&quot;</span>]</span>
+
+<span class="kw">extern</span> <span class="kw">crate</span> <span class="ident">proc_macro</span>;
+
+<span class="kw">mod</span> <span class="ident">storage</span>;
+
+<span class="kw">use</span> <span class="ident">proc_macro</span>::<span class="ident">TokenStream</span>;
+
+<span class="doccomment">/// Declares strongly-typed wrappers around codec-compatible types in storage.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ## Example</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ```nocompile</span>
+<span class="doccomment">/// decl_storage! {</span>
+<span class="doccomment">/// 	trait Store for Module&lt;T: Trait&gt; as Example {</span>
+<span class="doccomment">/// 		Foo get(foo) config(): u32=12;</span>
+<span class="doccomment">/// 		Bar: map u32 =&gt; u32;</span>
+<span class="doccomment">/// 		pub Zed build(|config| vec![(0, 0)]): linked_map u32 =&gt; u32;</span>
+<span class="doccomment">/// 	}</span>
+<span class="doccomment">/// }</span>
+<span class="doccomment">/// ```</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Declaration is set with the header `(pub) trait Store for Module&lt;T: Trait&gt; as Example`,</span>
+<span class="doccomment">/// with `Store` a (pub) trait generated associating each storage item to the `Module` and</span>
+<span class="doccomment">/// `as Example` setting the prefix used for storage items of this module. `Example` must be unique:</span>
+<span class="doccomment">/// another module with the same name and the same inner storage item name will conflict.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Basic storage consists of a name and a type; supported types are:</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// * Value: `Foo: type`: Implements the [`StorageValue`](../srml_support/storage/trait.StorageValue.html) trait.</span>
+<span class="doccomment">/// * Map: `Foo: map hasher($hash) type =&gt; type`: Implements the</span>
+<span class="doccomment">///   [`StorageMap`](../srml_support/storage/trait.StorageMap.html) trait</span>
+<span class="doccomment">///   with `$hash` representing a choice of hashing algorithms available in the</span>
+<span class="doccomment">///   [`Hashable`](../srml_support/trait.Hashable.html) trait.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">///   `hasher($hash)` is optional and its default is `blake2_256`.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">///   /!\ Be careful with each key in the map that is inserted in the trie</span>
+<span class="doccomment">///   `$hash(module_name ++ &quot; &quot; ++ storage_name ++ encoding(key))`.</span>
+<span class="doccomment">///   If the keys are not trusted (e.g. can be set by a user), a cryptographic `hasher` such as</span>
+<span class="doccomment">///   `blake2_256` must be used. Otherwise, other values in storage can be compromised.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// * Linked map: `Foo: linked_map hasher($hash) type =&gt; type`: Same as `Map` but also implements</span>
+<span class="doccomment">///   the [`EnumerableStorageMap`](../srml_support/storage/trait.EnumerableStorageMap.html) trait.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// * Double map: `Foo: double_map hasher($hash) u32, $hash2(u32) =&gt; u32`: Implements the</span>
+<span class="doccomment">///   [`StorageDoubleMap`](../srml_support/storage/trait.StorageDoubleMap.html) trait with</span>
+<span class="doccomment">///   `$hash` and `$hash2` representing choices of hashing algorithms available in the</span>
+<span class="doccomment">///   [`Hashable`](../srml_support/trait.Hashable.html) trait.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">///   `hasher($hash)` is optional and its default is `blake2_256`.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">///   /!\ Be careful with each key pair in the double map that is inserted in the trie.</span>
+<span class="doccomment">///   The final key is calculated as follows:</span>
+<span class="doccomment">///</span>
+<span class="doccomment">///   ```nocompile</span>
+<span class="doccomment">///   $hash(module_name ++ &quot; &quot; ++ storage_name ++ encoding(first_key)) ++ $hash2(encoding(second_key))</span>
+<span class="doccomment">///   ```</span>
+<span class="doccomment">///</span>
+<span class="doccomment">///   If the first key is untrusted, a cryptographic `hasher` such as `blake2_256` must be used.</span>
+<span class="doccomment">///   Otherwise, other values of all storage items can be compromised.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">///   If the second key is untrusted, a cryptographic `hasher` such as `blake2_256` must be used.</span>
+<span class="doccomment">///   Otherwise, other items in storage with the same first key can be compromised.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Basic storage can be extended as such:</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// `#vis #name get(#getter) config(#field_name) build(#closure): #type = #default;`</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// * `#vis`: Set the visibility of the structure. `pub` or nothing.</span>
+<span class="doccomment">/// * `#name`: Name of the storage item, used as a prefix in storage.</span>
+<span class="doccomment">/// * [optional] `get(#getter)`: Implements the function #getter to `Module`.</span>
+<span class="doccomment">/// * [optional] `config(#field_name)`: `field_name` is optional if get is set.</span>
+<span class="doccomment">/// Will include the item in `GenesisConfig`.</span>
+<span class="doccomment">/// * [optional] `build(#closure)`: Closure called with storage overlays.</span>
+<span class="doccomment">/// * `#type`: Storage type.</span>
+<span class="doccomment">/// * [optional] `#default`: Value returned when none.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Storage items are accessible in multiple ways:</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// * The structure: `Foo::&lt;T&gt;`</span>
+<span class="doccomment">/// * The `Store` trait structure: `&lt;Module&lt;T&gt; as Store&gt;::Foo`</span>
+<span class="doccomment">/// * The getter on the module that calls get on the structure: `Module::&lt;T&gt;::foo()`</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ## GenesisConfig</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// An optional `GenesisConfig` struct for storage initialization can be defined, either</span>
+<span class="doccomment">/// when at least one storage field requires default initialization</span>
+<span class="doccomment">/// (both `get` and `config` or `build`), or specifically as in:</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ```nocompile</span>
+<span class="doccomment">/// decl_storage! {</span>
+<span class="doccomment">/// 	trait Store for Module&lt;T: Trait&gt; as Example {</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// 		// Your storage items</span>
+<span class="doccomment">/// 	}</span>
+<span class="doccomment">///		add_extra_genesis {</span>
+<span class="doccomment">///			config(genesis_field): GenesisFieldType;</span>
+<span class="doccomment">///			config(genesis_field2): GenesisFieldType;</span>
+<span class="doccomment">///			...</span>
+<span class="doccomment">///			build(|_: &amp;mut StorageOverlay, _: &amp;mut ChildrenStorageOverlay, _: &amp;GenesisConfig&lt;T&gt;| {</span>
+<span class="doccomment">///				// Modification of storage</span>
+<span class="doccomment">///			})</span>
+<span class="doccomment">///		}</span>
+<span class="doccomment">/// }</span>
+<span class="doccomment">/// ```</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// This struct can be exposed as `Config` by the `decl_runtime!` macro.</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ### Module with Instances</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// The `decl_storage!` macro supports building modules with instances with the following syntax</span>
+<span class="doccomment">/// (`DefaultInstance` type is optional):</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// ```nocompile</span>
+<span class="doccomment">/// trait Store for Module&lt;T: Trait&lt;I&gt;, I: Instance=DefaultInstance&gt; as Example {}</span>
+<span class="doccomment">/// ```</span>
+<span class="doccomment">///</span>
+<span class="doccomment">/// Then the genesis config is generated with two generic parameters (i.e. `GenesisConfig&lt;T, I&gt;`)</span>
+<span class="doccomment">/// and storage items are accessible using two generic parameters, e.g.:</span>
+<span class="doccomment">/// `&lt;Dummy&lt;T, I&gt;&gt;::get()` or `Dummy::&lt;T, I&gt;::get()`.</span>
+<span class="attribute">#[<span class="ident">proc_macro</span>]</span>
+<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">decl_storage</span>(<span class="ident">input</span>: <span class="ident">TokenStream</span>) <span class="op">-&gt;</span> <span class="ident">TokenStream</span> {
+	<span class="ident">storage</span>::<span class="ident">transformation</span>::<span class="ident">decl_storage_impl</span>(<span class="ident">input</span>)
+}
+</pre></div>
+</section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../../";window.currentCrate = "srml_support_procedural";</script><script src="../../aliases.js"></script><script src="../../main.js"></script><script src="../../source-script.js"></script><script src="../../source-files.js"></script><script defer src="../../search-index.js"></script></body></html>

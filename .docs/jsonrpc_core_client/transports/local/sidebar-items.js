@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["connect","Connects to a `IoHandler`."]],"struct":[["LocalRpc","Implements a rpc client for `MetaIoHandler`."]]});

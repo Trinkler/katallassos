@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Decision","Decision about how to handle compacting an object"]],"fn":[["destructor_callback",""],["filter_callback",""],["name_callback",""]],"struct":[["CompactionFilterCallback",""]],"trait":[["CompactionFilterFn","Function to filter compaction with."]]});

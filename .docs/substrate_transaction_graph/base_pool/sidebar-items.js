@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["Imported","Successful import result."]],"struct":[["BasePool","Transaction pool."],["Limit","Queue limits"],["PruneStatus","Status of pruning the queue."],["Status","Pool status"],["Transaction","Immutable transaction"]]});

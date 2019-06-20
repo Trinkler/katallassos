@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["Target","Collection of functions to give information on the build target."]]});

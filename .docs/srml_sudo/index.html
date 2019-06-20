@@ -1,0 +1,57 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="API documentation for the Rust `srml_sudo` crate."><meta name="keywords" content="rust, rustlang, rust-lang, srml_sudo"><title>srml_sudo - Rust</title><link rel="stylesheet" type="text/css" href="../normalize.css"><link rel="stylesheet" type="text/css" href="../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" type="text/css" href="../dark.css"><link rel="stylesheet" type="text/css" href="../light.css" id="themeStyle"><script src="../storage.js"></script><noscript><link rel="stylesheet" href="../noscript.css"></noscript><link rel="shortcut icon" href="../favicon.ico"><style type="text/css">#crate-search{background-image:url("../down-arrow.svg");}</style></head><body class="rustdoc mod"><!--[if lte IE 8]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="sidebar-menu">&#9776;</div><a href='../srml_sudo/index.html'><div class='logo-container'><img src='../rust-logo.png' alt='logo'></div></a><p class='location'>Crate srml_sudo</p><div class="sidebar-elems"><a id='all-types' href='all.html'><p>See all srml_sudo's items</p></a><div class="block items"><ul><li><a href="#structs">Structs</a></li><li><a href="#enums">Enums</a></li><li><a href="#traits">Traits</a></li><li><a href="#types">Type Definitions</a></li></ul></div><p class='location'></p><script>window.sidebarCurrent = {name: 'srml_sudo', ty: 'mod', relpath: '../'};</script></div></nav><div class="theme-picker"><button id="theme-picker" aria-label="Pick another theme!"><img src="../brush.svg" width="18" alt="Pick another theme!"></button><div id="theme-choices"></div></div><script src="../theme.js"></script><nav class="sub"><form class="search-form js-only"><div class="search-container"><div><select id="crate-search"><option value="All crates">All crates</option></select><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"></div><a id="settings-menu" href="../settings.html"><img src="../wheel.svg" width="18" alt="Change settings"></a></div></form></nav><section id="main" class="content"><h1 class='fqn'><span class='out-of-band'><span id='render-detail'><a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">[<span class='inner'>&#x2212;</span>]</a></span><a class='srclink' href='../src/srml_sudo/lib.rs.html#17-170' title='goto source code'>[src]</a></span><span class='in-band'>Crate <a class="mod" href=''>srml_sudo</a></span></h1><div class='docblock'><h1 id="sudo-module" class="section-header"><a href="#sudo-module">Sudo Module</a></h1>
+<ul>
+<li><a href="./trait.Trait.html"><code>sudo::Trait</code></a></li>
+<li><a href="./enum.Call.html"><code>Call</code></a></li>
+</ul>
+<h2 id="overview" class="section-header"><a href="#overview">Overview</a></h2>
+<p>The Sudo module allows for a single account (called the &quot;sudo key&quot;)
+to execute dispatchable functions that require a <code>Root</code> call
+or designate a new account to replace them as the sudo key.
+Only one account can be the sudo key at a time.</p>
+<h2 id="interface" class="section-header"><a href="#interface">Interface</a></h2><h3 id="dispatchable-functions" class="section-header"><a href="#dispatchable-functions">Dispatchable Functions</a></h3>
+<p>Only the sudo key can call the dispatchable functions from the Sudo module.</p>
+<ul>
+<li><code>sudo</code> - Make a <code>Root</code> call to a dispatchable function.</li>
+<li><code>set_key</code> - Assign a new account to be the sudo key.</li>
+</ul>
+<h2 id="usage" class="section-header"><a href="#usage">Usage</a></h2><h3 id="executing-privileged-functions" class="section-header"><a href="#executing-privileged-functions">Executing Privileged Functions</a></h3>
+<p>The Sudo module itself is not intended to be used within other modules.
+Instead, you can build &quot;privileged functions&quot; (i.e. functions that require <code>Root</code> origin) in other modules.
+You can execute these privileged functions by calling <code>sudo</code> with the sudo key account.
+Privileged functions cannot be directly executed via an extrinsic.</p>
+<p>Learn more about privileged functions and <code>Root</code> origin in the <a href="https://docs.substrate.dev/docs/substrate-types"><code>Origin</code></a> type documentation.</p>
+<h3 id="simple-code-snippet" class="section-header"><a href="#simple-code-snippet">Simple Code Snippet</a></h3>
+<p>This is an example of a module that exposes a privileged function:</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered">
+<span class="kw">use</span> <span class="ident">srml_support</span>::{<span class="ident">decl_module</span>, <span class="ident">dispatch</span>::<span class="prelude-ty">Result</span>};
+<span class="kw">use</span> <span class="ident">system</span>::<span class="ident">ensure_root</span>;
+
+<span class="kw">pub</span> <span class="kw">trait</span> <span class="ident">Trait</span>: <span class="ident">system</span>::<span class="ident">Trait</span> {}
+
+<span class="macro">decl_module</span><span class="macro">!</span> {
+    <span class="kw">pub</span> <span class="kw">struct</span> <span class="ident">Module</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Trait</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="kw">enum</span> <span class="ident">Call</span> <span class="kw">where</span> <span class="ident">origin</span>: <span class="ident">T</span>::<span class="ident">Origin</span> {
+        <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">privileged_function</span>(<span class="ident">origin</span>) <span class="op">-&gt;</span> <span class="prelude-ty">Result</span> {
+            <span class="ident">ensure_root</span>(<span class="ident">origin</span>)<span class="question-mark">?</span>;
+
+            <span class="comment">// do something...</span>
+
+            <span class="prelude-val">Ok</span>(())
+        }
+    }
+}</pre></div>
+<h2 id="genesis-config" class="section-header"><a href="#genesis-config">Genesis Config</a></h2>
+<p>The Sudo module depends on the <a href="./struct.GenesisConfig.html"><code>GenesisConfig</code></a>.
+You need to set an initial superuser account as the sudo <code>key</code>.</p>
+<h2 id="related-modules" class="section-header"><a href="#related-modules">Related Modules</a></h2>
+<ul>
+<li><a href="../srml_consensus/index.html">Consensus</a></li>
+<li><a href="../srml_democracy/index.html">Democracy</a></li>
+</ul>
+</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table><tr class='module-item'><td><a class="struct" href="struct.GenesisConfig.html" title='srml_sudo::GenesisConfig struct'>GenesisConfig</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="struct" href="struct.Module.html" title='srml_sudo::Module struct'>Module</a></td><td class='docblock-short'></td></tr></table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table><tr class='module-item'><td><a class="enum" href="enum.Call.html" title='srml_sudo::Call enum'>Call</a></td><td class='docblock-short'></td></tr><tr class='module-item'><td><a class="enum" href="enum.RawEvent.html" title='srml_sudo::RawEvent enum'>RawEvent</a></td><td class='docblock-short'><p>Events for this module.</p>
+</td></tr></table><h2 id='traits' class='section-header'><a href="#traits">Traits</a></h2>
+<table><tr class='module-item'><td><a class="trait" href="trait.Trait.html" title='srml_sudo::Trait trait'>Trait</a></td><td class='docblock-short'></td></tr></table><h2 id='types' class='section-header'><a href="#types">Type Definitions</a></h2>
+<table><tr class='module-item'><td><a class="type" href="type.Event.html" title='srml_sudo::Event type'>Event</a></td><td class='docblock-short'><p><a href="enum.RawEvent.html"><code>RawEvent</code></a> specialized for the configuration <a href="trait.Trait.html"><code>Trait</code></a></p>
+</td></tr></table></section><section id="search" class="content hidden"></section><section class="footer"></section><aside id="help" class="hidden"><div><h1 class="hidden">Help</h1><div class="shortcuts"><h2>Keyboard Shortcuts</h2><dl><dt><kbd>?</kbd></dt><dd>Show this help dialog</dd><dt><kbd>S</kbd></dt><dd>Focus the search field</dd><dt><kbd>↑</kbd></dt><dd>Move up in search results</dd><dt><kbd>↓</kbd></dt><dd>Move down in search results</dd><dt><kbd>↹</kbd></dt><dd>Switch tab</dd><dt><kbd>&#9166;</kbd></dt><dd>Go to active search result</dd><dt><kbd>+</kbd></dt><dd>Expand all sections</dd><dt><kbd>-</kbd></dt><dd>Collapse all sections</dd></dl></div><div class="infos"><h2>Search Tricks</h2><p>Prefix searches with a type followed by a colon (e.g., <code>fn:</code>) to restrict the search to a given type.</p><p>Accepted types are: <code>fn</code>, <code>mod</code>, <code>struct</code>, <code>enum</code>, <code>trait</code>, <code>type</code>, <code>macro</code>, and <code>const</code>.</p><p>Search functions by type signature (e.g., <code>vec -> usize</code> or <code>* -> vec</code>)</p><p>Search multiple things at once by splitting your query with comma (e.g., <code>str,u8</code> or <code>String,struct:Vec,test</code>)</p></div></div></aside><script>window.rootPath = "../";window.currentCrate = "srml_sudo";</script><script src="../aliases.js"></script><script src="../main.js"></script><script defer src="../search-index.js"></script></body></html>

@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["ABORT",""]],"fn":[["set","Set the panic hook"],["set_abort","Set aborting flag. Returns previous value of the flag."]],"struct":[["AbortGuard","Abort flag guard. Sets abort on construction and reverts to previous setting when dropped."]]});

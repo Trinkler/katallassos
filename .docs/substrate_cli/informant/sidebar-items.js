@@ -1,0 +1,1 @@
+initSidebarItems({"fn":[["build","Creates an informant in the form of a `Future` that must be polled regularly."],["start","Spawn informant on the event loop"]]});

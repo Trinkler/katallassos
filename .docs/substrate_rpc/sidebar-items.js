@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["author","Substrate block-author/full-node API."],["chain","Substrate blockchain API."],["metadata","RPC Metadata"],["state","Substrate state API."],["system","Substrate system API."]],"struct":[["Subscriptions","Subscriptions manager."]]});

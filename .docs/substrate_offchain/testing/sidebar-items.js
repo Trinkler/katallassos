@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["PendingRequest","Pending request."],["State","Internal state of the externalities."],["TestOffchainExt","Implementation of offchain externalities used for tests."]]});

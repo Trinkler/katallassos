@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["RpcError","The errors returned by the client."]],"mod":[["transports","Client transport implementations"]],"struct":[["RawClient","Client for raw JSON RPC requests"],["RpcChannel","A channel to a `RpcClient`."],["RpcFuture","The future returned by the rpc call."],["TypedClient","Client for typed JSON RPC requests"]]});

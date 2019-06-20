@@ -1,0 +1,1 @@
+initSidebarItems({"macro":[["static_slice","Create a statically allocated slice of any type."]]});

@@ -1,0 +1,1 @@
+initSidebarItems({"derive":[["NetworkBehaviour","The interface that satisfies Rust."]]});
