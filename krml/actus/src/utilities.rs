@@ -27,43 +27,16 @@ pub fn schedule(
 
     let cycle = cycle.unwrap();
     let end_of_month_convention = end_of_month_convention.unwrap_or(EndOfMonthConvention::SD);
-    //let business_day_convention = business_day_convention.unwrap_or(BusinessDayConvention::NULL);
+    // let business_day_convention = business_day_convention.unwrap_or(BusinessDayConvention::NULL);
 
     match cycle {
         Cycle::Days(int, stub) => vec.push(t),
-        Cycle::Weeks(int, stub) => vec.push(t),
         Cycle::Months(int, stub) => {
             vec.push(s);
             let mut x: UncheckedTime;
             while s < t {
                 s.year += (s.month as u16 + int) / 12;
                 s.month = (s.month - 1 + int as i8) % 12 + 1;
-                x = end_of_month_shift(s, end_of_month_convention);
-                vec.push(x);
-            }
-            if x > t && stub {
-                vec.pop();
-            }
-        }
-        Cycle::Quarters(int, stub) => {
-            vec.push(s);
-            let mut x: UncheckedTime;
-            while s < t {
-                s.year += (s.month as u16 + 3 * int) / 12;
-                s.month = (s.month - 1 + 3 * int as i8) % 12 + 1;
-                x = end_of_month_shift(s, end_of_month_convention);
-                vec.push(x);
-            }
-            if x > t && stub {
-                vec.pop();
-            }
-        }
-        Cycle::Halfyears(int, stub) => {
-            vec.push(s);
-            let mut x: UncheckedTime;
-            while s < t {
-                s.year += (s.month as u16 + 6 * int) / 12;
-                s.month = (s.month - 1 + 6 * int as i8) % 12 + 1;
                 x = end_of_month_shift(s, end_of_month_convention);
                 vec.push(x);
             }
@@ -88,7 +61,7 @@ pub fn schedule(
 }
 
 // 4.3 End of Month Shift Convention
-fn end_of_month_shift(
+pub fn end_of_month_shift(
     mut date: UncheckedTime,
     end_of_month_convention: EndOfMonthConvention,
 ) -> UncheckedTime {
@@ -105,41 +78,40 @@ fn end_of_month_shift(
 }
 
 // 4.4 Business Day Shift Convention
-fn business_day_shift(
-    mut date: UncheckedTime,
-    business_day_convention: BusinessDayConvention,
-) -> UncheckedTime {
-    match business_day_convention {
-        BusinessDayConvention::NULL => {}
-        BusinessDayConvention::SCF => {}
-        BusinessDayConvention::SCMF => {}
-        BusinessDayConvention::CSF => {}
-        BusinessDayConvention::CSMF => {}
-        BusinessDayConvention::SCP => {}
-        BusinessDayConvention::SCMP => {}
-        BusinessDayConvention::CSP => {}
-        BusinessDayConvention::CSMP => {}
-    }
-    date
-}
+// pub fn business_day_shift(
+//     mut date: UncheckedTime,
+//     business_day_convention: BusinessDayConvention,
+// ) -> UncheckedTime {
+//     match business_day_convention {
+//         BusinessDayConvention::NULL => {}
+//         BusinessDayConvention::SCF => {}
+//         BusinessDayConvention::SCMF => {}
+//         BusinessDayConvention::CSF => {}
+//         BusinessDayConvention::CSMF => {}
+//         BusinessDayConvention::SCP => {}
+//         BusinessDayConvention::SCMP => {}
+//         BusinessDayConvention::CSP => {}
+//         BusinessDayConvention::CSMP => {}
+//     }
+//     date
+// }
 
 // 4.5 Business Day Calendar
-fn business_day(date: UncheckedTime, calendar: Calendar) -> bool {
-    match calendar {
-        Calendar::NC => true,
-        Calendar::MTF => {
-            let weekday = Time::day_of_week(date.year, date.month, date.day);
-            if weekday == 6 || weekday == 7 {
-                false
-            } else {
-                true
-            }
-        }
-    }
-}
+// pub fn business_day(date: UncheckedTime, calendar: Calendar) -> bool {
+//     match calendar {
+//         Calendar::NC => true,
+//         Calendar::MTF => {
+//             let weekday = Time::day_of_week(date.year, date.month, date.day);
+//             if weekday == 6 || weekday == 7 {
+//                 false
+//             } else {
+//                 true
+//             }
+//         }
+//     }
+// }
 
 // 4.6 Year Fraction Convention (https://en.wikipedia.org/wiki/Day_count_convention).
-// Need confirmation from Nils on every formula.
 pub fn year_fraction(s: Time, t: Time, day_cont_convention: DayCountConvention) -> Real {
     if s == Time(None) || t == Time(None) || s < t {
         return Real(None);
@@ -258,7 +230,6 @@ pub fn year_fraction(s: Time, t: Time, day_cont_convention: DayCountConvention) 
 
             Real::from(diff) / Real::from(365)
         }
-        DayCountConvention::_30E360ISDA => Real::from(0), // Needs to be implemented.
         DayCountConvention::_30E360 => {
             let year_1 = Real::from(s.0.unwrap().year as i64);
             let month_1 = Real::from(s.0.unwrap().month as i64);
@@ -292,7 +263,8 @@ pub fn year_fraction(s: Time, t: Time, day_cont_convention: DayCountConvention) 
                 + (day_2 - day_1))
                 / Real::from(360)
         }
-        DayCountConvention::_BUS252 => Real::from(0), // Needs to be implemented.
+        // DayCountConvention::_30E360ISDA => Real::from(0),
+        // DayCountConvention::_BUS252 => Real::from(0),
     }
 }
 

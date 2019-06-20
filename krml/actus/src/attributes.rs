@@ -122,10 +122,10 @@ pub struct Attributes {
 #[cfg_attr(feature = "std", derive(Debug))]
 pub enum Cycle {
     Days(u16, bool),
-    Weeks(u16, bool),
+    // Weeks(u16, bool),
     Months(u16, bool),
-    Quarters(u16, bool),
-    Halfyears(u16, bool),
+    // Quarters(u16, bool),
+    // Halfyears(u16, bool),
     Years(u16, bool),
 }
 
@@ -134,10 +134,10 @@ pub enum Cycle {
 #[cfg_attr(feature = "std", derive(Debug))]
 pub enum Period {
     Days(u16),
-    Weeks(u16),
+    // Weeks(u16),
     Months(u16),
-    Quarters(u16),
-    HalfYears(u16),
+    // Quarters(u16),
+    // HalfYears(u16),
     Years(u16),
 }
 
@@ -157,7 +157,7 @@ pub enum Calendar {
     // No Calendar
     NC,
     // Monday to Friday
-    MTF,
+    // MTF,
     // Further calendars may need to be added here
 }
 
@@ -165,14 +165,14 @@ pub enum Calendar {
 #[cfg_attr(feature = "std", derive(Debug))]
 pub enum BusinessDayConvention {
     NULL,
-    SCF,
-    SCMF,
-    CSF,
-    CSMF,
-    SCP,
-    SCMP,
-    CSP,
-    CSMP,
+    // SCF,
+    // SCMF,
+    // CSF,
+    // CSMF,
+    // SCP,
+    // SCMP,
+    // CSP,
+    // CSMP,
 }
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
@@ -262,10 +262,10 @@ pub enum DayCountConvention {
     _AAISDA,
     _A360,
     _A365,
-    _30E360ISDA,
+    // _30E360ISDA,
     _30E360,
     _30360,
-    _BUS252,
+    // _BUS252,
 }
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
