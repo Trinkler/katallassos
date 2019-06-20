@@ -1,38 +1,135 @@
 use super::*;
 
-/// All ACTUS utility functions
-/// Contract Role Sign Convention
-fn contract_role_sign(contract_role: &ContractRole) -> Real {
-    match contract_role {
-        ContractRole::RPA => Real::from(1),
-        ContractRole::RPL => Real::from(-1),
-        ContractRole::CLO => Real::from(1),
-        ContractRole::CNO => Real::from(1),
-        ContractRole::COL => Real::from(1),
-        ContractRole::LG => Real::from(1),
-        ContractRole::ST => Real::from(-1),
-        ContractRole::BUY => Real::from(1),
-        ContractRole::SEL => Real::from(-1),
-        ContractRole::RFL => Real::from(1),
-        ContractRole::PFL => Real::from(-1),
-        ContractRole::RF => Real::from(1),
-        ContractRole::PF => Real::from(-1),
+// 4.1 Schedule
+pub fn schedule(
+    s: Time,
+    t: Time,
+    cycle: Option<Cycle>,
+    end_of_month_convention: Option<EndOfMonthConvention>,
+) -> Vec<Time> {
+    let mut vec: Vec<Time> = Vec::new();
+
+    if s >= t || (s == Time(None) && t == Time(None)) {
+        return vec;
     }
+    if t == Time(None) {
+        vec.push(s);
+        return vec;
+    }
+    if cycle == None {
+        vec.push(s);
+        vec.push(t);
+        return vec;
+    }
+
+    let mut unchecked_s = s.0.unwrap();
+    let unchecked_t = t.0.unwrap();
+    let cycle = cycle.unwrap();
+    let end_of_month_convention = end_of_month_convention.unwrap_or(EndOfMonthConvention::SD);
+
+    match cycle {
+        Cycle::Days(int, stub) => {
+            vec.push(s);
+            let mut x = s;
+            while x != Time(None) && x < t {
+                x = Time::add_days(x, int);
+                vec.push(x);
+            }
+            if x > t && stub {
+                vec.pop();
+            }
+        }
+        Cycle::Months(int, stub) => {
+            vec.push(s);
+            let mut x: UncheckedTime = unchecked_s;
+            while unchecked_s < unchecked_t {
+                unchecked_s.year += (unchecked_s.month as u16 + int) / 12;
+                unchecked_s.month = ((unchecked_s.month as u16 - 1 + int) % 12 + 1) as i8;
+                x = end_of_month_shift(unchecked_s, end_of_month_convention);
+                vec.push(Time::from_unchecked(x));
+            }
+            if unchecked_s > unchecked_t && stub {
+                vec.pop();
+            }
+        }
+        Cycle::Years(int, stub) => {
+            vec.push(s);
+            let mut x: UncheckedTime = unchecked_s;
+            while unchecked_s < unchecked_t {
+                unchecked_s.year += int;
+                x = end_of_month_shift(unchecked_s, end_of_month_convention);
+                vec.push(Time::from_unchecked(x));
+            }
+            if unchecked_s > unchecked_t && stub {
+                vec.pop();
+            }
+        }
+    }
+    vec
 }
 
-// Contract Default Convention
-fn contract_default(contract_status: &ContractStatus) -> Real {
-    match contract_status {
-        ContractStatus::PF => Real::from(1),
-        ContractStatus::DL => Real::from(1),
-        ContractStatus::DQ => Real::from(1),
-        ContractStatus::DF => Real::from(0),
-    }
+// 4.2 Array Schedule
+pub fn array_schedule(
+    arr_s: Vec<Time>,
+    t: Time,
+    arr_cycle: Option<Vec<Cycle>>,
+    end_of_month_convention: Option<EndOfMonthConvention>,
+) -> Vec<Time> {
 }
 
-// Year Fraction Convention (https://en.wikipedia.org/wiki/Day_count_convention).
-// Need confirmation from Nils on every formula.
-fn year_fraction(s: Time, t: Time, day_cont_convention: &DayCountConvention) -> Real {
+// 4.3 End of Month Shift Convention
+pub fn end_of_month_shift(
+    mut date: UncheckedTime,
+    end_of_month_convention: EndOfMonthConvention,
+) -> UncheckedTime {
+    let days_in_month = Time::days_in_month(date.year, date.month);
+    match end_of_month_convention {
+        EndOfMonthConvention::EOM => date.day = days_in_month,
+        EndOfMonthConvention::SD => {
+            if date.day > days_in_month {
+                date.day = days_in_month
+            }
+        }
+    }
+    date
+}
+
+// 4.4 Business Day Shift Convention
+// pub fn business_day_shift(
+//     mut date: UncheckedTime,
+//     business_day_convention: BusinessDayConvention,
+// ) -> UncheckedTime {
+//     match business_day_convention {
+//         BusinessDayConvention::NULL => {}
+//         BusinessDayConvention::SCF => {}
+//         BusinessDayConvention::SCMF => {}
+//         BusinessDayConvention::CSF => {}
+//         BusinessDayConvention::CSMF => {}
+//         BusinessDayConvention::SCP => {}
+//         BusinessDayConvention::SCMP => {}
+//         BusinessDayConvention::CSP => {}
+//         BusinessDayConvention::CSMP => {}
+//     }
+//     date
+// }
+
+// 4.5 Business Day Calendar
+// pub fn business_day(date: UncheckedTime, calendar: Calendar) -> bool {
+//     match calendar {
+//         Calendar::NC => true,
+//         Calendar::MTF => {
+//             let weekday = Time::day_of_week(date.year, date.month, date.day);
+//             if weekday == 6 || weekday == 7 {
+//                 false
+//             } else {
+//                 true
+//             }
+//         }
+//     }
+// }
+
+// 4.6 Year Fraction Convention (https://en.wikipedia.org/wiki/Day_count_convention).
+pub fn year_fraction(s: Time, t: Time, day_cont_convention: DayCountConvention) -> Real {
     if s == Time(None) || t == Time(None) || s < t {
         return Real(None);
     }
@@ -150,7 +247,6 @@ fn year_fraction(s: Time, t: Time, day_cont_convention: &DayCountConvention) -> 
 
             Real::from(diff) / Real::from(365)
         }
-        DayCountConvention::_30E360ISDA => Real::from(0), // Needs to be implemented.
         DayCountConvention::_30E360 => {
             let year_1 = Real::from(s.0.unwrap().year as i64);
             let month_1 = Real::from(s.0.unwrap().month as i64);
@@ -184,6 +280,36 @@ fn year_fraction(s: Time, t: Time, day_cont_convention: &DayCountConvention) -> 
                 + (day_2 - day_1))
                 / Real::from(360)
         }
-        DayCountConvention::_BUS252 => Real::from(0), // Needs to be implemented.
+        // DayCountConvention::_30E360ISDA => Real::from(0),
+        // DayCountConvention::_BUS252 => Real::from(0),
+    }
+}
+
+/// 4.7 Contract Role Sign Convention
+pub fn contract_role_sign(contract_role: ContractRole) -> Real {
+    match contract_role {
+        ContractRole::RPA => Real::from(1),
+        ContractRole::RPL => Real::from(-1),
+        ContractRole::CLO => Real::from(1),
+        ContractRole::CNO => Real::from(1),
+        ContractRole::COL => Real::from(1),
+        ContractRole::LG => Real::from(1),
+        ContractRole::ST => Real::from(-1),
+        ContractRole::BUY => Real::from(1),
+        ContractRole::SEL => Real::from(-1),
+        ContractRole::RFL => Real::from(1),
+        ContractRole::PFL => Real::from(-1),
+        ContractRole::RF => Real::from(1),
+        ContractRole::PF => Real::from(-1),
+    }
+}
+
+// 4.8 Contract Default Convention
+pub fn contract_default(contract_status: ContractStatus) -> Real {
+    match contract_status {
+        ContractStatus::PF => Real::from(1),
+        ContractStatus::DL => Real::from(1),
+        ContractStatus::DQ => Real::from(1),
+        ContractStatus::DF => Real::from(0),
     }
 }
