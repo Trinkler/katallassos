@@ -6,58 +6,75 @@ pub fn schedule(
     t: Time,
     cycle: Option<Cycle>,
     end_of_month_convention: Option<EndOfMonthConvention>,
-    business_day_convention: Option<BusinessDayConvention>,
-) -> Vec<UncheckedTime> {
-    let mut vec: Vec<UncheckedTime> = Vec::new();
+) -> Vec<Time> {
+    let mut vec: Vec<Time> = Vec::new();
 
     if s >= t || (s == Time(None) && t == Time(None)) {
         return vec;
     }
-    let mut s = s.0.unwrap();
     if t == Time(None) {
         vec.push(s);
         return vec;
     }
-    let mut t = t.0.unwrap();
     if cycle == None {
         vec.push(s);
         vec.push(t);
         return vec;
     }
 
+    let mut unchecked_s = s.0.unwrap();
+    let unchecked_t = t.0.unwrap();
     let cycle = cycle.unwrap();
     let end_of_month_convention = end_of_month_convention.unwrap_or(EndOfMonthConvention::SD);
-    // let business_day_convention = business_day_convention.unwrap_or(BusinessDayConvention::NULL);
 
     match cycle {
-        Cycle::Days(int, stub) => vec.push(t),
-        Cycle::Months(int, stub) => {
+        Cycle::Days(int, stub) => {
             vec.push(s);
-            let mut x: UncheckedTime;
-            while s < t {
-                s.year += (s.month as u16 + int) / 12;
-                s.month = (s.month - 1 + int as i8) % 12 + 1;
-                x = end_of_month_shift(s, end_of_month_convention);
+            let mut x = s;
+            while x != Time(None) && x < t {
+                x = Time::add_days(x, int);
                 vec.push(x);
             }
             if x > t && stub {
+                vec.pop();
+            }
+        }
+        Cycle::Months(int, stub) => {
+            vec.push(s);
+            let mut x: UncheckedTime = unchecked_s;
+            while unchecked_s < unchecked_t {
+                unchecked_s.year += (unchecked_s.month as u16 + int) / 12;
+                unchecked_s.month = ((unchecked_s.month as u16 - 1 + int) % 12 + 1) as i8;
+                x = end_of_month_shift(unchecked_s, end_of_month_convention);
+                vec.push(Time::from_unchecked(x));
+            }
+            if unchecked_s > unchecked_t && stub {
                 vec.pop();
             }
         }
         Cycle::Years(int, stub) => {
             vec.push(s);
-            let mut x: UncheckedTime;
-            while s < t {
-                s.year += int;
-                x = end_of_month_shift(s, end_of_month_convention);
-                vec.push(x);
+            let mut x: UncheckedTime = unchecked_s;
+            while unchecked_s < unchecked_t {
+                unchecked_s.year += int;
+                x = end_of_month_shift(unchecked_s, end_of_month_convention);
+                vec.push(Time::from_unchecked(x));
             }
-            if x > t && stub {
+            if unchecked_s > unchecked_t && stub {
                 vec.pop();
             }
         }
     }
     vec
+}
+
+// 4.2 Array Schedule
+pub fn array_schedule(
+    arr_s: Vec<Time>,
+    t: Time,
+    arr_cycle: Option<Vec<Cycle>>,
+    end_of_month_convention: Option<EndOfMonthConvention>,
+) -> Vec<Time> {
 }
 
 // 4.3 End of Month Shift Convention
