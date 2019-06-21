@@ -41,12 +41,13 @@ pub fn schedule(
         }
         Cycle::Months(int, stub) => {
             vec.push(s);
-            let mut x: UncheckedTime = unchecked_s;
             while unchecked_s < unchecked_t {
                 unchecked_s.year += (unchecked_s.month as u16 + int) / 12;
                 unchecked_s.month = ((unchecked_s.month as u16 - 1 + int) % 12 + 1) as i8;
-                x = end_of_month_shift(unchecked_s, end_of_month_convention);
-                vec.push(Time::from_unchecked(x));
+                vec.push(Time::from_unchecked(end_of_month_shift(
+                    unchecked_s,
+                    end_of_month_convention,
+                )));
             }
             if unchecked_s > unchecked_t && stub {
                 vec.pop();
@@ -54,17 +55,19 @@ pub fn schedule(
         }
         Cycle::Years(int, stub) => {
             vec.push(s);
-            let mut x: UncheckedTime = unchecked_s;
             while unchecked_s < unchecked_t {
                 unchecked_s.year += int;
-                x = end_of_month_shift(unchecked_s, end_of_month_convention);
-                vec.push(Time::from_unchecked(x));
+                vec.push(Time::from_unchecked(end_of_month_shift(
+                    unchecked_s,
+                    end_of_month_convention,
+                )));
             }
             if unchecked_s > unchecked_t && stub {
                 vec.pop();
             }
         }
     }
+
     vec
 }
 
@@ -72,9 +75,42 @@ pub fn schedule(
 pub fn array_schedule(
     arr_s: Vec<Time>,
     t: Time,
-    arr_cycle: Option<Vec<Cycle>>,
+    arr_cycle: Vec<Option<Cycle>>,
     end_of_month_convention: Option<EndOfMonthConvention>,
 ) -> Vec<Time> {
+    let mut vec: Vec<Time> = Vec::new();
+
+    if arr_s.len() != arr_cycle.len() {
+        return vec;
+    }
+
+    // Waiting for this feature to be added in Rust. Purpose of this block is to check if both
+    // arrays are sorted.
+    // https://github.com/rust-lang/rust/issues/53485
+    // if !arr_s.is_sorted() || !arr_cycle.is_sorted() {
+    //     return vec;
+    // }
+
+    let mut i: usize = 0;
+    let m = arr_s.len();
+    let mut vec_2: Vec<Time> = Vec::new();
+
+    while i < m - 1 {
+        vec_2 = schedule(
+            arr_s[i],
+            arr_s[i + 1],
+            arr_cycle[i],
+            end_of_month_convention,
+        );
+        vec_2.pop();
+        vec.append(&mut vec_2);
+        i += 1;
+    }
+
+    vec_2 = schedule(arr_s[i], t, arr_cycle[i], end_of_month_convention);
+    vec.append(&mut vec_2);
+
+    vec
 }
 
 // 4.3 End of Month Shift Convention
@@ -83,6 +119,7 @@ pub fn end_of_month_shift(
     end_of_month_convention: EndOfMonthConvention,
 ) -> UncheckedTime {
     let days_in_month = Time::days_in_month(date.year, date.month);
+
     match end_of_month_convention {
         EndOfMonthConvention::EOM => date.day = days_in_month,
         EndOfMonthConvention::SD => {
@@ -91,6 +128,7 @@ pub fn end_of_month_shift(
             }
         }
     }
+
     date
 }
 

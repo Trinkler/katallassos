@@ -210,7 +210,7 @@ impl Time {
     }
 
     /// Adds a given number of days (as an u16) to a date (as a Time) and returns the resulting Time.
-    pub fn add_days(self, mut days: u16) -> Time {
+    pub fn add_days(self, days: u16) -> Time {
         // Checking the None case and getting the UncheckedTime.
         if self == Time(None) {
             return Time(None);
