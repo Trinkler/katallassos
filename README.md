@@ -4,7 +4,9 @@
 
 A Standard Framework for Finance.
 
-## Usage
+## Usage [![Netlify Status](https://api.netlify.com/api/v1/badges/ad0fbe5e-064f-4c35-b916-2839c5f54851/deploy-status)](https://app.netlify.com/sites/katal-docs/deploys)
+
+View [Documentation](https://docs.katal.io).
 
 ### Initial Setup
 
