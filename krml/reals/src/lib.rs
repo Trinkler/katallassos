@@ -26,7 +26,7 @@
 /// These are necessary to work with Substrate.
 use parity_codec::{Decode, Encode};
 /// These are necessary to do operator overloading.
-use std::ops::{Add, Div, Mul, Neg, Sub};
+use std::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
 /// The scale factor (must be positive).
 const SF: i128 = 1000000000;
@@ -80,6 +80,13 @@ impl Add for Real {
     }
 }
 
+/// Implements the addition assignment operator +=.
+impl AddAssign for Real {
+    fn add_assign(&mut self, rhs: Self) {
+        *self = *self + rhs;
+    }
+}
+
 /// Calculates the division of two reals. If any of the inputs is 'None' (or the result
 /// over/underflows), it returns 'None'. It does operator overloading for the symbol '/'.
 impl Div for Real {
@@ -123,6 +130,13 @@ impl Div for Real {
     }
 }
 
+/// Implements the division assignment operator /=.
+impl DivAssign for Real {
+    fn div_assign(&mut self, rhs: Self) {
+        *self = *self / rhs;
+    }
+}
+
 /// Calculates the multiplication of two reals. If any of the inputs is 'None' (or the result
 /// over/underflows), it returns 'None'. It does operator overloading for the symbol '*'.
 impl Mul for Real {
@@ -161,6 +175,13 @@ impl Mul for Real {
     }
 }
 
+/// Implements the multiplication assignment operator *=.
+impl MulAssign for Real {
+    fn mul_assign(&mut self, rhs: Self) {
+        *self = *self * rhs;
+    }
+}
+
 /// Calculates the negation of a real. If the input is 'None' (or the result
 /// overflows which is possible if the input is -2^63/SF), it returns 'None'.
 /// It does operator overloading for the symbol '-'.
@@ -187,6 +208,13 @@ impl Sub for Real {
         } else {
             Real(None)
         }
+    }
+}
+
+/// Implements the subtraction assignment operator -=.
+impl SubAssign for Real {
+    fn sub_assign(&mut self, rhs: Self) {
+        *self = *self - rhs;
     }
 }
 

@@ -91,11 +91,10 @@ pub fn array_schedule(
     //     return vec;
     // }
 
-    let mut i: usize = 0;
     let m = arr_s.len();
     let mut vec_2: Vec<Time> = Vec::new();
 
-    while i < m - 1 {
+    for i in 0..(m - 1) {
         vec_2 = schedule(
             arr_s[i],
             arr_s[i + 1],
@@ -104,10 +103,9 @@ pub fn array_schedule(
         );
         vec_2.pop();
         vec.append(&mut vec_2);
-        i += 1;
     }
 
-    vec_2 = schedule(arr_s[i], t, arr_cycle[i], end_of_month_convention);
+    vec_2 = schedule(arr_s[m - 1], t, arr_cycle[m - 1], end_of_month_convention);
     vec.append(&mut vec_2);
 
     vec
@@ -168,7 +166,7 @@ pub fn end_of_month_shift(
 
 // 4.6 Year Fraction Convention (https://en.wikipedia.org/wiki/Day_count_convention).
 pub fn year_fraction(s: Time, t: Time, day_cont_convention: DayCountConvention) -> Real {
-    if s == Time(None) || t == Time(None) || s < t {
+    if s == Time(None) || t == Time(None) || s > t {
         return Real(None);
     }
     match day_cont_convention {
@@ -350,4 +348,24 @@ pub fn contract_default(contract_status: ContractStatus) -> Real {
         ContractStatus::DQ => Real::from(1),
         ContractStatus::DF => Real::from(0),
     }
+}
+
+// 4.9 Annuity Amount Function (slightly different implementation from the paper)
+pub fn annuity_amount(
+    arr: Vec<Time>,
+    day_cont_convention: DayCountConvention,
+    nominal_value: Real,
+    nominal_accrued: Real,
+    nominal_rate: Real,
+) -> Real {
+    let mut x1 = Real::from(1);
+    let mut x2 = Real::from(0);
+
+    // This is a reverse range, it starts at arr.len()-2 and ends at 0 (both inclusive).
+    for i in (0..(arr.len() - 1)).rev() {
+        x1 *= Real::from(1) + nominal_rate * year_fraction(arr[i], arr[i + 1], day_cont_convention);
+        x2 += x1;
+    }
+
+    (nominal_value + nominal_accrued) * x1 / (Real::from(1) + x2)
 }
