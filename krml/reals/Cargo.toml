@@ -1,17 +1,22 @@
 [package]
 name = "krml-reals"
-version = "0.1.0"
+version = "0.0.1"
 authors = ["Trinkler Software <company@trinkler.software>"]
 edition = "2018"
-
-[dependencies]
-# External crates
-serde = { version = "1.0", optional = true }
-parity-codec = { version = "3.3", default-features = false, features = ["derive"] }
 
 [features]
 default = ["std"]
 std = [
-	"parity-codec/std",
 	"serde",
+	"parity-codec/std",
 ]
+
+# Rust crates
+[dependencies.serde]
+version = "1.0"
+optional = true
+
+[dependencies.parity-codec]
+version = "3.3"
+default-features = false
+features = ["derive"]

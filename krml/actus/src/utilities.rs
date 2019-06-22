@@ -1,6 +1,7 @@
 use super::*;
 
-// 4.1 Schedule
+/// Schedule: a function mapping two different times *s* and *t*, with *s<t*, and a cycle c onto a
+/// sequence of times. See section 4.1 of the ACTUS paper for details.
 pub fn schedule(
     s: Time,
     t: Time,
@@ -71,7 +72,9 @@ pub fn schedule(
     vec
 }
 
-// 4.2 Array Schedule
+/// Array Schedule: a generalization of a regular schedule. It allows the creation of a schedule
+/// that consists of several diferent schedules with different cycles pieced together. See section
+/// 4.2 of the ACTUS paper for details.
 pub fn array_schedule(
     arr_s: Vec<Time>,
     t: Time,
@@ -85,8 +88,7 @@ pub fn array_schedule(
     }
 
     // Waiting for this feature to be added in Rust. Purpose of this block is to check if both
-    // arrays are sorted.
-    // https://github.com/rust-lang/rust/issues/53485
+    // arrays are sorted. (https://github.com/rust-lang/rust/issues/53485)
     // if !arr_s.is_sorted() || !arr_cycle.is_sorted() {
     //     return vec;
     // }
@@ -111,7 +113,10 @@ pub fn array_schedule(
     vec
 }
 
-// 4.3 End of Month Shift Convention
+/// End of Month Shift Convention: it defines for schedules with monthly or yearly cycles if the
+/// schedule times are supposed to try to fall on the same day every time or to always fall on the
+/// end of the month. It shifts an input time according to the desired rule. See section 4.3 of the
+/// ACTUS paper for details.
 pub fn end_of_month_shift(
     mut date: UncheckedTime,
     end_of_month_convention: EndOfMonthConvention,
@@ -130,7 +135,9 @@ pub fn end_of_month_shift(
     date
 }
 
-// 4.4 Business Day Shift Convention
+// Business Day Shift Convention: it defines if the schedule times are supposed to fall on only
+// business days or not. It shifts an input time according to the desired rule. See section 4.4 of
+// the ACTUS paper for details.
 // pub fn business_day_shift(
 //     mut date: UncheckedTime,
 //     business_day_convention: BusinessDayConvention,
@@ -149,22 +156,25 @@ pub fn end_of_month_shift(
 //     date
 // }
 
-// 4.5 Business Day Calendar
-// pub fn business_day(date: UncheckedTime, calendar: Calendar) -> bool {
-//     match calendar {
-//         Calendar::NC => true,
-//         Calendar::MTF => {
-//             let weekday = Time::day_of_week(date.year, date.month, date.day);
-//             if weekday == 6 || weekday == 7 {
-//                 false
-//             } else {
-//                 true
-//             }
-//         }
-//     }
-// }
+/// Business Day Calendar: for a given calendar, it determines if the inputted time falls on a
+/// business day or not. See section 4.5 of the ACTUS paper for details.
+pub fn business_day(date: UncheckedTime, calendar: Calendar) -> bool {
+    match calendar {
+        Calendar::NC => true,
+        // Calendar::MTF => {
+        //     let weekday = Time::day_of_week(date.year, date.month, date.day);
+        //     if weekday == 6 || weekday == 7 {
+        //         false
+        //     } else {
+        //         true
+        //     }
+        // }
+    }
+}
 
-// 4.6 Year Fraction Convention (https://en.wikipedia.org/wiki/Day_count_convention).
+/// Year Fraction Convention: given two input time *s* and *t*, with *s<t*, and the desired day count
+/// convention it calculates the fraction of a year between the two times and returns it as a Real.
+/// See section 4.6 of the ACTUS paper for details.
 pub fn year_fraction(s: Time, t: Time, day_cont_convention: DayCountConvention) -> Real {
     if s == Time(None) || t == Time(None) || s > t {
         return Real(None);
@@ -321,7 +331,8 @@ pub fn year_fraction(s: Time, t: Time, day_cont_convention: DayCountConvention) 
     }
 }
 
-/// 4.7 Contract Role Sign Convention
+/// Contract Role Sign Convention: it maps a given contract role to either a 1 or a -1, representing
+/// a direction for cashflows. See section 4.7 of the ACTUS paper for details.
 pub fn contract_role_sign(contract_role: ContractRole) -> Real {
     match contract_role {
         ContractRole::RPA => Real::from(1),
@@ -340,7 +351,8 @@ pub fn contract_role_sign(contract_role: ContractRole) -> Real {
     }
 }
 
-// 4.8 Contract Default Convention
+/// Contract Default Convention:it maps a given contract status to either a 1 or a 0, representing
+/// a performant or a defaulted contract. See section 4.8 of the ACTUS paper for details.
 pub fn contract_default(contract_status: ContractStatus) -> Real {
     match contract_status {
         ContractStatus::PF => Real::from(1),
@@ -350,7 +362,8 @@ pub fn contract_default(contract_status: ContractStatus) -> Real {
     }
 }
 
-// 4.9 Annuity Amount Function (slightly different implementation from the paper)
+/// Annuity Amount Function: it is used to calculate the annuity amount that needs to be paid at a
+/// given time in an annuity contract. See section 4.9 of the ACTUS paper for details.
 pub fn annuity_amount(
     arr: Vec<Time>,
     day_cont_convention: DayCountConvention,
@@ -368,4 +381,12 @@ pub fn annuity_amount(
     }
 
     (nominal_value + nominal_accrued) * x1 / (Real::from(1) + x2)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn _works() {}
 }
