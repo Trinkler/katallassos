@@ -1,7 +1,7 @@
 use super::*;
 
-// All ACTUS contract attributes as specifed in the data dictionary
-// https://www.actusfrf.org/data-dictionary
+/// All ACTUS contract attributes as specified in the data dictionary
+/// https://www.actusfrf.org/data-dictionary
 #[derive(Encode, Decode, Default, Clone, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct Attributes {
@@ -10,11 +10,11 @@ pub struct Attributes {
     array_cycle_anchor_date_of_interest_payment: Vec<Time>,
     array_cycle_anchor_date_of_principal_redemption: Vec<Time>,
     array_cycle_anchor_date_of_rate_reset: Vec<Time>,
-    array_cycle_of_interest_payment: Option<Vec<Cycle>>,
-    array_cycle_of_principal_redemption: Option<Vec<Cycle>>,
-    array_cycle_of_rate_reset: Option<Vec<Cycle>>,
+    array_cycle_of_interest_payment: Vec<Option<Cycle>>,
+    array_cycle_of_principal_redemption: Vec<Option<Cycle>>,
+    array_cycle_of_rate_reset: Vec<Option<Cycle>>,
     array_fixed_variable: Option<ArrayFixedVariable>,
-    array_increase_decrease: Option<Vec<IncreaseDecrease>>,
+    array_increase_decrease: Vec<Option<IncreaseDecrease>>,
     array_next_principal_redemption_payment: Vec<Real>,
     array_rate: Vec<Real>,
     business_day_convention: Option<BusinessDayConvention>,
@@ -69,8 +69,8 @@ pub struct Attributes {
     initial_margin: Real,
     interest_calculation_base: Option<InterestCalculationBase>,
     interest_calculation_base_amount: Real,
-    legal_entity_id_counterparty: Option<u128>, //Not sure of this type
-    legal_entity_id_record_creator: Option<u128>, //Not sure of this type
+    legal_entity_id_counterparty: Option<u128>,
+    legal_entity_id_record_creator: Option<u128>,
     life_cap: Real,
     life_floor: Real,
     maintenance_margin_lower_bound: Real,
@@ -117,7 +117,7 @@ pub struct Attributes {
     x_day_notice: Option<Period>,
 }
 
-/// the boolean represents the stub, true = long stub, false = short stub.
+// The boolean represents the stub, true = long stub, false = short stub.
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub enum Cycle {
@@ -129,7 +129,6 @@ pub enum Cycle {
     Years(u16, bool),
 }
 
-///
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub enum Period {
@@ -141,7 +140,6 @@ pub enum Period {
     Years(u16),
 }
 
-///
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct ScalingEffect {
@@ -150,7 +148,6 @@ pub struct ScalingEffect {
     z: bool,
 }
 
-// All the following enums are used for the contracts attributes.
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub enum Calendar {

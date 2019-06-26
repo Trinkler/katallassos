@@ -17,24 +17,29 @@
 //! than any time.
 //!
 //! ## Methods
-//! This module also implements several methods to deal with times. The three most important are
-//! 'new', 'is_valid' and 'from_unix'.
+//! This module also implements several methods to deal with times. The four most important are
+//! 'is_valid', 'from_values', 'from_unchecked' and 'from_unix'.
 //!
-//! ### new
+//! ### is_valid
+//! This method checks if an already created instance of Time represents a valid time and returns a
+//! corresponding boolean. It even takes into account leap days. This is meant to be used after a
+//! Time instance is modified, to check that it's still valid.
+//!
+//! ### from_values
 //! This method creates a new instance of Time given the desired values (year, month, etc) as input.
 //! It also checks if the input values are a valid time, and if they are not it returns 'None'. Since
 //! this is a safe way of creating Time instances this method should always preferred instead of the
 //! default constructor.
 //!
-//! ### is_valid
-//! This method performs the same checks as the method 'new', but it does it on a reference of an
-//! already created instance of Time and returns a boolean. This is meant to be used after a Time
-//! instance is modified, to check that it's still valid.
+//! ### from_unchecked
+//! This method creates a new instance of Time given an instance of UncheckedTime as input.
+//! If the inputted UncheckedTime is not valid time it will return a 'None'. This is also a safe
+//| constructor for Time.
 //!
 //! ### from_unix
-//! This method converts an unix time into a ISO8601 time and then creates a corresponding Time instance.
-//! If the input unix time exceeds the range of allowed ISO8601 times, it will return 'None'. When
-//! converting between the two formats leap seconds are ignored.
+//! This method converts an unix time into a ISO8601 time and then creates a corresponding Time
+//! instance. If the input unix time exceeds the range of allowed ISO8601 times, it will return 'None'.
+//! When converting between the two formats leap seconds are ignored.
 
 /// These are necessary to work with Substrate.
 use parity_codec::{Decode, Encode};
@@ -210,7 +215,7 @@ impl Time {
     }
 
     /// Adds a given number of days (as an u16) to a date (as a Time) and returns the resulting Time.
-    pub fn add_days(self, mut days: u16) -> Time {
+    pub fn add_days(self, days: u16) -> Time {
         // Checking the None case and getting the UncheckedTime.
         if self == Time(None) {
             return Time(None);
