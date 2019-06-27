@@ -1,7 +1,7 @@
 use super::*;
 
-// All ACTUS contract variables as specifed in the ACTUS paper.
-#[derive(Encode, Decode, Default, Clone, PartialEq)]
+/// All ACTUS contract variables as specifed in the ACTUS paper.
+#[derive(Clone, Copy, Decode, Encode, Default, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct Variables {
     fee_accrued: Real,

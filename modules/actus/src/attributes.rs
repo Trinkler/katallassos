@@ -1,8 +1,7 @@
 use super::*;
 
-/// All ACTUS contract attributes as specified in the data dictionary
-/// https://www.actusfrf.org/data-dictionary
-#[derive(Encode, Decode, Default, Clone, PartialEq)]
+/// All ACTUS contract attributes as specified in the data dictionary.
+#[derive(Clone, Decode, Encode, Default, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct Attributes {
     accrued_interest: Real,

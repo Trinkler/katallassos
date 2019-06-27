@@ -7,11 +7,22 @@ use time::{Time, UncheckedTime};
 
 // Importing the rest of the files in this crate.
 mod attributes;
+mod events;
 mod utilities;
 mod variables;
 use self::attributes::*;
+use self::events::*;
 use self::utilities::*;
 use self::variables::*;
+
+// This struct contains all the information that defines a contract state.
+#[derive(Clone, Decode, Encode, Default, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub struct ContractState {
+    attributes: Attributes,
+    variables: Variables,
+    schedule: Vec<ContractEvent>,
+}
 
 // The module's configuration trait.
 pub trait Trait: system::Trait {
@@ -26,14 +37,6 @@ decl_event!(
         Nothing(AccountId),
     }
 );
-
-// This struct contains all the information that defines a contract state.
-#[derive(Encode, Decode, Default, Clone, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
-pub struct ContractState {
-    attributes: Attributes,
-    variables: Variables,
-}
 
 // This module's storage items.
 decl_storage! {
