@@ -15,6 +15,10 @@ use self::events::*;
 use self::utilities::*;
 use self::variables::*;
 
+// Defines an alias for the Result type. It has the name MyResult because Substrate already uses
+// the name Result for their own type Result<(), &'static str>.
+type MyResult<T> = rstd::result::Result<T, &'static str>;
+
 // This struct contains all the information that defines a contract state.
 #[derive(Clone, Decode, Encode, Default, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
