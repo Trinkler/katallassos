@@ -1,7 +1,7 @@
 [package]
 name = "katal-runtime"
 version = "0.0.1"
-authors = ["Anonymous"]
+authors = ["Trinkler Software <company@trinkler.software>"]
 edition = "2018"
 
 [dependencies]
@@ -52,5 +52,4 @@ std = [
 	"safe-mix/std",
 	"consensus-aura/std",
 	"offchain-primitives/std",
-	"reals/std",
 ]
