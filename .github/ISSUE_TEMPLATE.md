@@ -8,6 +8,6 @@ Please provide the following information:
 
 ### Information about our environment
 
-* OS & Verison
-* Browser & Version
-* Katal version
+-   OS & Version
+-   Browser & Version
+-   Katal version
