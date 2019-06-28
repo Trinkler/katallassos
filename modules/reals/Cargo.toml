@@ -1,5 +1,5 @@
 [package]
-name = "krml-reals"
+name = "modules-reals"
 version = "0.0.1"
 authors = ["Trinkler Software <company@trinkler.software>"]
 edition = "2018"

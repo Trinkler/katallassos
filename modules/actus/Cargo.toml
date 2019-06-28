@@ -1,5 +1,5 @@
 [package]
-name = "krml-actus"
+name = "modules-actus"
 version = "0.0.1"
 authors = ["Trinkler Software <company@trinkler.software>"]
 edition = "2018"
@@ -55,12 +55,12 @@ default-features = false
 
 # KRML crates
 [dependencies.reals]
-package = "krml-reals"
+package = "modules-reals"
 path = "../reals"
 default-features = false
 
 [dependencies.time]
-package = "krml-time"
+package = "modules-time"
 path = "../time"
 default-features = false
 

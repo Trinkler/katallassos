@@ -1,5 +1,5 @@
 [package]
-name = "krml-time"
+name = "modules-time"
 version = "0.0.1"
 authors = ["Trinkler Software <company@trinkler.software>"]
 edition = "2018"
