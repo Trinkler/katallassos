@@ -1,1 +1,0 @@
-initSidebarItems({"trait":[["NetworkSpecialization","A specialization of the substrate network protocol. Handles events and sends messages."]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"macro":[["hex","Macro for converting hex string to byte array at compile time"]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["read_children","Returns the hashes of the children blocks of the block with `parent_hash`."],["remove_children","Prepare transaction to remove the children of `parent_hash`."],["write_children","Insert the key-value pair (`parent_hash`, `children_hashes`) in the transaction. Any existing value is overwritten upon write."]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Error",""]],"fn":[["u128","Decode the given slice as `u128`."],["u16","Decode the given slice as `u16`."],["u32","Decode the given slice as `u32`."],["u64","Decode the given slice as `u64`."],["u8","Decode the given slice as `u8`."],["usize","Decode the given slice as `usize`."]]});

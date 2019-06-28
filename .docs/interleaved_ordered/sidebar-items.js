@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["interleave_ordered","Interleave two ordered iterators, yielding a new iterator whose items are also ordered."]],"struct":[["InterleaveOrdered","Iterator that encapsulates two other ordered iterators to yield their results in order."]]});

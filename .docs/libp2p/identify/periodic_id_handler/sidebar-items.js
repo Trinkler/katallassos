@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["PeriodicIdHandlerEvent","Event produced by the periodic identifier."]],"struct":[["PeriodicIdHandler","Protocol handler that identifies the remote at a regular period."]]});

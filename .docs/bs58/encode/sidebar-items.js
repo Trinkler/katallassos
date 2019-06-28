@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["encode_into","Encode given bytes into given string using the given alphabet, any existing data will be cleared."]],"struct":[["EncodeBuilder","A builder for setting up the alphabet and output of a base58 encode."]]});

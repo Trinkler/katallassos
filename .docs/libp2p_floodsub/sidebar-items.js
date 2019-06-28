@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["FloodsubEvent","Event that can happen on the floodsub behaviour."]],"mod":[["protocol",""]],"struct":[["Floodsub","Network behaviour that automatically identifies nodes periodically, and returns information about them."],["Topic","Built topic."],["TopicBuilder","Builder for a `TopicHash`."],["TopicHash","Represents the hash of a topic."]]});

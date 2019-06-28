@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["AURA_ENGINE_ID","The `ConsensusEngineId` of AuRa."]],"enum":[["ConsensusLog","An consensus log item for Aura."]],"trait":[["AuraApi","API necessary for block authorship with aura."]]});

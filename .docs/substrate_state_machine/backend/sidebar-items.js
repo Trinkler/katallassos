@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Void","Error impossible."]],"struct":[["InMemory","In-memory backend. Fully recomputes tries on each commit but useful for tests."]],"trait":[["Backend","A state backend is used to read state data and can have changes committed to it."],["Consolidate","Trait that allows consolidate two transactions together."]]});

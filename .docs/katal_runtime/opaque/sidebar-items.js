@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["UncheckedExtrinsic","Opaque, encoded, unchecked extrinsic."]],"type":[["Block","Opaque block type."],["BlockId","Opaque block identifier type."],["Header","Opaque block header type."],["SessionKey","Opaque session key type."]]});

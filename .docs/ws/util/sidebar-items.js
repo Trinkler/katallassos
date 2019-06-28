@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Timeout","A timeout, as returned by `Timer::set_timeout`."],["Token","Associates readiness notifications with [`Evented`] handles."]]});
