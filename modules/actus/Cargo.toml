@@ -31,26 +31,26 @@ features = ["derive"]
 [dependencies.rstd]
 package = "sr-std"
 git = "https://github.com/paritytech/substrate.git"
-branch = 'v1.0'
+rev = "dbf3226"
 default-features = false
 
 [dependencies.runtime_primitives]
 package = "sr-primitives"
 git = "https://github.com/paritytech/substrate.git"
-branch = 'v1.0'
+rev = "dbf3226"
 default-features = false
 
 # SRML crates
 [dependencies.support]
 package = "srml-support"
 git = "https://github.com/paritytech/substrate.git"
-branch = 'v1.0'
+rev = "dbf3226"
 default-features = false
 
 [dependencies.system]
 package = "srml-system"
 git = "https://github.com/paritytech/substrate.git"
-branch = 'v1.0'
+rev = "dbf3226"
 default-features = false
 
 # Katal crates
@@ -68,9 +68,9 @@ default-features = false
 [dev-dependencies.runtime_io]
 package = "sr-io"
 git = "https://github.com/paritytech/substrate.git"
-branch = 'v1.0'
+rev = "dbf3226"
 
 [dev-dependencies.primitives]
 package = "substrate-primitives"
 git = "https://github.com/paritytech/substrate.git"
-branch = 'v1.0'
+rev = "dbf3226"
