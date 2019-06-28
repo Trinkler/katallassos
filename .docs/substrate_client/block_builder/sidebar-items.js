@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["api","The runtime api for building blocks."]],"struct":[["BlockBuilder","Utility for building new (valid) blocks from a stream of extrinsics."]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Error","Author RPC errors."]],"type":[["Result","Author RPC Result type."]]});

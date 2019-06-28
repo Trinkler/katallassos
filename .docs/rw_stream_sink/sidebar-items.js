@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["RwStreamSink","Wraps around a `Stream + Sink` whose items are buffers. Implements `AsyncRead` and `AsyncWrite`."]]});

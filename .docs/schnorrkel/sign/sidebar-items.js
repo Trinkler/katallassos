@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["SIGNATURE_LENGTH","The length of a curve25519 EdDSA `Signature`, in bytes."]],"fn":[["verify_batch","Verify a batch of `signatures` on `messages` with their respective `public_keys`."]],"struct":[["Signature","A Ristretto Schnorr signature \"detached\" from the signed message."]]});

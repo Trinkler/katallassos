@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["clean_type_string",""],["generate_crate_access","Generates the access to the `srml-support` crate."],["generate_hidden_includes","Generates the hidden includes that are required to make the macro independent from its scope."]],"mod":[["syn_ext","Extension to syn types, mainly for parsing"]]});

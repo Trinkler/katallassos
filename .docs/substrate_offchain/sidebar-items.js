@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["testing","Offchain Externalities implementation for tests."]],"struct":[["OffchainWorkers","An offchain workers manager."]],"trait":[["OffchainWorkerApi","The offchain worker api."]]});

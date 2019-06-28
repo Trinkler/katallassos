@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["DecodeError","Errors that could occur when decoding a Base58 encoded string."]],"fn":[["decode_into","Decode given string into given byte slice using the given alphabet."]],"struct":[["DecodeBuilder","A builder for setting up the alphabet and output of a base58 decode."]]});

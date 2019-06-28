@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["ListenersEvent","Event that can happen on the `ListenersStream`."]],"struct":[["ListenersStream","Implementation of `futures::Stream` that allows listening on multiaddresses."]]});

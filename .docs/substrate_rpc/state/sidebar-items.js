@@ -1,1 +1,0 @@
-initSidebarItems({"mod":[["error","State RPC errors."],["gen_client","The generated client module."]],"struct":[["State","State API with subscriptions support."],["StateClient","The Client."]],"trait":[["StateApi","Substrate state API"]]});

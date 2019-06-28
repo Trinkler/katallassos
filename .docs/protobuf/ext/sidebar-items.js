@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["ExtFieldOptional","Optional ext field"],["ExtFieldRepeated","Repeated ext field"]]});

@@ -1,1 +1,0 @@
-initSidebarItems({"fn":[["future_to_promise","Converts a Rust `Future` into a JavaScript `Promise`."],["spawn_local","Converts a Rust `Future` on a local task queue."]],"struct":[["JsFuture","A Rust `Future` backed by a JavaScript `Promise`."]]});

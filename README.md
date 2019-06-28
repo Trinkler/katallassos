@@ -2,11 +2,15 @@
 
 # katal-chain
 
-A Standard Framework for Finance.
+> [Katal](https://katal.io): Standard Framework for Finance.
 
 ## Usage [![Netlify Status](https://api.netlify.com/api/v1/badges/ad0fbe5e-064f-4c35-b916-2839c5f54851/deploy-status)](https://app.netlify.com/sites/katal-docs/deploys)
 
-View [Documentation](https://docs.katal.io).
+- [View Documentation](https://docs.katal.io)
+- [Read Research Papers](https://github.com/Trinkler/katal-research)
+- [Subscribe to Newsletter](https://software.us19.list-manage.com/subscribe?u=48964a7b4b5e9480604838bf2&id=982968577c)
+- [Join Telegram](https://t.me/katalchain)
+- [Join Reddit](https://www.reddit.com/r/katalchain)
 
 ### Initial Setup
 

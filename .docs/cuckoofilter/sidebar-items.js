@@ -1,1 +1,0 @@
-initSidebarItems({"constant":[["DEFAULT_CAPACITY","The default number of buckets."],["MAX_REBUCKET","If insertion fails, we will retry this many times."]],"struct":[["CuckooFilter","A cuckoo filter class exposes a Bloomier filter interface, providing methods of add, delete, contains."]]});

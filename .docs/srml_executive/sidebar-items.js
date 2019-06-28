@@ -1,1 +1,0 @@
-initSidebarItems({"struct":[["Executive",""]],"trait":[["ExecuteBlock","Trait that can be used to execute a block."]],"type":[["CallOf",""],["CheckedOf",""],["OriginOf",""]]});

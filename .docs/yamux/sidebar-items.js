@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["ConnectionError",""],["DecodeError",""],["Mode",""],["State",""],["WindowUpdateMode","Specifies when window update frames are sent."]],"struct":[["Config","Yamux configuration."],["Connection","Holds the underlying connection."],["StreamHandle","A handle to a multiplexed stream."]]});

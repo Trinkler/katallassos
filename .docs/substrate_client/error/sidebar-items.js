@@ -1,1 +1,0 @@
-initSidebarItems({"enum":[["Error","Substrate Client error"]],"type":[["Result","Client Result type alias"]]});
