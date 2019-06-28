@@ -43,7 +43,7 @@ pub struct Attributes {
     cycle_of_dividend: Option<Period>,
     cycle_of_fee: Option<Cycle>,
     cycle_of_interest_calculation_base: Option<Cycle>,
-    cycle_of_nterest_payment: Option<Cycle>,
+    cycle_of_interest_payment: Option<Cycle>,
     cycle_of_margining: Option<Cycle>,
     cycle_of_optionality: Option<Cycle>,
     cycle_of_principal_redemption: Option<Cycle>,
