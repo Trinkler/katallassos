@@ -1,15 +1,15 @@
-#!/usr/bin/env bash
+#!/bin/bash
+set -e
 
-# Define Variables
-PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
-
-bold=$(tput bold)
-normal=$(tput sgr0)
-
-echo "${bold}Building static doc site...${normal}"
+PROJECT_ROOT=`git rev-parse --show-toplevel`
 
 cd "$PROJECT_ROOT"
-# Build docs
-cargo doc
+
+for toml in $(find . -maxdepth 3 -name "Cargo.toml"); do
+    cargo update --manifest-path $toml || true
+    cargo doc --no-deps --manifest-path $toml "$@"
+done
+
 # Move to docs folder to deploy
-cp -r target/doc/* .docs
+cp -r target/doc/* ../katal-docs/docs
+cp ../katal-docs/.ci/index.html ../katal-docs/docs/index.html
