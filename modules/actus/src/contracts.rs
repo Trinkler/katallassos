@@ -95,6 +95,7 @@ pub fn initialize_pam(
     // legal_entity_id_record_creator: Option<u128>,
     // status_date: Time,
     //
+    //
     // // Mandatory on stand-alone and parent contracts only and
     // // optional on child contracts -> NN(_,_,2)
     // legal_entity_id_counterparty: Option<u128>,
