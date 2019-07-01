@@ -66,7 +66,7 @@ pub fn initialize_pam(
     termination_date: Time,
 ) -> MyResult<ContractState> {
     // The ContractID, necessary to create any contract
-    let mut attributes = attributes::new(contract_id);
+    let mut attributes = Attributes::new(contract_id);
 
     // Mandatory in all cases -> NN
     if contract_type.is_none()
@@ -88,16 +88,31 @@ pub fn initialize_pam(
         attributes.notional_principal = notional_principal;
     }
 
-    // // Mandatory on stand-alone and parent contracts only and
-    // // not applicable on child contracts -> NN(_,_,1)
-    // contract_deal_date: Time,
-    // contract_role: Option<ContractRole>,
-    // legal_entity_id_record_creator: Option<u128>,
-    // status_date: Time,
-    //
-    // // Mandatory on stand-alone and parent contracts only and
-    // // optional on child contracts -> NN(_,_,2)
-    // legal_entity_id_counterparty: Option<u128>,
+    // Mandatory on stand-alone and parent contracts only and
+    // not applicable on child contracts -> NN(_,_,1)
+    // TODO: check for parent/child relationship
+    if contract_deal_date.0.is_none()
+        || contract_deal_date.0.is_none()
+        || contract_role.is_none()
+        || legal_entity_id_record_creator.is_none()
+        || status_date.0.is_none()
+    {
+        return Err("Error while initializing attributes");
+    } else {
+        attributes.contract_deal_date = contract_deal_date;
+        attributes.contract_role = contract_role;
+        attributes.legal_entity_id_record_creator = legal_entity_id_record_creator;
+        attributes.status_date = status_date;
+    }
+
+    // Mandatory on stand-alone and parent contracts only and
+    // optional on child contracts -> NN(_,_,2)
+    // TODO: check for parent/child relationship
+    if legal_entity_id_counterparty.is_none() {
+        return Err("Error while initializing attributes");
+    } else {
+        attributes.legal_entity_id_counterparty = legal_entity_id_counterparty;
+    }
 
     // Optional in all cases -> x
     attributes.accrued_interest = accrued_interest;
@@ -108,80 +123,145 @@ pub fn initialize_pam(
     attributes.market_value_observed = market_value_observed;
     attributes.premium_discount_at_ied = premium_discount_at_ied;
 
-    // // Optional on stand-alone and parent contracts only and
-    // // not applicable on child contracts -> x(_,_,1)
-    // contract_status: Option<ContractStatus>,
-    // delinquency_period: Option<Period>,
-    // delinquency_rate: Real,
-    // grace_period: Option<Period>,
-    // non_performing_date: Time,
-    // seniority: Option<Seniority>,
-    //
-    // // Group 1
-    // // Business rule ‘a’ applies unconditionally
-    // fee_rate: Real, // -> x(1,0,_)
-    // // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
-    // fee_basis: Option<FeeBasis>, // -> NN(1,1,_)
-    // fee_accrued: Real, // -> x(1,1,_)
-    // // At least one of the CAs with c=2 has to be defined if at least one of the unconditional CAs
-    // // of the group is defined
-    // cycle_anchor_date_of_fee: Time, // -> x(1,2,_)
-    // cycle_of_fee: Option<Cycle>, // -> x(1,2,_)
-    //
-    // // Group 2
-    // // Business rule ‘a’ applies unconditionally
-    // cycle_anchor_date_of_interest_payment: Time, // -> x(2,0,_)
-    // cycle_of_interest_payment: Option<Cycle>, // -> x(2,0,_)
-    // // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
-    // cycle_point_of_interest_payment: Option<CyclePointOfInterestPayment>, // -> x(2,1,_)1
-    //
-    // // Group 5
-    // // Business rule ‘a’ applies unconditionally
-    // purchase_date: Time, // -> x(5,0,1)
-    // // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
-    // price_at_purchase_date: Real, // -> NN(5,1,1)
-    //
-    // // Group 6
-    // // Business rule ‘a’ applies unconditionally
-    // termination_date: Time, // -> x(6,0,1)
-    // // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
-    // price_at_termination_date: Real, // -> NN(6,1,1)
-    //
-    // // Group 7
-    // // Business rule ‘a’ applies unconditionally
-    // scaling_effect: Option<ScalingEffect>, // -> x(7,0,_)
-    // // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
-    // market_object_code_of_scaling_index: Option<u128>, // -> NN(7,1,_)
-    // scaling_index_at_status_date: Real, // -> NN(7,1,_)
-    // // At least one of the CAs with c=2 has to be defined if at least one of the unconditional CAs
-    // // of the group is defined
-    // cycle_anchor_date_of_scaling_index: Time, // -> x(7,2,_)
-    // cycle_of_scaling_index: Option<Cycle>, // -> x(7,2,_)
-    //
-    // // Group 8
-    // // Business rule ‘a’ applies unconditionally
-    // prepayment_effect: Option<PrepaymentEffect>, // -> x(8,0,_)
-    // // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
-    // cycle_anchor_date_of_optionality: Time, // -> x(8,1,_)
-    // cycle_of_optionality: Option<Cycle>, // -> x(8,1,_)
-    // option_exercise_end_date: Time, // -> x(8,1,_)
-    // penalty_rate: Real, // -> x(8,1,_)
-    // penalty_type: Option<PenaltyType>, // -> x(8,1,_)
-    // prepayment_period: Option<Period>, // -> x(8,1,1)
-    //
-    // // Group 9
-    // // Business rule ‘a’ applies unconditionally
-    // cycle_anchor_date_of_rate_reset: Time, // -> x(9,0,_)
-    // cycle_of_rate_reset: Option<Cycle>, // -> x(9,0,_)
-    // // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
-    // market_object_code_rate_reset: Option<u128>, // -> NN(9,1,_)
-    // rate_spread: Real, // -> NN(9,1,_)
-    // fixing_days: Option<Period>, // -> x(9,1,_)
-    // life_cap: Real, // -> x(9,1,_)
-    // life_floor: Real, // -> x(9,1,_)
-    // next_reset_rate: Real, // -> x(9,1,_)
-    // period_cap: Real, // -> x(9,1,_)
-    // period_floor: Real, // -> x(9,1,_)
-    // rate_multiplier: Real, // -> x(9,1,_)
-    // cycle_point_of_rate_reset: Option<CyclePointOfRateReset>, // -> x(9,1,_)1
+    // Optional on stand-alone and parent contracts only and
+    // not applicable on child contracts -> x(_,_,1)
+    // TODO: check for parent/child relationship
+    attributes.contract_status = contract_status;
+    attributes.delinquency_period = delinquency_period;
+    attributes.delinquency_rate = delinquency_rate;
+    attributes.grace_period = grace_period;
+    attributes.non_performing_date = non_performing_date;
+    attributes.seniority = seniority;
+
+    // Group 1
+    // Business rule ‘a’ applies unconditionally
+    attributes.fee_rate = fee_rate; // -> x(1,0,_)
+
+    // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
+    if fee_rate.0.is_some() {
+        if fee_basis.is_none() {
+            return Err("Error while initializing attributes");
+        }
+        attributes.fee_basis = fee_basis; // -> NN(1,1,_)
+        attributes.fee_accrued = fee_accrued; // -> x(1,1,_)
+    }
+    // At least one of the CAs with c=2 has to be defined if at least one of the unconditional CAs
+    // of the group is defined
+    if fee_rate.0.is_some() {
+        if cycle_anchor_date_of_fee.0.is_none() && cycle_of_fee.is_none() {
+            return Err("Error while initializing attributes");
+        }
+        attributes.cycle_anchor_date_of_fee = cycle_anchor_date_of_fee; // -> x(1,2,_)
+        attributes.cycle_of_fee = cycle_of_fee; // -> x(1,2,_)
+    }
+
+    // Group 2
+    // Business rule ‘a’ applies unconditionally
+    attributes.cycle_anchor_date_of_interest_payment = cycle_anchor_date_of_interest_payment; // -> x(2,0,_)
+    attributes.cycle_of_interest_payment = cycle_of_interest_payment; // -> x(2,0,_)
+
+    // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
+    if cycle_anchor_date_of_interest_payment.0.is_some() || cycle_of_interest_payment.is_some() {
+        if cycle_point_of_interest_payment == Some(CyclePointOfInterestPayment::B)
+            && cycle_point_of_rate_reset != Some(CyclePointOfRateReset::B)
+        {
+            return Err("Error while initializing attributes");
+        }
+        attributes.cycle_point_of_interest_payment = cycle_point_of_interest_payment; // -> x(2,1,_)1
+    }
+
+    // Group 5
+    // Business rule ‘a’ applies unconditionally
+    // TODO: check for parent/child relationship
+    attributes.purchase_date = purchase_date; // -> x(5,0,1)
+
+    // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
+    if purchase_date.0.is_some() {
+        if price_at_purchase_date.0.is_none() {
+            return Err("Error while initializing attributes");
+        } else {
+            // TODO: check for parent/child relationship
+            attributes.price_at_purchase_date = price_at_purchase_date; // -> NN(5,1,1)
+        }
+    }
+
+    // Group 6
+    // Business rule ‘a’ applies unconditionally
+    // TODO: check for parent/child relationship
+    attributes.termination_date = termination_date; // -> x(6,0,1)
+
+    // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
+    if termination_date.0.is_some() {
+        if price_at_termination_date.0.is_none() {
+            return Err("Error while initializing attributes");
+        } else {
+            // TODO: check for parent/child relationship
+            attributes.price_at_termination_date = price_at_termination_date; // -> NN(6,1,1)
+        }
+    }
+
+    // Group 7
+    // Business rule ‘a’ applies unconditionally
+    attributes.scaling_effect = scaling_effect; // -> x(7,0,_)
+
+    // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
+    if scaling_effect.is_some() {
+        if market_object_code_of_scaling_index.is_none() || scaling_index_at_status_date.0.is_none()
+        {
+            return Err("Error while initializing attributes");
+        }
+        attributes.market_object_code_of_scaling_index = market_object_code_of_scaling_index; // -> NN(7,1,_)
+        attributes.scaling_index_at_status_date = scaling_index_at_status_date; // -> NN(7,1,_)
+    }
+    // At least one of the CAs with c=2 has to be defined if at least one of the unconditional CAs
+    // of the group is defined
+    if scaling_effect.is_some() {
+        if cycle_anchor_date_of_scaling_index.0.is_none() && cycle_of_scaling_index.is_none() {
+            return Err("Error while initializing attributes");
+        }
+        attributes.cycle_anchor_date_of_scaling_index = cycle_anchor_date_of_scaling_index; // -> x(7,2,_)
+        attributes.cycle_of_scaling_index = cycle_of_scaling_index; // -> x(7,2,_)
+    }
+
+    // Group 8
+    // Business rule ‘a’ applies unconditionally
+    attributes.prepayment_effect = prepayment_effect; // -> x(8,0,_)
+
+    // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
+    if prepayment_effect.is_some() {
+        attributes.cycle_anchor_date_of_optionality = cycle_anchor_date_of_optionality; // -> x(8,1,_)
+        attributes.cycle_of_optionality = cycle_of_optionality; // -> x(8,1,_)
+        attributes.option_exercise_end_date = option_exercise_end_date; // -> x(8,1,_)
+        attributes.penalty_rate = penalty_rate; // -> x(8,1,_)
+        attributes.penalty_type = penalty_type; // -> x(8,1,_)
+
+        // TODO: check for parent/child relationship
+        attributes.prepayment_period = prepayment_period; // -> x(8,1,1)
+    }
+
+    // Group 9
+    // Business rule ‘a’ applies unconditionally
+    attributes.cycle_anchor_date_of_rate_reset = cycle_anchor_date_of_rate_reset; // -> x(9,0,_)
+    attributes.cycle_of_rate_reset = cycle_of_rate_reset; // -> x(9,0,_)
+
+    // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
+    if cycle_anchor_date_of_rate_reset.0.is_some() || cycle_of_rate_reset.is_some() {
+        if market_object_code_rate_reset.is_none() || rate_spread.0.is_none() {
+            return Err("Error while initializing attributes");
+        } else {
+            attributes.market_object_code_rate_reset = market_object_code_rate_reset; // -> NN(9,1,_)
+            attributes.rate_spread = rate_spread; // -> NN(9,1,_)
+        }
+        attributes.fixing_days = fixing_days; // -> x(9,1,_)
+        attributes.life_cap = life_cap; // -> x(9,1,_)
+        attributes.life_floor = life_floor; // -> x(9,1,_)
+        attributes.next_reset_rate = next_reset_rate; // -> x(9,1,_)
+        attributes.period_cap = period_cap; // -> x(9,1,_)
+        attributes.period_floor = period_floor; // -> x(9,1,_)
+        attributes.rate_multiplier = rate_multiplier; // -> x(9,1,_)
+        attributes.cycle_point_of_rate_reset = cycle_point_of_rate_reset; // -> x(9,1,_)1
+    }
+
+    // Temporary, remove this!
+    Err("Exterminate!")
 }

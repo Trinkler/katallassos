@@ -9,11 +9,13 @@ use time::{Time, UncheckedTime};
 mod attributes;
 mod contract_events;
 mod contract_state;
+mod contracts;
 mod utilities;
 mod variables;
 use self::attributes::*;
 use self::contract_events::*;
 use self::contract_state::*;
+use self::contracts::*;
 use self::utilities::*;
 use self::variables::*;
 
