@@ -5,8 +5,8 @@ use super::*;
 #[derive(Clone, Copy, Decode, Encode, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct ContractEvent {
-    time: Time,
-    event_type: ContractEventType,
+    pub time: Time,
+    pub event_type: ContractEventType,
 }
 
 /// All ACTUS contract event types as specifed in the ACTUS paper. They are ordered from highest to

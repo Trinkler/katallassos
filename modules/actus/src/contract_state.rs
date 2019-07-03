@@ -4,7 +4,7 @@ use super::*;
 #[derive(Clone, Decode, Encode, Default, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct ContractState {
-    attributes: Attributes,
-    variables: Variables,
-    schedule: Vec<ContractEvent>,
+    pub attributes: Attributes,
+    pub variables: Variables,
+    pub schedule: Vec<ContractEvent>,
 }
