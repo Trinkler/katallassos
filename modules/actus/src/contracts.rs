@@ -1,6 +1,7 @@
 use super::*;
 
 pub fn initialize_pam(
+    t0: Time,
     accrued_interest: Real,
     business_day_convention: Option<BusinessDayConvention>,
     calendar: Option<Calendar>,
@@ -92,7 +93,6 @@ pub fn initialize_pam(
     // not applicable on child contracts -> NN(_,_,1)
     // TODO: check for parent/child relationship
     if contract_deal_date.0.is_none()
-        || contract_deal_date.0.is_none()
         || contract_role.is_none()
         || legal_entity_id_record_creator.is_none()
         || status_date.0.is_none()
@@ -102,7 +102,7 @@ pub fn initialize_pam(
         attributes.contract_deal_date = contract_deal_date;
         attributes.contract_role = contract_role;
         attributes.legal_entity_id_record_creator = legal_entity_id_record_creator;
-        attributes.status_date = status_date;
+        attributes.status_date = status_date; // What's the relation of this to t0?
     }
 
     // Mandatory on stand-alone and parent contracts only and
@@ -260,6 +260,41 @@ pub fn initialize_pam(
         attributes.period_floor = period_floor; // -> x(9,1,_)
         attributes.rate_multiplier = rate_multiplier; // -> x(9,1,_)
         attributes.cycle_point_of_rate_reset = cycle_point_of_rate_reset; // -> x(9,1,_)1
+    }
+
+    // Creating the schedule for all the events.
+    let mut schedule: Vec<ContractEvent> = Vec::new();
+
+    // Inital exchange date event
+    let event = ContractEvent::new(initial_exchange_date, ContractEventType::IED);
+    schedule.push(event);
+
+    // Principal redemption event
+    let event = ContractEvent::new(maturity_date, ContractEventType::PR);
+    schedule.push(event);
+
+    // Principal prepayment event
+    // TODO: It can't be properly implemented now. Tech specs are ambiguous.
+    if prepayment_effect != Some(PrepaymentEffect::N) {
+        if cycle_anchor_date_of_optionality == Time(None) && cycle_of_optionality == None {
+            let s = Time(None);
+        } else if cycle_anchor_date_of_optionality == Time(None) {
+            let s = Time(None); // TBD TBD TBD
+        } else {
+            let s = cycle_anchor_date_of_optionality;
+        }
+
+        let vec = schedule(
+            s,
+            maturity_date,
+            cycle_of_optionality,
+            end_of_month_convention,
+        )?;
+
+        for t in vec {
+            let event = ContractEvent::new(t, ContractEventType::PP);
+            schedule.push(event);
+        }
     }
 
     // Temporary, remove this!
