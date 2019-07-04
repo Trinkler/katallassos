@@ -19,3 +19,24 @@ pub struct Variables {
     pub performance: Option<ContractStatus>,
     pub time_at_maturity_date: Time,
 }
+
+impl Variables {
+    pub fn new() -> Variables {
+        Variables {
+            fee_accrued: Real(None),
+            interest_calculation_base: Real(None),
+            interest_scaling_multiplier: Real(None),
+            last_event_date: Time(None),
+            next_principal_redemption_payment: Real(None),
+            nominal_accrued_1: Real(None),
+            nominal_accrued_2: Real(None),
+            nominal_rate: Real(None),
+            nominal_value_1: Real(None),
+            nominal_value_2: Real(None),
+            notional_scaling_multiplier: Real(None),
+            payoff_at_settlement: Real(None),
+            performance: None,
+            time_at_maturity_date: Time(None),
+        }
+    }
+}

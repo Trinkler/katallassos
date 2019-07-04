@@ -275,16 +275,22 @@ pub fn initialize_pam(
 
     // Principal prepayment event
     // TODO: It can't be properly implemented now. Tech specs are ambiguous.
-    if prepayment_effect != Some(PrepaymentEffect::N) {
+    if prepayment_effect == Some(PrepaymentEffect::N) {
+    } else {
+        let mut s: Time = Time(None);
         if cycle_anchor_date_of_optionality == Time(None) && cycle_of_optionality == None {
-            let s = Time(None);
+            s = Time(None);
         } else if cycle_anchor_date_of_optionality == Time(None) {
-            let s = Time(None); // TBD TBD TBD
+            s = utilities::sum_cycle(
+                initial_exchange_date,
+                cycle_of_optionality,
+                end_of_month_convention,
+            );
         } else {
-            let s = cycle_anchor_date_of_optionality;
+            s = cycle_anchor_date_of_optionality;
         }
 
-        let vec = schedule(
+        let vec = utilities::schedule(
             s,
             maturity_date,
             cycle_of_optionality,
@@ -296,6 +302,228 @@ pub fn initialize_pam(
             schedule.push(event);
         }
     }
+
+    // Penalty payment event
+    if penalty_type == Some(PenaltyType::O) {
+    } else {
+        for e in schedule.clone() {
+            if e.event_type == ContractEventType::PP {
+                let event = ContractEvent::new(e.time, ContractEventType::PY);
+                schedule.push(event);
+            }
+        }
+    }
+
+    // Fee payment event
+    // TODO: Need to check if attributes are correct.
+    if fee_rate == Real(None) || fee_rate == Real::from(0) {
+    } else {
+        let mut s: Time = Time(None);
+        if cycle_anchor_date_of_fee == Time(None) && cycle_of_fee == None {
+            s = Time(None);
+        } else if cycle_anchor_date_of_fee == Time(None) {
+            s = utilities::sum_cycle(initial_exchange_date, cycle_of_fee, end_of_month_convention);
+        } else {
+            s = cycle_anchor_date_of_fee;
+        }
+
+        let vec = utilities::schedule(s, maturity_date, cycle_of_fee, end_of_month_convention)?;
+
+        for t in vec {
+            let event = ContractEvent::new(t, ContractEventType::FP);
+            schedule.push(event);
+        }
+    }
+
+    // Purchase date event
+    let event = ContractEvent::new(purchase_date, ContractEventType::PRD);
+    schedule.push(event);
+
+    // Termination date event
+    let event = ContractEvent::new(termination_date, ContractEventType::TD);
+    schedule.push(event);
+
+    // Interest payment event
+    // TODO: Check expression.
+    if nominal_interest_rate == Real::from(0) {
+    } else {
+        let mut s: Time = Time(None);
+        if cycle_anchor_date_of_interest_payment == Time(None) && cycle_of_interest_payment == None
+        {
+            s = Time(None);
+        } else if capitalization_end_date != Time(None) {
+            s = capitalization_end_date;
+        } else if cycle_anchor_date_of_interest_payment == Time(None) {
+            s = utilities::sum_cycle(
+                initial_exchange_date,
+                cycle_of_interest_payment,
+                end_of_month_convention,
+            );
+        } else {
+            s = cycle_anchor_date_of_interest_payment;
+        }
+
+        let vec = utilities::schedule(
+            s,
+            maturity_date,
+            cycle_of_interest_payment,
+            end_of_month_convention,
+        )?;
+
+        for t in vec {
+            let event = ContractEvent::new(t, ContractEventType::IP);
+            schedule.push(event);
+        }
+    }
+
+    // Interest capitalization event
+    if capitalization_end_date == Time(None) {
+    } else {
+        let mut s: Time = Time(None);
+        if cycle_anchor_date_of_interest_payment == Time(None) && cycle_of_interest_payment == None
+        {
+            s = Time(None);
+        } else if cycle_anchor_date_of_interest_payment == Time(None) {
+            s = utilities::sum_cycle(
+                initial_exchange_date,
+                cycle_of_interest_payment,
+                end_of_month_convention,
+            );
+        } else {
+            s = cycle_anchor_date_of_interest_payment;
+        }
+
+        let vec = utilities::schedule(
+            s,
+            capitalization_end_date,
+            cycle_of_interest_payment,
+            end_of_month_convention,
+        )?;
+
+        for t in vec {
+            let event = ContractEvent::new(t, ContractEventType::IPCI);
+            schedule.push(event);
+        }
+    }
+
+    // Rate reset variable event
+    // TODO:Not sure what status date is.
+    if cycle_anchor_date_of_rate_reset == Time(None) && cycle_of_rate_reset == None {
+    } else {
+        let mut s: Time = Time(None);
+        if cycle_anchor_date_of_rate_reset == Time(None) {
+            s = utilities::sum_cycle(
+                initial_exchange_date,
+                cycle_of_rate_reset,
+                end_of_month_convention,
+            );
+        } else {
+            s = cycle_anchor_date_of_rate_reset;
+        }
+
+        let vec = utilities::schedule(
+            s,
+            maturity_date,
+            cycle_of_rate_reset,
+            end_of_month_convention,
+        )?;
+
+        if next_reset_rate != Real(None) {
+            let mut t_rry = Time(None);
+            for t in vec.clone() {
+                if t > status_date {
+                    t_rry = t;
+                    break;
+                }
+            }
+            for t in vec {
+                if t != t_rry {
+                    let event = ContractEvent::new(t, ContractEventType::RR);
+                    schedule.push(event);
+                }
+            }
+        } else {
+            for t in vec {
+                let event = ContractEvent::new(t, ContractEventType::RR);
+                schedule.push(event);
+            }
+        }
+    }
+
+    // Rate reset fixed event
+    // TODO:Not sure what status date is.
+    if cycle_anchor_date_of_rate_reset == Time(None) && cycle_of_rate_reset == None {
+    } else {
+        let mut s: Time = Time(None);
+        if cycle_anchor_date_of_rate_reset == Time(None) {
+            s = utilities::sum_cycle(
+                initial_exchange_date,
+                cycle_of_rate_reset,
+                end_of_month_convention,
+            );
+        } else {
+            s = cycle_anchor_date_of_rate_reset;
+        }
+
+        let vec = utilities::schedule(
+            s,
+            maturity_date,
+            cycle_of_rate_reset,
+            end_of_month_convention,
+        )?;
+
+        for t in vec {
+            if t > status_date {
+                let event = ContractEvent::new(t, ContractEventType::RRF);
+                schedule.push(event);
+                break;
+            }
+        }
+    }
+
+    // Scaling index revision event
+    if scaling_effect
+        == Some(ScalingEffect {
+            x: false,
+            y: false,
+            z: false,
+        })
+    {
+    } else {
+        let mut s: Time = Time(None);
+        if cycle_anchor_date_of_scaling_index == Time(None) && cycle_of_scaling_index == None {
+            s = Time(None);
+        } else if cycle_anchor_date_of_scaling_index == Time(None) {
+            s = utilities::sum_cycle(
+                initial_exchange_date,
+                cycle_of_scaling_index,
+                end_of_month_convention,
+            );
+        } else {
+            s = cycle_anchor_date_of_scaling_index;
+        }
+
+        let vec = utilities::schedule(
+            s,
+            maturity_date,
+            cycle_of_scaling_index,
+            end_of_month_convention,
+        )?;
+
+        for t in vec {
+            let event = ContractEvent::new(t, ContractEventType::SC);
+            schedule.push(event);
+        }
+    }
+
+    // Credit default event
+    // TODO: Seems to be user-initiated, so no need to appear in the schedule?
+
+    // Ordering the schedule
+    schedule.sort_unstable();
+
+    // Initializing the variables
+    let mut variables = Variables::new();
 
     // Temporary, remove this!
     Err("Exterminate!")
