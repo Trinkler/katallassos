@@ -174,10 +174,9 @@ impl sudo::Trait for Runtime {
     type Proposal = Call;
 }
 
-// /// Used for the module template in `./template.rs`
-// impl template::Trait for Runtime {
-//     type Event = Event;
-// }
+impl actus::Trait for Runtime {
+    type Event = Event;
+}
 
 construct_runtime!(
 	pub enum Runtime where
@@ -191,8 +190,7 @@ construct_runtime!(
 		Indices: indices::{default, Config<T>},
 		Balances: balances,
 		Sudo: sudo,
-		// // Used for the module template in `./template.rs`
-		// TemplateModule: template::{Module, Call, Storage, Event<T>},
+		Actus: actus::{Module, Call, Storage, Event<T>},
 	}
 );
 

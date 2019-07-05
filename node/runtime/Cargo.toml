@@ -27,8 +27,8 @@ indices = { package = "srml-indices", git = "https://github.com/paritytech/subst
 system = { package = "srml-system", git = "https://github.com/paritytech/substrate.git", rev = "dbf3226", default_features = false }
 timestamp = { package = "srml-timestamp", git = "https://github.com/paritytech/substrate.git", rev = "dbf3226", default_features = false }
 sudo = { package = "srml-sudo", git = "https://github.com/paritytech/substrate.git", rev = "dbf3226", default_features = false }
-# KRML crates
-reals = { package = "modules-reals", path = "../../modules/reals", default_features = false }
+# Katal crates
+actus = { package="modules-actus", path="../../modules/actus", default_features = false}
 
 [features]
 default = ["std"]
@@ -52,4 +52,5 @@ std = [
 	"safe-mix/std",
 	"consensus-aura/std",
 	"offchain-primitives/std",
+	"actus/std",
 ]
