@@ -525,6 +525,117 @@ pub fn initialize_pam(
     // Initializing the variables
     let mut variables = Variables::new();
 
-    // Temporary, remove this!
-    Err("Exterminate!")
+    // Time at maturity date variable
+    variables.time_at_maturity_date = maturity_date;
+
+    // Nominal value 1 variable
+    if initial_exchange_date > t0 {
+        variables.nominal_value_1 = Real::from(0);
+    } else {
+        variables.nominal_value_1 =
+            utilities::contract_role_sign(contract_role) * notional_principal;
+    }
+
+    // Nominal rate variable
+    if initial_exchange_date > t0 {
+        variables.nominal_rate = Real::from(0);
+    } else {
+        variables.nominal_rate = nominal_interest_rate;
+    }
+
+    // Nominal accrued 1 variable
+    if nominal_interest_rate == Real(None) {
+        variables.nominal_accrued_1 = Real::from(0);
+    } else if accrued_interest != Real(None) {
+        variables.nominal_accrued_1 = accrued_interest;
+    } else {
+        let mut t_minus = Time(None);
+        for e in schedule.clone() {
+            if e.event_type == ContractEventType::IP {
+                if e.time >= t0 {
+                    break;
+                }
+                t_minus = e.time;
+            }
+        }
+        variables.nominal_accrued_1 =
+            utilities::year_fraction(t_minus, t0, day_count_convention.unwrap())
+                * variables.nominal_value_1
+                * variables.nominal_rate;
+    }
+
+    // Fee accrued variable
+    // TODO: Check what t_minus is.
+    if fee_rate == Real(None) {
+        variables.fee_accrued = Real::from(0);
+    } else if fee_accrued != Real(None) {
+        variables.fee_accrued = fee_accrued;
+    } else if fee_basis == Some(FeeBasis::N) {
+        let mut t_minus = Time(None);
+        for e in schedule.clone() {
+            if e.event_type == ContractEventType::FP {
+                if e.time >= t0 {
+                    break;
+                }
+                t_minus = e.time;
+            }
+        }
+        variables.fee_accrued =
+            utilities::year_fraction(t_minus, t0, day_count_convention.unwrap())
+                * variables.nominal_value_1
+                * fee_rate;
+    } else {
+        let mut t_minus = Time(None);
+        let mut t_plus = Time(None);
+        for e in schedule.clone() {
+            if e.event_type == ContractEventType::FP {
+                if e.time >= t0 {
+                    t_plus = e.time;
+                    break;
+                }
+                t_minus = e.time;
+            }
+        }
+        variables.fee_accrued =
+            utilities::year_fraction(t_minus, t0, day_count_convention.unwrap())
+                / utilities::year_fraction(t_minus, t_plus, day_count_convention.unwrap())
+                * fee_rate;
+    }
+
+    // Nominal scaling multiplier variable
+    let temp = scaling_effect.unwrap_or(ScalingEffect {
+        x: false,
+        y: false,
+        z: false,
+    });
+    if temp.y == true {
+        variables.notional_scaling_multiplier = scaling_index_at_status_date;
+    } else {
+        variables.notional_scaling_multiplier = Real::from(1);
+    }
+
+    // Interest scaling multiplier variable
+    let temp = scaling_effect.unwrap_or(ScalingEffect {
+        x: false,
+        y: false,
+        z: false,
+    });
+    if temp.x == true {
+        variables.interest_scaling_multiplier = scaling_index_at_status_date;
+    } else {
+        variables.interest_scaling_multiplier = Real::from(1);
+    }
+
+    // Performance variable
+    variables.performance = contract_status;
+
+    // Last event date variable
+    variables.last_event_date = t0;
+
+    // Returning the initialized Contract State
+    Ok(ContractState {
+        attributes: attributes,
+        variables: variables,
+        schedule: schedule,
+    })
 }
