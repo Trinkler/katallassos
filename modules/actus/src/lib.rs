@@ -22,28 +22,28 @@ use time::{Time, UncheckedTime};
 
 // Importing the rest of the files in this crate.
 mod attributes;
-mod events;
+mod contract_events;
+mod contract_state;
+mod contracts;
 mod utilities;
 mod variables;
 use self::attributes::*;
-use self::events::*;
+use self::contract_events::*;
+use self::contract_state::*;
+use self::contracts::*;
 use self::utilities::*;
 use self::variables::*;
 
-// This struct contains all the information that defines a contract state.
-#[derive(Clone, Decode, Encode, Default, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
-pub struct ContractState {
-    attributes: Attributes,
-    variables: Variables,
-    schedule: Vec<ContractEvent>,
-}
+// Defines an alias for the Result type. It has the name MyResult because Substrate already uses
+// the name Result for their own type Result<(), &'static str>.
+type MyResult<T> = rstd::result::Result<T, &'static str>;
 
-// The module's configuration trait.
+// This module's configuration trait.
 pub trait Trait: system::Trait {
     type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
 }
 
+// This module's events.
 decl_event!(
     pub enum Event<T>
     where
@@ -60,7 +60,7 @@ decl_storage! {
     }
 }
 
-// The module's dispatchable functions.
+// This module's dispatchable functions.
 decl_module! {
     /// The module declaration.
     pub struct Module<T: Trait> for enum Call where origin: T::Origin {

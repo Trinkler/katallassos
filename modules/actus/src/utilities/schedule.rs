@@ -22,26 +22,25 @@ pub fn schedule(
     t: Time,
     cycle: Option<Cycle>,
     end_of_month_convention: Option<EndOfMonthConvention>,
-) -> Vec<Time> {
-    let mut vec: Vec<Time> = Vec::new();
-
+) -> MyResult<Vec<Time>> {
     // Checking some assumptions about the inputs.
     if s != Time(None) && t != Time(None) && s >= t {
-        return vec;
+        return Err("Couldn't create schedule");
     }
     if s == Time(None) && t == Time(None) {
-        return vec;
+        return Err("Couldn't create schedule");
     }
 
     // Checking two specific cases of the schedule function.
+    let mut vec: Vec<Time> = Vec::new();
     if t == Time(None) {
         vec.push(s);
-        return vec;
+        return Ok(vec);
     }
     if cycle == None {
         vec.push(s);
         vec.push(t);
-        return vec;
+        return Ok(vec);
     }
 
     // Checking the main case of the schedule function.
@@ -53,7 +52,7 @@ pub fn schedule(
     match cycle {
         Cycle::Days(int, stub) => {
             if int == 0 {
-                return vec;
+                return Err("Couldn't create schedule");
             }
             vec.push(s);
             let mut x = s;
@@ -67,7 +66,7 @@ pub fn schedule(
         }
         Cycle::Months(int, stub) => {
             if int == 0 {
-                return vec;
+                return Err("Couldn't create schedule");
             }
             vec.push(s);
             while unchecked_s < unchecked_t {
@@ -84,7 +83,7 @@ pub fn schedule(
         }
         Cycle::Years(int, stub) => {
             if int == 0 {
-                return vec;
+                return Err("Couldn't create schedule");
             }
             vec.push(s);
             while unchecked_s < unchecked_t {
@@ -100,7 +99,7 @@ pub fn schedule(
         }
     }
 
-    vec
+    Ok(vec)
 }
 
 #[cfg(test)]
@@ -110,73 +109,73 @@ mod tests {
     #[test]
     fn schedule_works() {
         // Testing s==None && t==None.
-        let mut vec: Vec<Time> = Vec::new();
-        assert_eq!(schedule(Time(None), Time(None), None, None), vec);
+        assert!(schedule(Time(None), Time(None), None, None).is_err());
 
         // Testing t>s.
         let s = Time::from_values(2019, 06, 01, 12, 00, 00);
         let t = Time::from_values(2019, 06, 15, 12, 00, 00);
-        assert_eq!(schedule(t, s, None, None), vec);
+        assert!(schedule(t, s, None, None).is_err());
 
         // Testing t==None.
+        let mut vec: Vec<Time> = Vec::new();
         vec.push(s);
-        assert_eq!(schedule(s, Time(None), None, None), vec);
+        assert_eq!(schedule(s, Time(None), None, None), Ok(vec.clone()));
 
         // Testing cycle==None.
         vec.push(t);
-        assert_eq!(schedule(s, t, None, None), vec);
+        assert_eq!(schedule(s, t, None, None), Ok(vec.clone()));
 
         // Testing Cycle::Days==0.
-        let mut vec: Vec<Time> = Vec::new();
         let c = Some(Cycle::Days(0, true));
-        assert_eq!(schedule(s, t, c, None), vec);
+        assert!(schedule(s, t, c, None).is_err());
 
         // Testing Cycle::Days with long stub.
+        let mut vec: Vec<Time> = Vec::new();
         let c = Some(Cycle::Days(5, true));
         vec.push(s);
         vec.push(Time::from_values(2019, 06, 06, 12, 00, 00));
         vec.push(Time::from_values(2019, 06, 11, 12, 00, 00));
-        assert_eq!(schedule(s, t, c, None), vec);
+        assert_eq!(schedule(s, t, c, None), Ok(vec.clone()));
 
         // Testing Cycle::Days with short stub.
         let c = Some(Cycle::Days(5, false));
         vec.push(Time::from_values(2019, 06, 16, 12, 00, 00));
-        assert_eq!(schedule(s, t, c, None), vec);
+        assert_eq!(schedule(s, t, c, None), Ok(vec.clone()));
 
         // Testing Cycle::Months==0.
-        let mut vec: Vec<Time> = Vec::new();
         let t = Time::from_values(2020, 06, 01, 12, 00, 00);
         let c = Some(Cycle::Months(0, true));
-        assert_eq!(schedule(s, t, c, None), vec);
+        assert!(schedule(s, t, c, None).is_err());
 
         // Testing Cycle::Months with long stub.
+        let mut vec: Vec<Time> = Vec::new();
         let c = Some(Cycle::Months(5, true));
         vec.push(s);
         vec.push(Time::from_values(2019, 11, 01, 12, 00, 00));
         vec.push(Time::from_values(2020, 04, 01, 12, 00, 00));
-        assert_eq!(schedule(s, t, c, None), vec);
+        assert_eq!(schedule(s, t, c, None), Ok(vec.clone()));
 
         // Testing Cycle::Months with short stub.
         let c = Some(Cycle::Months(5, false));
         vec.push(Time::from_values(2020, 09, 01, 12, 00, 00));
-        assert_eq!(schedule(s, t, c, None), vec);
+        assert_eq!(schedule(s, t, c, None), Ok(vec.clone()));
 
         // Testing Cycle::Years==0.
-        let mut vec: Vec<Time> = Vec::new();
         let t = Time::from_values(2030, 06, 01, 12, 00, 00);
         let c = Some(Cycle::Years(0, true));
-        assert_eq!(schedule(s, t, c, None), vec);
+        assert!(schedule(s, t, c, None).is_err());
 
         // Testing Cycle::Years with long stub.
+        let mut vec: Vec<Time> = Vec::new();
         let c = Some(Cycle::Years(5, true));
         vec.push(s);
         vec.push(Time::from_values(2024, 06, 01, 12, 00, 00));
         vec.push(Time::from_values(2029, 06, 01, 12, 00, 00));
-        assert_eq!(schedule(s, t, c, None), vec);
+        assert_eq!(schedule(s, t, c, None), Ok(vec.clone()));
 
         // Testing Cycle::Years with short stub.
         let c = Some(Cycle::Years(5, false));
         vec.push(Time::from_values(2034, 06, 01, 12, 00, 00));
-        assert_eq!(schedule(s, t, c, None), vec);
+        assert_eq!(schedule(s, t, c, None), Ok(vec.clone()));
     }
 }

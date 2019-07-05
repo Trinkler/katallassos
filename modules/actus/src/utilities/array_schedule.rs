@@ -23,20 +23,19 @@ pub fn array_schedule(
     t: Time,
     arr_cycle: Vec<Option<Cycle>>,
     end_of_month_convention: Option<EndOfMonthConvention>,
-) -> Vec<Time> {
-    let mut vec: Vec<Time> = Vec::new();
-
+) -> MyResult<Vec<Time>> {
     if arr_s.len() != arr_cycle.len() {
-        return vec;
+        return Err("Couldn't create array schedule");
     }
 
     // Waiting for this feature to be added in Rust. Purpose of this block is to check if the
     // array is sorted. (https://github.com/rust-lang/rust/issues/53485)
     // if !arr_s.is_sorted() {
-    //     return vec;
+    //     return Err("Couldn't create array schedule");
     // }
 
     let m = arr_s.len();
+    let mut vec: Vec<Time> = Vec::new();
     let mut vec_2: Vec<Time> = Vec::new();
 
     for i in 0..(m - 1) {
@@ -45,15 +44,15 @@ pub fn array_schedule(
             arr_s[i + 1],
             arr_cycle[i],
             end_of_month_convention,
-        );
+        )?;
         vec_2.pop();
         vec.append(&mut vec_2);
     }
 
-    vec_2 = schedule(arr_s[m - 1], t, arr_cycle[m - 1], end_of_month_convention);
+    vec_2 = schedule(arr_s[m - 1], t, arr_cycle[m - 1], end_of_month_convention)?;
     vec.append(&mut vec_2);
 
-    vec
+    Ok(vec)
 }
 
 #[cfg(test)]
@@ -68,7 +67,7 @@ mod tests {
 
         // Testing different sizes of vectors.
         arr_s.push(t);
-        assert_eq!(array_schedule(arr_s, t, arr_c, None), Vec::new());
+        assert!(array_schedule(arr_s, t, arr_c, None).is_err());
 
         // Testing an arbitrary schedule.
         let s1 = Time::from_values(2019, 06, 01, 12, 00, 00);
@@ -87,6 +86,6 @@ mod tests {
         vec.push(s3);
         vec.push(Time::from_values(2020, 08, 03, 12, 00, 00));
         vec.push(t);
-        assert_eq!(array_schedule(arr_s, t, arr_c, None), vec);
+        assert_eq!(array_schedule(arr_s, t, arr_c, None), Ok(vec.clone()));
     }
 }
