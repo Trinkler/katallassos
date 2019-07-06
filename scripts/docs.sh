@@ -11,6 +11,6 @@ for toml in $(find . -maxdepth 3 -name "Cargo.toml"); do
 done
 
 # Remove previous docs
-rm -rf ../katal.io/docs && mkdir ../katal.io/docs
+rm -rf ../katal.io/public/docs && mkdir ../katal.io/public/docs
 # Move to docs folder to deploy
-cp -r target/doc/* ../katal.io/docs
+cp -r target/doc/* ../katal.io/public/docs
