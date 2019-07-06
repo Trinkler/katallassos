@@ -36,6 +36,7 @@ pub struct Variables {
 }
 
 impl Variables {
+    // Creates an instance of Variables with every field set to None.
     pub fn new() -> Variables {
         Variables {
             fee_accrued: Real(None),

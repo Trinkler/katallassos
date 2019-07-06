@@ -68,7 +68,7 @@ pub struct Attributes {
     pub cycle_of_scaling_index: Option<Cycle>,
     pub cycle_point_of_interest_payment: Option<CyclePointOfInterestPayment>,
     pub cycle_point_of_rate_reset: Option<CyclePointOfRateReset>,
-    pub day_count_convention: Option<DayCountConvention>, // Check allowed values in the Data dictionary.
+    pub day_count_convention: Option<DayCountConvention>,
     pub delinquency_period: Option<Period>,
     pub delinquency_rate: Real,
     pub delivery_settlement: Option<DeliverySettlement>,
@@ -248,7 +248,7 @@ pub enum DayCountConvention {
     _A365,
     // _30E360ISDA,
     _30E360,
-    _30360, // This one does not appear in the data dictionary now?...
+    _30360, // This one does not appear in the data dictionary?...
             // _BUS252,
 }
 

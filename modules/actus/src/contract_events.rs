@@ -51,7 +51,7 @@ pub enum ContractEventType {
     XD,
     STD,
     MD,
-    // AD,
+    // AD, // This event is for analysis only, it has no effect on the state.
 }
 
 impl ContractEvent {
