@@ -9,7 +9,7 @@ pub fn initialize_pam(
     contract_deal_date: Time,
     contract_id: u128,
     contract_role: Option<ContractRole>,
-    contract_status: Option<ContractStatus>,
+    contract_performance: Option<ContractPerformance>,
     contract_type: Option<ContractType>,
     currency: Option<u128>,
     cycle_anchor_date_of_fee: Time,
@@ -35,8 +35,8 @@ pub fn initialize_pam(
     fixing_days: Option<Period>,
     grace_period: Option<Period>,
     initial_exchange_date: Time,
-    legal_entity_id_counterparty: Option<u128>,
-    legal_entity_id_record_creator: Option<u128>,
+    counterparty_id: Option<u128>,
+    creator_id: Option<u128>,
     life_cap: Real,
     life_floor: Real,
     market_object_code_of_scaling_index: Option<u128>,
@@ -63,11 +63,13 @@ pub fn initialize_pam(
     scaling_effect: Option<ScalingEffect>,
     scaling_index_at_status_date: Real,
     seniority: Option<Seniority>,
-    status_date: Time,
     termination_date: Time,
 ) -> MyResult<ContractState> {
     // The ContractID, necessary to create any contract
     let mut attributes = Attributes::new(contract_id);
+
+    // Setting the Status Date to t0, since we don't attributes to change.
+    attributes.status_date = t0;
 
     // Mandatory in all cases -> NN
     if contract_type.is_none()
@@ -92,26 +94,21 @@ pub fn initialize_pam(
     // Mandatory on stand-alone and parent contracts only and
     // not applicable on child contracts -> NN(_,_,1)
     // TODO: check for parent/child relationship
-    if contract_deal_date.0.is_none()
-        || contract_role.is_none()
-        || legal_entity_id_record_creator.is_none()
-        || status_date.0.is_none()
-    {
+    if contract_deal_date.0.is_none() || contract_role.is_none() || creator_id.is_none() {
         return Err("Error while initializing attributes");
     } else {
         attributes.contract_deal_date = contract_deal_date;
         attributes.contract_role = contract_role;
-        attributes.legal_entity_id_record_creator = legal_entity_id_record_creator;
-        attributes.status_date = status_date; // What's the relation of this to t0?
+        attributes.creator_id = creator_id;
     }
 
     // Mandatory on stand-alone and parent contracts only and
     // optional on child contracts -> NN(_,_,2)
     // TODO: check for parent/child relationship
-    if legal_entity_id_counterparty.is_none() {
+    if counterparty_id.is_none() {
         return Err("Error while initializing attributes");
     } else {
-        attributes.legal_entity_id_counterparty = legal_entity_id_counterparty;
+        attributes.counterparty_id = counterparty_id;
     }
 
     // Optional in all cases -> x
@@ -126,7 +123,7 @@ pub fn initialize_pam(
     // Optional on stand-alone and parent contracts only and
     // not applicable on child contracts -> x(_,_,1)
     // TODO: check for parent/child relationship
-    attributes.contract_status = contract_status;
+    attributes.contract_performance = contract_performance;
     attributes.delinquency_period = delinquency_period;
     attributes.delinquency_rate = delinquency_rate;
     attributes.grace_period = grace_period;
@@ -262,6 +259,11 @@ pub fn initialize_pam(
         attributes.cycle_point_of_rate_reset = cycle_point_of_rate_reset; // -> x(9,1,_)1
     }
 
+    // Checking if the attributes all have allowed values
+    if attributes.is_valid() == false {
+        return Err("Error while initializing attributes");
+    }
+
     // Creating the schedule for all the events.
     let mut schedule: Vec<ContractEvent> = Vec::new();
 
@@ -274,7 +276,7 @@ pub fn initialize_pam(
     schedule.push(event);
 
     // Principal prepayment event
-    // TODO: It can't be properly implemented now. Tech specs are ambiguous.
+    // TODO: Consider the user-initiated event.
     if prepayment_effect == Some(PrepaymentEffect::N) {
     } else {
         let mut s: Time = Time(None);
@@ -315,7 +317,6 @@ pub fn initialize_pam(
     }
 
     // Fee payment event
-    // TODO: Need to check if attributes are correct.
     if fee_rate == Real(None) || fee_rate == Real::from(0) {
     } else {
         let mut s: Time = Time(None);
@@ -344,8 +345,7 @@ pub fn initialize_pam(
     schedule.push(event);
 
     // Interest payment event
-    // TODO: Check expression.
-    if nominal_interest_rate == Real::from(0) {
+    if nominal_interest_rate == Real(None) {
     } else {
         let mut s: Time = Time(None);
         if cycle_anchor_date_of_interest_payment == Time(None) && cycle_of_interest_payment == None
@@ -407,7 +407,6 @@ pub fn initialize_pam(
     }
 
     // Rate reset variable event
-    // TODO:Not sure what status date is.
     if cycle_anchor_date_of_rate_reset == Time(None) && cycle_of_rate_reset == None {
     } else {
         let mut s: Time = Time(None);
@@ -431,7 +430,7 @@ pub fn initialize_pam(
         if next_reset_rate != Real(None) {
             let mut t_rry = Time(None);
             for t in vec.clone() {
-                if t > status_date {
+                if t > attributes.status_date {
                     t_rry = t;
                     break;
                 }
@@ -451,7 +450,6 @@ pub fn initialize_pam(
     }
 
     // Rate reset fixed event
-    // TODO:Not sure what status date is.
     if cycle_anchor_date_of_rate_reset == Time(None) && cycle_of_rate_reset == None {
     } else {
         let mut s: Time = Time(None);
@@ -473,7 +471,7 @@ pub fn initialize_pam(
         )?;
 
         for t in vec {
-            if t > status_date {
+            if t > attributes.status_date {
                 let event = ContractEvent::new(t, ContractEventType::RRF);
                 schedule.push(event);
                 break;
@@ -517,7 +515,7 @@ pub fn initialize_pam(
     }
 
     // Credit default event
-    // TODO: Seems to be user-initiated, so no need to appear in the schedule?
+    // TODO: First figure out how to do user-initiated events.
 
     // Ordering the schedule
     schedule.sort_unstable();
@@ -565,7 +563,6 @@ pub fn initialize_pam(
     }
 
     // Fee accrued variable
-    // TODO: Check what t_minus is.
     if fee_rate == Real(None) {
         variables.fee_accrued = Real::from(0);
     } else if fee_accrued != Real(None) {
@@ -627,7 +624,7 @@ pub fn initialize_pam(
     }
 
     // Performance variable
-    variables.performance = contract_status;
+    variables.performance = contract_performance;
 
     // Last event date variable
     variables.last_event_date = t0;

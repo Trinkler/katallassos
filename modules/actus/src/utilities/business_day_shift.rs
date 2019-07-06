@@ -18,20 +18,20 @@ use super::*;
 /// Business Day Shift Convention: it defines if the schedule times are supposed to fall on only
 /// business days or not. It shifts an input time according to the desired rule. See section 4.4 of
 /// the ACTUS paper for details.
+/// Note: So far, it is not implemented, since it may not be needed in Katal.
 pub fn business_day_shift(
     mut date: UncheckedTime,
     business_day_convention: BusinessDayConvention,
 ) -> UncheckedTime {
     match business_day_convention {
-        BusinessDayConvention::NULL => (),
-        // BusinessDayConvention::SCF => {}
-        // BusinessDayConvention::SCMF => {}
-        // BusinessDayConvention::CSF => {}
-        // BusinessDayConvention::CSMF => {}
-        // BusinessDayConvention::SCP => {}
-        // BusinessDayConvention::SCMP => {}
-        // BusinessDayConvention::CSP => {}
-        // BusinessDayConvention::CSMP => {}
+        BusinessDayConvention::SCF => (),
+        BusinessDayConvention::SCMF => (),
+        BusinessDayConvention::CSF => (),
+        BusinessDayConvention::CSMF => (),
+        BusinessDayConvention::SCP => (),
+        BusinessDayConvention::SCMP => (),
+        BusinessDayConvention::CSP => (),
+        BusinessDayConvention::CSMP => (),
     }
     date
 }
@@ -50,6 +50,6 @@ mod tests {
             minute: 00,
             second: 00,
         };
-        assert_eq!(business_day_shift(t, BusinessDayConvention::NULL), t);
+        assert_eq!(business_day_shift(t, BusinessDayConvention::NS), t);
     }
 }

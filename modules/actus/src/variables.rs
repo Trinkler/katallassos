@@ -31,11 +31,12 @@ pub struct Variables {
     pub nominal_value_2: Real,
     pub notional_scaling_multiplier: Real,
     pub payoff_at_settlement: Real,
-    pub performance: Option<ContractStatus>,
+    pub performance: Option<ContractPerformance>,
     pub time_at_maturity_date: Time,
 }
 
 impl Variables {
+    // Creates an instance of Variables with every field set to None.
     pub fn new() -> Variables {
         Variables {
             fee_accrued: Real(None),
