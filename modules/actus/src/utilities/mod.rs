@@ -24,7 +24,6 @@ mod contract_role_sign;
 mod end_of_month_shift;
 mod schedule;
 mod sum_cycle;
-mod sum_period;
 mod year_fraction;
 
 pub use annuity_amount::*;
@@ -36,5 +35,4 @@ pub use contract_role_sign::*;
 pub use end_of_month_shift::*;
 pub use schedule::*;
 pub use sum_cycle::*;
-pub use sum_period::*;
 pub use year_fraction::*;

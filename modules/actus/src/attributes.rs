@@ -15,7 +15,8 @@
 
 use super::*;
 
-/// All ACTUS contract attributes as specified in the data dictionary.
+/// All ACTUS contract attributes as specified in the data dictionary in the Github.
+// TODO: Add ContractStructure attribute.
 #[derive(Clone, Decode, Encode, Default, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct Attributes {
@@ -27,7 +28,7 @@ pub struct Attributes {
     pub array_cycle_of_interest_payment: Vec<Option<Cycle>>,
     pub array_cycle_of_principal_redemption: Vec<Option<Cycle>>,
     pub array_cycle_of_rate_reset: Vec<Option<Cycle>>,
-    pub array_fixed_variable: Option<ArrayFixedVariable>,
+    pub array_fixed_variable: Vec<Option<ArrayFixedVariable>>,
     pub array_increase_decrease: Vec<Option<IncreaseDecrease>>,
     pub array_next_principal_redemption_payment: Vec<Real>,
     pub array_rate: Vec<Real>,
@@ -37,13 +38,14 @@ pub struct Attributes {
     pub clearing_house: Option<ClearingHouse>,
     pub contract_deal_date: Time,
     pub contract_id: u128,
+    pub contract_performance: Option<ContractPerformance>,
     pub contract_role: Option<ContractRole>,
-    pub contract_status: Option<ContractStatus>,
+    // ContractStructure goes here.
     pub contract_type: Option<ContractType>,
+    pub counterparty_id: Option<u128>, // Represents an account object.
     pub coverage_of_credit_enhancement: Real,
-    pub covered_contracts: Vec<Option<u128>>,
-    pub covered_legal_entity: Option<u128>, // Not sure about this one.
-    pub covering_contracts: Vec<Option<u128>>,
+    pub creator_id: Option<u128>, // Represents an account object.
+    pub credit_line_amount: Real,
     pub currency: Option<u128>,   // Represents an issuance object.
     pub currency_2: Option<u128>, // Represents an issuance object.
     pub cycle_anchor_date_of_dividend: Time,
@@ -66,7 +68,7 @@ pub struct Attributes {
     pub cycle_of_scaling_index: Option<Cycle>,
     pub cycle_point_of_interest_payment: Option<CyclePointOfInterestPayment>,
     pub cycle_point_of_rate_reset: Option<CyclePointOfRateReset>,
-    pub day_count_convention: Option<DayCountConvention>,
+    pub day_count_convention: Option<DayCountConvention>, // Check allowed values in the Data dictionary.
     pub delinquency_period: Option<Period>,
     pub delinquency_rate: Real,
     pub delivery_settlement: Option<DeliverySettlement>,
@@ -83,14 +85,13 @@ pub struct Attributes {
     pub initial_margin: Real,
     pub interest_calculation_base: Option<InterestCalculationBase>,
     pub interest_calculation_base_amount: Real,
-    pub legal_entity_id_counterparty: Option<u128>,
-    pub legal_entity_id_record_creator: Option<u128>,
     pub life_cap: Real,
     pub life_floor: Real,
     pub maintenance_margin_lower_bound: Real,
     pub maintenance_margin_upper_bound: Real,
-    pub market_object_code_of_scaling_index: Option<u128>, //Not sure of this type
-    pub market_object_code_rate_reset: Option<u128>,       // Not sure about this type
+    pub market_object_code: Option<u128>, // Represents an oracle object.
+    pub market_object_code_of_scaling_index: Option<u128>, // Represents an oracle object.
+    pub market_object_code_rate_reset: Option<u128>, // Represents an oracle object.
     pub market_value_observed: Real,
     pub maturity_date: Time,
     pub maximum_penalty_free_disbursement: Real,
@@ -131,66 +132,62 @@ pub struct Attributes {
     pub x_day_notice: Option<Period>,
 }
 
-// The boolean represents the stub, true = long stub, false = short stub.
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
-pub enum Cycle {
-    Days(u16, bool),
-    // Weeks(u16, bool),
-    Months(u16, bool),
-    // Quarters(u16, bool),
-    // Halfyears(u16, bool),
-    Years(u16, bool),
-}
-
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
-pub enum Period {
-    Days(u16),
-    // Weeks(u16),
-    Months(u16),
-    // Quarters(u16),
-    // HalfYears(u16),
-    Years(u16),
-}
-
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
-pub struct ScalingEffect {
-    pub x: bool,
-    pub y: bool,
-    pub z: bool,
-}
-
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
-pub enum Calendar {
-    // No Calendar
-    NC,
-    // Monday to Friday
-    // MTF,
-    // Further calendars may need to be added here
+pub enum ArrayFixedVariable {
+    F,
+    V,
 }
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub enum BusinessDayConvention {
-    NULL,
-    // SCF,
-    // SCMF,
-    // CSF,
-    // CSMF,
-    // SCP,
-    // SCMP,
-    // CSP,
-    // CSMP,
+    SCF,
+    SCMF,
+    CSF,
+    CSMF,
+    SCP,
+    SCMP,
+    CSP,
+    CSMP,
 }
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
-pub enum EndOfMonthConvention {
-    EOM,
-    SD,
+pub enum Calendar {
+    NC,
+    MTF,
+}
+
+#[derive(Clone, Copy, Decode, Encode, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum ClearingHouse {
+    Y,
+    N,
+}
+
+#[derive(Clone, Copy, Decode, Encode, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum ContractPerformance {
+    PF,
+    DL,
+    DQ,
+    DF,
+}
+
+#[derive(Clone, Copy, Decode, Encode, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum ContractRole {
+    RPA,
+    RPL,
+    LG,
+    ST,
+    BUY,
+    SEL,
+    RFL,
+    PFL,
+    GUA,
+    OBL,
 }
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
@@ -217,39 +214,63 @@ pub enum ContractType {
     MRGNG,
 }
 
-// This specific attribute is according to the ACTUS paper and not the Data Dictionary.
+// The boolean represents the stub, true = long stub, false = short stub.
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
-pub enum ContractRole {
-    RPA,
-    RPL,
-    CLO,
-    CNO,
-    COL,
-    LG,
-    ST,
-    BUY,
-    SEL,
-    RFL,
-    PFL,
-    RF,
-    PF,
+pub enum Cycle {
+    Days(u16, bool),
+    // Weeks(u16, bool),
+    Months(u16, bool),
+    // Quarters(u16, bool),
+    // Halfyears(u16, bool),
+    Years(u16, bool),
 }
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
-pub enum ContractStatus {
-    PF,
-    DL,
-    DQ,
-    DF,
+pub enum CyclePointOfInterestPayment {
+    B,
+    E,
 }
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
-pub enum Seniority {
+pub enum CyclePointOfRateReset {
+    B,
+    E,
+}
+
+#[derive(Clone, Copy, Decode, Encode, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum DayCountConvention {
+    _AAISDA,
+    _A360,
+    _A365,
+    // _30E360ISDA,
+    _30E360,
+    _30360, // This one does not appear in the data dictionary now?...
+            // _BUS252,
+}
+
+#[derive(Clone, Copy, Decode, Encode, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum DeliverySettlement {
     S,
-    J,
+    D,
+}
+
+#[derive(Clone, Copy, Decode, Encode, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum EndOfMonthConvention {
+    EOM,
+    SD,
+}
+
+#[derive(Clone, Copy, Decode, Encode, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum FeeBasis {
+    A,
+    N,
 }
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
@@ -262,21 +283,9 @@ pub enum GuaranteedExposure {
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
-pub enum FeeBasis {
-    A,
-    N,
-}
-
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
-pub enum DayCountConvention {
-    _AAISDA,
-    _A360,
-    _A365,
-    // _30E360ISDA,
-    _30E360,
-    _30360,
-    // _BUS252,
+pub enum IncreaseDecrease {
+    INC,
+    DEC,
 }
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
@@ -285,27 +294,6 @@ pub enum InterestCalculationBase {
     NT,
     NTIED,
     NTL,
-}
-
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
-pub enum CyclePointOfInterestPayment {
-    B,
-    E,
-}
-
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
-pub enum ClearingHouse {
-    Y,
-    N,
-}
-
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
-pub enum IncreaseDecrease {
-    INC,
-    DEC,
 }
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
@@ -335,6 +323,17 @@ pub enum PenaltyType {
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
+pub enum Period {
+    Days(u16),
+    // Weeks(u16),
+    Months(u16),
+    // Quarters(u16),
+    // HalfYears(u16),
+    Years(u16),
+}
+
+#[derive(Clone, Copy, Decode, Encode, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
 pub enum PrepaymentEffect {
     N,
     A,
@@ -343,23 +342,17 @@ pub enum PrepaymentEffect {
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
-pub enum ArrayFixedVariable {
-    F,
-    V,
+pub struct ScalingEffect {
+    pub x: bool,
+    pub y: bool,
+    pub z: bool,
 }
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
-pub enum CyclePointOfRateReset {
-    B,
-    E,
-}
-
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
-pub enum DeliverySettlement {
+pub enum Seniority {
     S,
-    D,
+    J,
 }
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
@@ -377,6 +370,8 @@ pub enum Unit {
 }
 
 impl Attributes {
+    // Creates a new Attributes instance with every field set to the default value (as defined by
+    // the ACTUS data dictionary).
     pub fn new(contract_id: u128) -> Attributes {
         Attributes {
             accrued_interest: Real(None),
@@ -387,23 +382,24 @@ impl Attributes {
             array_cycle_of_interest_payment: Vec::new(),
             array_cycle_of_principal_redemption: Vec::new(),
             array_cycle_of_rate_reset: Vec::new(),
-            array_fixed_variable: None,
+            array_fixed_variable: Vec::new(),
             array_increase_decrease: Vec::new(),
             array_next_principal_redemption_payment: Vec::new(),
             array_rate: Vec::new(),
-            business_day_convention: Some(BusinessDayConvention::NULL),
+            business_day_convention: Some(BusinessDayConvention::SCF),
             calendar: Some(Calendar::NC),
             capitalization_end_date: Time(None),
             clearing_house: None,
             contract_deal_date: Time(None),
             contract_id: contract_id,
+            contract_performance: Some(ContractPerformance::PF),
             contract_role: None,
-            contract_status: Some(ContractStatus::PF),
+            // ContractStructure goes here.
             contract_type: None,
+            counterparty_id: None,
             coverage_of_credit_enhancement: Real::from(1),
-            covered_contracts: Vec::new(),
-            covered_legal_entity: None,
-            covering_contracts: Vec::new(),
+            creator_id: None,
+            credit_line_amount: Real(None),
             currency: None,
             currency_2: None,
             cycle_anchor_date_of_dividend: Time(None),
@@ -429,7 +425,7 @@ impl Attributes {
             day_count_convention: None,
             delinquency_period: Some(Period::Days(0)),
             delinquency_rate: Real::from(0),
-            delivery_settlement: None,
+            delivery_settlement: Some(DeliverySettlement::D),
             end_of_month_convention: Some(EndOfMonthConvention::SD),
             ex_dividend_date: Time(None),
             fee_accrued: Real(None),
@@ -440,15 +436,14 @@ impl Attributes {
             grace_period: Some(Period::Days(0)),
             guaranteed_exposure: None,
             initial_exchange_date: Time(None),
-            initial_margin: Real(None),
+            initial_margin: Real::from(0),
             interest_calculation_base: Some(InterestCalculationBase::NT),
             interest_calculation_base_amount: Real(None),
-            legal_entity_id_counterparty: None,
-            legal_entity_id_record_creator: None,
             life_cap: Real(None),
             life_floor: Real(None),
             maintenance_margin_lower_bound: Real(None),
             maintenance_margin_upper_bound: Real(None),
+            market_object_code: None,
             market_object_code_of_scaling_index: None,
             market_object_code_rate_reset: None,
             market_value_observed: Real(None),
@@ -493,6 +488,37 @@ impl Attributes {
             unit: None,
             variation_margin: Real(None),
             x_day_notice: None,
+        }
+    }
+
+    // Checks if an Attribute instance is valid. It just guarantees that each field has a value that
+    // is allowed (as defined in the ACTUS dictionary as "allowed values").
+    pub fn is_valid(&self) -> bool {
+        if self.coverage_of_credit_enhancement >= Real::from(0)
+            && self.coverage_of_credit_enhancement <= Real::from(1)
+            && self.credit_line_amount >= Real::from(0)
+            && self.delinquency_rate >= Real::from(0)
+            && self.initial_margin >= Real::from(0)
+            && self.interest_calculation_base_amount >= Real::from(0)
+            && self.maintenance_margin_lower_bound >= Real::from(0)
+            && self.maintenance_margin_upper_bound >= Real::from(0)
+            && self.maximum_penalty_free_disbursement >= Real::from(0)
+            && self.next_dividend_payment_amount >= Real::from(0)
+            && self.next_principal_redemption_payment >= Real::from(0)
+            && self.notional_principal >= Real::from(0)
+            && self.notional_principal_2 >= Real::from(0)
+            && self.option_strike_1 >= Real::from(0)
+            && self.option_strike_2 >= Real::from(0)
+            && self.penalty_rate >= Real::from(0)
+            && self.period_cap >= Real::from(0)
+            && self.period_floor >= Real::from(0)
+            && self.quantity >= Real::from(0)
+            && self.scaling_index_at_status_date >= Real::from(0)
+            && self.variation_margin >= Real::from(0)
+        {
+            true
+        } else {
+            false
         }
     }
 }

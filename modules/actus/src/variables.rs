@@ -31,7 +31,7 @@ pub struct Variables {
     pub nominal_value_2: Real,
     pub notional_scaling_multiplier: Real,
     pub payoff_at_settlement: Real,
-    pub performance: Option<ContractStatus>,
+    pub performance: Option<ContractPerformance>,
     pub time_at_maturity_date: Time,
 }
 

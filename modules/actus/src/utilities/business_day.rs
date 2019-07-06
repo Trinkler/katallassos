@@ -20,14 +20,14 @@ use super::*;
 pub fn business_day(date: UncheckedTime, calendar: Calendar) -> bool {
     match calendar {
         Calendar::NC => true,
-        // Calendar::MTF => {
-        //     let weekday = Time::day_of_week(date.year, date.month, date.day);
-        //     if weekday == 6 || weekday == 7 {
-        //         false
-        //     } else {
-        //         true
-        //     }
-        // }
+        Calendar::MTF => {
+            let weekday = Time::day_of_week(date.year, date.month, date.day);
+            if weekday == 6 || weekday == 7 {
+                false
+            } else {
+                true
+            }
+        }
     }
 }
 
