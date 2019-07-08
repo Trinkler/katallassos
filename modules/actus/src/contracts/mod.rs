@@ -18,3 +18,10 @@ use super::*;
 mod pam;
 
 pub use pam::*;
+
+pub fn initialize(t0: Time, input: Attributes) -> MyResult<ContractState> {
+    match input.contract_type {
+        Some(ContractType::PAM) => initialize_pam(t0, input),
+        _ => Err("Contract type not supported."),
+    }
+}

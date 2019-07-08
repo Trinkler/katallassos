@@ -16,7 +16,9 @@
 use super::*;
 
 /// All ACTUS contract attributes as specified in the data dictionary in the Github.
+// P.S. Has a size of 1280 bytes.
 // TODO: Add ContractStructure attribute.
+// TODO: Change u128 to Hash.
 #[derive(Clone, Decode, Encode, Default, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct Attributes {
