@@ -68,11 +68,13 @@ decl_module! {
         fn deposit_event<T>() = default;
 
         fn deploy_contract(origin, attributes: Attributes) -> Result {
-            // TODO: Get current time.
-            let t0 = Time::from_values(2019, 07, 04, 00, 00, 00);
-
             // Getting the contract ID.
             let id = attributes.contract_id;
+
+            // TODO: Check if id is available.
+
+            // TODO: Get current time.
+            let t0 = Time::from_values(2019, 07, 04, 00, 00, 00);
 
             // Calculating the initial contract state.
             let state = contracts::initialize(t0, attributes)?;
