@@ -16,7 +16,7 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
         || input.nominal_interest_rate.0.is_none()
         || input.notional_principal.0.is_none()
     {
-        return Err("Error while initializing attributes");
+        return Err("Error while initializing attributes. [0]");
     } else {
         attributes.contract_type = input.contract_type;
         attributes.currency = input.currency;
@@ -34,7 +34,7 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
         || input.contract_role.is_none()
         || input.creator_id.is_none()
     {
-        return Err("Error while initializing attributes");
+        return Err("Error while initializing attributes. [1]");
     } else {
         attributes.contract_deal_date = input.contract_deal_date;
         attributes.contract_role = input.contract_role;
@@ -45,7 +45,7 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
     // optional on child contracts -> NN(_,_,2)
     // TODO: check for parent/child relationship
     if input.counterparty_id.is_none() {
-        return Err("Error while initializing attributes");
+        return Err("Error while initializing attributes. [2]");
     } else {
         attributes.counterparty_id = input.counterparty_id;
     }
@@ -76,7 +76,7 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
     // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
     if input.fee_rate.0.is_some() {
         if input.fee_basis.is_none() {
-            return Err("Error while initializing attributes");
+            return Err("Error while initializing attributes. [3]");
         }
         attributes.fee_basis = input.fee_basis; // -> NN(1,1,_)
         attributes.fee_accrued = input.fee_accrued; // -> x(1,1,_)
@@ -85,7 +85,7 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
     // of the group is defined
     if input.fee_rate.0.is_some() {
         if input.cycle_anchor_date_of_fee.0.is_none() && input.cycle_of_fee.is_none() {
-            return Err("Error while initializing attributes");
+            return Err("Error while initializing attributes. [4]");
         }
         attributes.cycle_anchor_date_of_fee = input.cycle_anchor_date_of_fee; // -> x(1,2,_)
         attributes.cycle_of_fee = input.cycle_of_fee; // -> x(1,2,_)
@@ -103,7 +103,7 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
         if input.cycle_point_of_interest_payment == Some(CyclePointOfInterestPayment::B)
             && input.cycle_point_of_rate_reset != Some(CyclePointOfRateReset::B)
         {
-            return Err("Error while initializing attributes");
+            return Err("Error while initializing attributes. [5]");
         }
         attributes.cycle_point_of_interest_payment = input.cycle_point_of_interest_payment; // -> x(2,1,_)1
     }
@@ -116,7 +116,7 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
     // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
     if input.purchase_date.0.is_some() {
         if input.price_at_purchase_date.0.is_none() {
-            return Err("Error while initializing attributes");
+            return Err("Error while initializing attributes. [6]");
         } else {
             // TODO: check for parent/child relationship
             attributes.price_at_purchase_date = input.price_at_purchase_date; // -> NN(5,1,1)
@@ -131,7 +131,7 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
     // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
     if input.termination_date.0.is_some() {
         if input.price_at_termination_date.0.is_none() {
-            return Err("Error while initializing attributes");
+            return Err("Error while initializing attributes. [7]");
         } else {
             // TODO: check for parent/child relationship
             attributes.price_at_termination_date = input.price_at_termination_date; // -> NN(6,1,1)
@@ -147,7 +147,7 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
         if input.market_object_code_of_scaling_index.is_none()
             || input.scaling_index_at_status_date.0.is_none()
         {
-            return Err("Error while initializing attributes");
+            return Err("Error while initializing attributes. [8]");
         }
         attributes.market_object_code_of_scaling_index = input.market_object_code_of_scaling_index; // -> NN(7,1,_)
         attributes.scaling_index_at_status_date = input.scaling_index_at_status_date; // -> NN(7,1,_)
@@ -158,7 +158,7 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
         if input.cycle_anchor_date_of_scaling_index.0.is_none()
             && input.cycle_of_scaling_index.is_none()
         {
-            return Err("Error while initializing attributes");
+            return Err("Error while initializing attributes. [9]");
         }
         attributes.cycle_anchor_date_of_scaling_index = input.cycle_anchor_date_of_scaling_index; // -> x(7,2,_)
         attributes.cycle_of_scaling_index = input.cycle_of_scaling_index; // -> x(7,2,_)
@@ -188,7 +188,7 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
     // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
     if input.cycle_anchor_date_of_rate_reset.0.is_some() || input.cycle_of_rate_reset.is_some() {
         if input.market_object_code_rate_reset.is_none() || input.rate_spread.0.is_none() {
-            return Err("Error while initializing attributes");
+            return Err("Error while initializing attributes. [10]");
         } else {
             attributes.market_object_code_rate_reset = input.market_object_code_rate_reset; // -> NN(9,1,_)
             attributes.rate_spread = input.rate_spread; // -> NN(9,1,_)
@@ -205,7 +205,7 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
 
     // Checking if the attributes all have allowed values
     if attributes.is_valid() == false {
-        return Err("Error while initializing attributes");
+        return Err("Error while initializing attributes. [11]");
     }
 
     // Creating the schedule for all the events.

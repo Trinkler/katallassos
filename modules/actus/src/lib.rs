@@ -20,18 +20,12 @@ use support::{decl_event, decl_module, decl_storage, dispatch::Result, StorageMa
 use time::{Time, UncheckedTime};
 
 // Importing the rest of the files in this crate.
-mod attributes;
-mod contract_events;
 mod contract_state;
 mod contracts;
 mod utilities;
-mod variables;
-use self::attributes::*;
-use self::contract_events::*;
-use self::contract_state::*;
-use self::contracts::*;
-use self::utilities::*;
-use self::variables::*;
+use contract_state::*;
+use contracts::*;
+use utilities::*;
 
 // Defines an alias for the Result type. It has the name MyResult because Substrate already uses
 // the name Result for their own type Result<(), &'static str>.
@@ -71,10 +65,13 @@ decl_module! {
             // Getting the contract ID.
             let id = attributes.contract_id;
 
-            // TODO: Check if id is available.
+            // Checking if ID is available.
+            if <ContractStates<T>>::exists(id) {
+                return Err("Contract ID already exists");
+            }
 
             // TODO: Get current time.
-            let t0 = Time::from_values(2019, 07, 04, 00, 00, 00);
+            let t0 = Time::from_values(1969, 07, 20, 20, 17, 00);
 
             // Calculating the initial contract state.
             let state = contracts::initialize(t0, attributes)?;
@@ -88,58 +85,89 @@ decl_module! {
 }
 
 // tests for this module
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-//
-//     use primitives::{Blake2Hasher, H256};
-//     use runtime_io::with_externalities;
-//     use runtime_primitives::{
-//         testing::{Digest, DigestItem, Header},
-//         traits::{BlakeTwo256, IdentityLookup},
-//         BuildStorage,
-//     };
-//     use support::{assert_ok, impl_outer_origin};
-//
-//     impl_outer_origin! {
-//         pub enum Origin for Test {}
-//     }
-//
-//     // For testing the module, we construct most of a mock runtime. This means
-//     // first constructing a configuration type (`Test`) which `impl`s each of the
-//     // configuration traits of modules we want to use.
-//     #[derive(Clone, Eq, PartialEq)]
-//     pub struct Test;
-//     impl system::Trait for Test {
-//         type Origin = Origin;
-//         type Index = u64;
-//         type BlockNumber = u64;
-//         type Hash = H256;
-//         type Hashing = BlakeTwo256;
-//         type Digest = Digest;
-//         type AccountId = u64;
-//         type Lookup = IdentityLookup<Self::AccountId>;
-//         type Header = Header;
-//         type Event = ();
-//         type Log = DigestItem;
-//     }
-//     impl Trait for Test {
-//         type Event = ();
-//     }
-//     type ACTUS = Module<Test>;
-//
-//     // This function basically just builds a genesis storage key/value store according to
-//     // our desired mockup.
-//     fn new_test_ext() -> runtime_io::TestExternalities<Blake2Hasher> {
-//         system::GenesisConfig::<Test>::default()
-//             .build_storage()
-//             .unwrap()
-//             .0
-//             .into()
-//     }
-//
-//     #[test]
-//     fn it_works_for_default_value() {
-//         with_externalities(&mut new_test_ext(), || {});
-//     }
-// }
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    use primitives::{Blake2Hasher, H256};
+    use runtime_io::with_externalities;
+    use runtime_primitives::{
+        testing::{Digest, DigestItem, Header},
+        traits::{BlakeTwo256, IdentityLookup},
+        BuildStorage,
+    };
+    use support::{assert_ok, impl_outer_origin};
+
+    impl_outer_origin! {
+        pub enum Origin for Test {}
+    }
+
+    // For testing the module, we construct most of a mock runtime. This means
+    // first constructing a configuration type (`Test`) which `impl`s each of the
+    // configuration traits of modules we want to use.
+    #[derive(Clone, Eq, PartialEq)]
+    pub struct Test;
+    impl system::Trait for Test {
+        type Origin = Origin;
+        type Index = u64;
+        type BlockNumber = u64;
+        type Hash = H256;
+        type Hashing = BlakeTwo256;
+        // type Digest = Digest; // This must be commented out for tests to work.
+        type AccountId = u64;
+        type Lookup = IdentityLookup<Self::AccountId>;
+        type Header = Header;
+        type Event = ();
+        // type Log = DigestItem; // This must be commented out for tests to work.
+    }
+    impl Trait for Test {
+        type Event = ();
+    }
+    type Actus = Module<Test>;
+
+    // This function basically just builds a genesis storage key/value store according to
+    // our desired mockup.
+    fn new_test_ext() -> runtime_io::TestExternalities<Blake2Hasher> {
+        system::GenesisConfig::<Test>::default()
+            .build_storage()
+            .unwrap()
+            .0
+            .into()
+    }
+
+    #[test]
+    fn deploy_contract_works() {
+        with_externalities(&mut new_test_ext(), || {
+            // Tries to start a contract with the wrong type.
+            let mut attributes = Attributes::new(0);
+            let result = Actus::deploy_contract(Origin::signed(1), attributes.clone());
+            assert!(result.is_err());
+
+            // Starts a PAM contract with the wrong attributes.
+            attributes.contract_id = 420;
+            attributes.contract_type = Some(ContractType::PAM);
+            attributes.currency = Some(421);
+            attributes.day_count_convention = Some(DayCountConvention::_A365);
+            attributes.initial_exchange_date = Time::from_values(1969, 07, 21, 02, 56, 15);
+            attributes.maturity_date = Time::from_values(1979, 07, 21, 02, 56, 15);
+            attributes.nominal_interest_rate = Real::from(1000);
+            attributes.notional_principal = Real(Some(50000000));
+            attributes.contract_deal_date = Time::from_values(1969, 07, 21, 02, 56, 15);
+            attributes.contract_role = Some(ContractRole::RPA);
+            attributes.creator_id = Some(422);
+            attributes.counterparty_id = Some(423);
+            let result = Actus::deploy_contract(Origin::signed(1), attributes.clone());
+            assert!(result.is_err());
+
+            // Starts a PAM contract with the right attributes.
+            attributes.scaling_effect = None;
+            let result = Actus::deploy_contract(Origin::signed(1), attributes.clone());
+            assert!(result.is_ok());
+
+            // Starts another contract with the same ID.
+            attributes.scaling_effect = None;
+            let result = Actus::deploy_contract(Origin::signed(1), attributes.clone());
+            assert!(result.is_err());
+        });
+    }
+}
