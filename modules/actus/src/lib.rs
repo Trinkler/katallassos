@@ -65,17 +65,19 @@ decl_module! {
             // Getting the contract ID.
             let id = attributes.contract_id;
 
-            // Checking if id is available.
+            // Checking if ID is available.
             if <ContractStates<T>>::exists(id) {
-                // TODO: Get current time.
-                let t0 = Time::from_values(2019, 07, 04, 00, 00, 00);
-
-                // Calculating the initial contract state.
-                let state = contracts::initialize(t0, attributes)?;
-
-                // Storing the contract state.
-                <ContractStates<T>>::insert(id, state);
+                return Err("Contract ID already exists");
             }
+
+            // TODO: Get current time.
+            let t0 = Time::from_values(1969, 07, 20, 20, 17, 00);
+
+            // Calculating the initial contract state.
+            let state = contracts::initialize(t0, attributes)?;
+
+            // Storing the contract state.
+            <ContractStates<T>>::insert(id, state);
 
             Ok(())
         }
@@ -111,17 +113,17 @@ mod tests {
         type BlockNumber = u64;
         type Hash = H256;
         type Hashing = BlakeTwo256;
-        type Digest = Digest;
+        // type Digest = Digest; // This must be commented out for tests to work.
         type AccountId = u64;
         type Lookup = IdentityLookup<Self::AccountId>;
         type Header = Header;
         type Event = ();
-        type Log = DigestItem;
+        // type Log = DigestItem; // This must be commented out for tests to work.
     }
     impl Trait for Test {
         type Event = ();
     }
-    type ACTUS = Module<Test>;
+    type Actus = Module<Test>;
 
     // This function basically just builds a genesis storage key/value store according to
     // our desired mockup.
@@ -134,7 +136,38 @@ mod tests {
     }
 
     #[test]
-    fn it_works_for_default_value() {
-        with_externalities(&mut new_test_ext(), || {});
+    fn deploy_contract_works() {
+        with_externalities(&mut new_test_ext(), || {
+            // Tries to start a contract with the wrong type.
+            let mut attributes = Attributes::new(0);
+            let result = Actus::deploy_contract(Origin::signed(1), attributes.clone());
+            assert!(result.is_err());
+
+            // Starts a PAM contract with the wrong attributes.
+            attributes.contract_id = 420;
+            attributes.contract_type = Some(ContractType::PAM);
+            attributes.currency = Some(421);
+            attributes.day_count_convention = Some(DayCountConvention::_A365);
+            attributes.initial_exchange_date = Time::from_values(1969, 07, 21, 02, 56, 15);
+            attributes.maturity_date = Time::from_values(1979, 07, 21, 02, 56, 15);
+            attributes.nominal_interest_rate = Real::from(1000);
+            attributes.notional_principal = Real(Some(50000000));
+            attributes.contract_deal_date = Time::from_values(1969, 07, 21, 02, 56, 15);
+            attributes.contract_role = Some(ContractRole::RPA);
+            attributes.creator_id = Some(422);
+            attributes.counterparty_id = Some(423);
+            let result = Actus::deploy_contract(Origin::signed(1), attributes.clone());
+            assert!(result.is_err());
+
+            // Starts a PAM contract with the right attributes.
+            attributes.scaling_effect = None;
+            let result = Actus::deploy_contract(Origin::signed(1), attributes.clone());
+            assert!(result.is_ok());
+
+            // Starts another contract with the same ID.
+            attributes.scaling_effect = None;
+            let result = Actus::deploy_contract(Origin::signed(1), attributes.clone());
+            assert!(result.is_err());
+        });
     }
 }
