@@ -24,7 +24,6 @@ runtime-primitives = { package = "sr-primitives", git = "https://github.com/pari
 client = { package = "substrate-client", git = "https://github.com/paritytech/substrate", default_features = false }
 consensus-aura = { package = "substrate-consensus-aura-primitives", git = "https://github.com/paritytech/substrate", default_features = false }
 offchain-primitives = { package = "substrate-offchain-primitives", git = "https://github.com/paritytech/substrate", default-features = false }
-actus = { package = "modules-actus", path = "../../modules/actus", default-features = false }
 
 [build-dependencies]
 wasm-builder-runner = { package = "substrate-wasm-builder-runner", version = "1.0.2" }
@@ -51,6 +50,5 @@ std = [
 	"safe-mix/std",
 	"consensus-aura/std",
 	"offchain-primitives/std",
-	"actus/std",
 ]
 no_std = []

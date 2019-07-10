@@ -194,10 +194,6 @@ impl sudo::Trait for Runtime {
     type Proposal = Call;
 }
 
-// impl actus::Trait for Runtime {
-//     type Event = Event;
-// }
-
 construct_runtime!(
 	pub enum Runtime where
 		Block = Block,
@@ -210,7 +206,6 @@ construct_runtime!(
 		Indices: indices::{default, Config<T>},
 		Balances: balances,
 		Sudo: sudo,
-		// Actus: actus::{Module, Call, Storage, Event<T>},
 	}
 );
 
