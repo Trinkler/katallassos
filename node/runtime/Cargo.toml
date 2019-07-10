@@ -117,12 +117,6 @@ git = "https://github.com/paritytech/substrate.git"
 rev = "dbf3226"
 default_features = false
 
-# Katal crates
-[dependencies.actus]
-package="modules-actus"
-path="../../modules/actus"
-default_features = false
-
 [features]
 default = ["std"]
 std = [
@@ -145,5 +139,4 @@ std = [
 	"safe-mix/std",
 	"consensus-aura/std",
 	"offchain-primitives/std",
-	"actus/std",
 ]

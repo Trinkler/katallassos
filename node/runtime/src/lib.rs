@@ -55,9 +55,6 @@ pub type BlockNumber = u64;
 /// Index of an account's extrinsic in the chain.
 pub type Nonce = u64;
 
-// /// Used for the module template in `./template.rs`
-// mod template;
-
 /// Opaque types. These are used by the CLI to instantiate machinery that don't need to know
 /// the specifics of the runtime. They can then be made to be agnostic over specific formats
 /// of data like extrinsics, allowing for them to continue syncing the network through upgrades
@@ -174,10 +171,6 @@ impl sudo::Trait for Runtime {
     type Proposal = Call;
 }
 
-impl actus::Trait for Runtime {
-    type Event = Event;
-}
-
 construct_runtime!(
 	pub enum Runtime where
 		Block = Block,
@@ -190,8 +183,7 @@ construct_runtime!(
 		Indices: indices::{default, Config<T>},
 		Balances: balances,
 		Sudo: sudo,
-		Actus: actus::{Module, Call, Storage, Event<T>},
-	}
+    }
 );
 
 /// The type used as a helper for interpreting the sender of transactions.
