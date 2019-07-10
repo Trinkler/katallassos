@@ -41,53 +41,53 @@ features = ["termination"]
 # Substrate Core crates
 [dependencies.sr-io]
 git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
+branch = "v1.0"
 
 [dependencies.primitives]
 package = "substrate-primitives"
 git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
+branch = "v1.0"
 
 [dependencies.substrate-client]
 git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
+branch = "v1.0"
 
 [dependencies.consensus]
 package = "substrate-consensus-aura"
 git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
+branch = "v1.0"
 
 [dependencies.substrate-cli]
 git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
+branch = "v1.0"
 
 [dependencies.substrate-executor]
 git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
+branch = "v1.0"
 
 [dependencies.substrate-service]
 git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
+branch = "v1.0"
 
 [dependencies.inherents]
 package = "substrate-inherents"
 git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
+branch = "v1.0"
 
 [dependencies.transaction-pool]
 package = "substrate-transaction-pool"
 git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
+branch = "v1.0"
 
 [dependencies.network]
 package = "substrate-network"
 git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
+branch = "v1.0"
 
 [dependencies.basic-authorship]
 package = "substrate-basic-authorship"
 git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
+branch = "v1.0"
 
 [dependencies.katal-runtime]
 path = "node/runtime"
