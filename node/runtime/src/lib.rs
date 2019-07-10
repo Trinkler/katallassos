@@ -216,6 +216,10 @@ impl ownership::Trait for Runtime {
     type AssetId = u128; // TODO: Validate assumption using interface
 }
 
+impl oracle::Trait for Runtime {
+    type Event = Event;
+}
+
 construct_runtime!(
 	pub enum Runtime where
 		Block = Block,
@@ -230,6 +234,7 @@ construct_runtime!(
 		Sudo: sudo,
         Assets: assets::{Module, Call, Storage, Event<T>},
         Ownership: ownership::{Module, Call, Storage, Event<T>},
+        Oracle: oracle::{Module, Call, Storage, Event<T>},
 	}
 );
 

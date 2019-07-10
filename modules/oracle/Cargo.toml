@@ -1,5 +1,5 @@
 [package]
-name = "modules-ownership"
+name = "modules-oracle"
 version = "0.0.1"
 authors = ["Trinkler Software <company@trinkler.software>"]
 edition = "2018"
@@ -13,6 +13,8 @@ primitives = { package = "sr-primitives", git = "https://github.com/paritytech/s
 support = { package = "srml-support", git = "https://github.com/paritytech/substrate.git", default-features = false }
 # `system` module provides us with all sorts of useful stuff and macros depend on it being around.
 system = { package = "srml-system", git = "https://github.com/paritytech/substrate.git", default-features = false }
+# Modules specific dependencies
+rand = { version = "0.6.5", optional = true }
 
 [dev-dependencies]
 substrate-primitives = { git = "https://github.com/paritytech/substrate.git", default-features = false }
@@ -27,4 +29,5 @@ std = [
 	"primitives/std",
 	"support/std",
 	"system/std",
+	"rand"
 ]
