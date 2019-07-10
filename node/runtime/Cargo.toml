@@ -27,6 +27,7 @@ offchain-primitives = { package = "substrate-offchain-primitives", git = "https:
 assets = { package = "srml-assets", git = "https://github.com/paritytech/substrate", default-features = false }
 ownership = { package = "modules-ownership", path="../../modules/ownership", default-features = false }
 oracle = { package = "modules-oracle", path="../../modules/oracle", default-features = false }
+actus = { package = "modules-actus", path="../../modules/actus", default-features = false }
 
 [build-dependencies]
 wasm-builder-runner = { package = "substrate-wasm-builder-runner", version = "1.0.2" }
@@ -56,5 +57,6 @@ std = [
 	"assets/std",
 	"ownership/std",
 	"oracle/std",
+	"actus/std",
 ]
 no_std = []

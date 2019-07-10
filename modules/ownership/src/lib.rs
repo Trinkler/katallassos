@@ -1,131 +1,15 @@
-// Copyright 2017-2019 Parity Technologies (UK) Ltd.
-// This file is part of Substrate.
-
-// Substrate is free software: you can redistribute it and/or modify
+// Copyright 2019 by Trinkler Software AG (Switzerland).
+// This file is part of Katal.
+//
+// Katal is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-
-// Substrate is distributed in the hope that it will be useful,
+// (at your option) any later version <http://www.gnu.org/licenses/>.
+//
+// Katal is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
-
-// You should have received a copy of the GNU General Public License
-// along with Substrate.  If not, see <http://www.gnu.org/licenses/>.
-
-//! # Ownership Module
-//!
-//! A simple, secure module for dealing with fungible ownership.
-//!
-//! ## Overview
-//!
-//! The Ownership module provides functionality for asset management of fungible asset classes
-//! with a fixed supply, including:
-//!
-//! * Asset Issuance
-//! * Asset Transfer
-//! * Asset Destruction
-//!
-//! To use it in your runtime, you need to implement the ownership [`Trait`](./trait.Trait.html).
-//!
-//! The supported dispatchable functions are documented in the [`Call`](./enum.Call.html) enum.
-//!
-//! ### Terminology
-//!
-//! * **Asset issuance:** The creation of a new asset, whose total supply will belong to the
-//!   account that issues the asset.
-//! * **Asset transfer:** The action of transferring ownership from one account to another.
-//! * **Asset destruction:** The process of an account removing its entire holding of an asset.
-//! * **Fungible asset:** An asset whose units are interchangeable.
-//! * **Non-fungible asset:** An asset for which each unit has unique characteristics.
-//!
-//! ### Goals
-//!
-//! The ownership system in Substrate is designed to make the following possible:
-//!
-//! * Issue a unique asset to its creator's account.
-//! * Move ownership between accounts.
-//! * Remove an account's balance of an asset when requested by that account's owner and update
-//!   the asset's total supply.
-//!
-//! ## Interface
-//!
-//! ### Dispatchable Functions
-//!
-//! * `issue` - Issues the total supply of a new fungible asset to the account of the caller of the function.
-//! * `transfer` - Transfers an `amount` of units of fungible asset `id` from the balance of
-//! the function caller's account (`origin`) to a `target` account.
-//! * `destroy` - Destroys the entire holding of a fungible asset `id` associated with the account
-//! that called the function.
-//!
-//! Please refer to the [`Call`](./enum.Call.html) enum and its associated variants for documentation on each function.
-//!
-//! ### Public Functions
-//! <!-- Original author of descriptions: @gavofyork -->
-//!
-//! * `balance` - Get the asset `id` balance of `who`.
-//! * `total_supply` - Get the total supply of an asset `id`.
-//!
-//! Please refer to the [`Module`](./struct.Module.html) struct for details on publicly available functions.
-//!
-//! ## Usage
-//!
-//! The following example shows how to use the Ownership module in your runtime by exposing public functions to:
-//!
-//! * Issue a new fungible asset for a token distribution event (airdrop).
-//! * Query the fungible asset holding balance of an account.
-//! * Query the total supply of a fungible asset that has been issued.
-//!
-//! ### Prerequisites
-//!
-//! Import the Ownership module and types and derive your runtime's configuration traits from the Ownership module trait.
-//!
-//! ### Simple Code Snippet
-//!
-//! ```rust,ignore
-//! use support::{decl_module, dispatch::Result};
-//! use system::ensure_signed;
-//!
-//! pub trait Trait: ownership::Trait { }
-//!
-//! decl_module! {
-//! 	pub struct Module<T: Trait> for enum Call where origin: T::Origin {
-//! 		pub fn issue_token_airdrop(origin) -> Result {
-//! 			const ACCOUNT_ALICE: u64 = 1;
-//! 			const ACCOUNT_BOB: u64 = 2;
-//! 			const COUNT_AIRDROP_RECIPIENTS = 2;
-//! 			const TOKENS_FIXED_SUPPLY: u64 = 100;
-//!
-//! 			ensure!(!COUNT_AIRDROP_RECIPIENTS.is_zero(), "Divide by zero error.");
-//!
-//! 			let sender = ensure_signed(origin)?;
-//! 			let asset_id = Self::next_asset_id();
-//!
-//! 			<NextAssetId<T>>::mutate(|asset_id| *asset_id += 1);
-//! 			<Balances<T>>::insert((asset_id, &ACCOUNT_ALICE), TOKENS_FIXED_SUPPLY / COUNT_AIRDROP_RECIPIENTS);
-//! 			<Balances<T>>::insert((asset_id, &ACCOUNT_BOB), TOKENS_FIXED_SUPPLY / COUNT_AIRDROP_RECIPIENTS);
-//! 			<TotalSupply<T>>::insert(asset_id, TOKENS_FIXED_SUPPLY);
-//!
-//! 			Self::deposit_event(RawEvent::Issued(asset_id, sender, TOKENS_FIXED_SUPPLY));
-//! 			Ok(())
-//! 		}
-//! 	}
-//! }
-//! ```
-//!
-//! ## Assumptions
-//!
-//! Below are assumptions that must be held when using this module.  If any of
-//! them are violated, the behavior of this module is undefined.
-//!
-//! * The total count of ownership should be less than
-//!   `Trait::AssetId::max_value()`.
-//!
-//! ## Related Modules
-//!
-//! * [`System`](../srml_system/index.html)
-//! * [`Support`](../srml_support/index.html)
 
 // Ensure we're `no_std` when compiling for Wasm.
 #![cfg_attr(not(feature = "std"), no_std)]
