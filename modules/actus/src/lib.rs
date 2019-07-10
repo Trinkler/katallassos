@@ -14,6 +14,7 @@
 //
 
 use parity_codec::{Decode, Encode};
+use primitives::H256;
 use reals::Real;
 use rstd::prelude::*;
 use support::{decl_event, decl_module, decl_storage, dispatch::Result, StorageMap};
@@ -49,7 +50,7 @@ decl_event!(
 // This module's storage items.
 decl_storage! {
     trait Store for Module<T: Trait> as ContractStorage {
-        ContractStates: map u128 => ContractState;
+        ContractStorage: map H256 => ContractState;
     }
 }
 
@@ -66,7 +67,7 @@ decl_module! {
             let id = attributes.contract_id;
 
             // Checking if ID is available.
-            if <ContractStates<T>>::exists(id) {
+            if <ContractStorage<T>>::exists(id) {
                 return Err("Contract ID already exists");
             }
 
@@ -77,7 +78,7 @@ decl_module! {
             let state = contracts::initialize(t0, attributes)?;
 
             // Storing the contract state.
-            <ContractStates<T>>::insert(id, state);
+            <ContractStorage<T>>::insert(id, state);
 
             Ok(())
         }
@@ -139,14 +140,15 @@ mod tests {
     fn deploy_contract_works() {
         with_externalities(&mut new_test_ext(), || {
             // Tries to start a contract with the wrong type.
-            let mut attributes = Attributes::new(0);
+            let id = H256::zero();
+            let mut attributes = Attributes::new(id);
             let result = Actus::deploy_contract(Origin::signed(1), attributes.clone());
             assert!(result.is_err());
 
             // Starts a PAM contract with the wrong attributes.
-            attributes.contract_id = 420;
+            attributes.contract_id = id;
             attributes.contract_type = Some(ContractType::PAM);
-            attributes.currency = Some(421);
+            attributes.currency = Some(420);
             attributes.day_count_convention = Some(DayCountConvention::_A365);
             attributes.initial_exchange_date = Time::from_values(1969, 07, 21, 02, 56, 15);
             attributes.maturity_date = Time::from_values(1979, 07, 21, 02, 56, 15);
@@ -154,8 +156,8 @@ mod tests {
             attributes.notional_principal = Real(Some(50000000));
             attributes.contract_deal_date = Time::from_values(1969, 07, 21, 02, 56, 15);
             attributes.contract_role = Some(ContractRole::RPA);
-            attributes.creator_id = Some(422);
-            attributes.counterparty_id = Some(423);
+            attributes.creator_id = Some(421);
+            attributes.counterparty_id = Some(422);
             let result = Actus::deploy_contract(Origin::signed(1), attributes.clone());
             assert!(result.is_err());
 

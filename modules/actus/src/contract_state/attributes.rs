@@ -39,7 +39,7 @@ pub struct Attributes {
     pub capitalization_end_date: Time,
     pub clearing_house: Option<ClearingHouse>,
     pub contract_deal_date: Time,
-    pub contract_id: u128,
+    pub contract_id: H256,
     pub contract_performance: Option<ContractPerformance>,
     pub contract_role: Option<ContractRole>,
     // ContractStructure goes here.
@@ -374,7 +374,7 @@ pub enum Unit {
 impl Attributes {
     // Creates a new Attributes instance with every field set to the default value (as defined by
     // the ACTUS data dictionary).
-    pub fn new(contract_id: u128) -> Attributes {
+    pub fn new(contract_id: H256) -> Attributes {
         Attributes {
             accrued_interest: Real(None),
             amortization_date: Time(None),

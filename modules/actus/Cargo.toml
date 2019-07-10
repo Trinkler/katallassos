@@ -34,6 +34,11 @@ git = "https://github.com/paritytech/substrate.git"
 rev = "dbf3226"
 default-features = false
 
+[dependencies.primitives]
+package = "substrate-primitives"
+git = "https://github.com/paritytech/substrate.git"
+rev = "dbf3226"
+
 [dependencies.runtime_primitives]
 package = "sr-primitives"
 git = "https://github.com/paritytech/substrate.git"
@@ -67,10 +72,5 @@ default-features = false
 # Debug crates
 [dev-dependencies.runtime_io]
 package = "sr-io"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-
-[dev-dependencies.primitives]
-package = "substrate-primitives"
 git = "https://github.com/paritytech/substrate.git"
 rev = "dbf3226"
