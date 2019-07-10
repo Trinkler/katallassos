@@ -25,6 +25,7 @@ client = { package = "substrate-client", git = "https://github.com/paritytech/su
 consensus-aura = { package = "substrate-consensus-aura-primitives", git = "https://github.com/paritytech/substrate", default-features = false }
 offchain-primitives = { package = "substrate-offchain-primitives", git = "https://github.com/paritytech/substrate", default-features = false }
 assets = { package = "srml-assets", git = "https://github.com/paritytech/substrate", default-features = false }
+ownership = { package = "modules-ownership", path="../../modules/ownership", default-features = false }
 
 [build-dependencies]
 wasm-builder-runner = { package = "substrate-wasm-builder-runner", version = "1.0.2" }
@@ -52,5 +53,6 @@ std = [
 	"consensus-aura/std",
 	"offchain-primitives/std",
 	"assets/std",
+	"ownership/std",
 ]
 no_std = []

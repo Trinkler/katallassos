@@ -205,6 +205,17 @@ impl assets::Trait for Runtime {
     type AssetId = u128; // TODO: Validate assumption using interface
 }
 
+impl ownership::Trait for Runtime {
+    /// The overarching event type.
+    type Event = Event;
+
+    /// The units in which we record balances.
+    type Balance = u128;
+
+    /// The arithmetic type of asset identifier.
+    type AssetId = u128; // TODO: Validate assumption using interface
+}
+
 construct_runtime!(
 	pub enum Runtime where
 		Block = Block,
@@ -218,6 +229,7 @@ construct_runtime!(
 		Balances: balances,
 		Sudo: sudo,
         Assets: assets::{Module, Call, Storage, Event<T>},
+        Ownership: ownership::{Module, Call, Storage, Event<T>},
 	}
 );
 
