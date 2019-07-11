@@ -1,5 +1,8 @@
 use super::*;
 
+// TODO: Handle ContractStructure. It is non-applicable.
+// TODO: Check that all non-applicable attributes are None.
+// TODO: Take out all the check parent/child relation warnings. PAM is always a standalone contract.
 pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
     // The ContractID, necessary to create any contract.
     let mut attributes = Attributes::new(input.contract_id);

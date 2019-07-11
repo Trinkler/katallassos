@@ -37,10 +37,10 @@ pub struct Attributes {
     pub capitalization_end_date: Time,
     pub clearing_house: Option<ClearingHouse>,
     pub contract_deal_date: Time,
-    pub contract_id: H256,
+    pub contract_id: H256, // Represents an contract object.
     pub contract_performance: Option<ContractPerformance>,
     pub contract_role: Option<ContractRole>,
-    // ContractStructure goes here.
+    pub contract_structure: Vec<Option<ContractReference>>,
     pub contract_type: Option<ContractType>,
     pub counterparty_id: Option<H256>, // Represents an account object.
     pub coverage_of_credit_enhancement: Real,
@@ -173,6 +173,35 @@ pub enum ContractPerformance {
     DL,
     DQ,
     DF,
+}
+
+// The underscore is necessary because 'type' is a reserved word.
+#[derive(Clone, Copy, Decode, Encode, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub struct ContractReference {
+    pub _object: H256,
+    pub _type: ContractReferenceType,
+    pub _role: ContractReferenceRole,
+}
+
+#[derive(Clone, Copy, Decode, Encode, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum ContractReferenceRole {
+    Underlying,
+    FirstLeg,
+    SecondLeg,
+    CoveredContract,
+    CoveringContract,
+}
+
+#[derive(Clone, Copy, Decode, Encode, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum ContractReferenceType {
+    Contract,
+    ContractIdentifier,
+    MarketObjectIdentifier,
+    LegalEntityIdentifier,
+    ContractStructure,
 }
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
@@ -394,7 +423,7 @@ impl Attributes {
             contract_id: contract_id,
             contract_performance: Some(ContractPerformance::PF),
             contract_role: None,
-            // ContractStructure goes here.
+            contract_structure: Vec::new(),
             contract_type: None,
             counterparty_id: None,
             coverage_of_credit_enhancement: Real::from(1),
