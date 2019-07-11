@@ -14,24 +14,21 @@
 // Ensure we're `no_std` when compiling for Wasm.
 #![cfg_attr(not(feature = "std"), no_std)]
 
-#![cfg_attr(not(feature = "std"), no_std)]
-// The above line is needed to compile the Wasm binaries.
-
 use parity_codec::{Decode, Encode};
-// use primitives::H256;
+use primitives::H256;
 use reals::Real;
 use rstd::prelude::*;
 use support::{decl_event, decl_module, decl_storage, dispatch::Result, StorageMap};
-// use time::{Time, UncheckedTime};
+use time::{Time, UncheckedTime};
 
-// // Importing the rest of the files in this crate.
-// mod contract_state;
-// mod contracts;
-// mod utilities;
-// use contract_state::*;
-// use contracts::*;
-// use utilities::*;
-// //
+// Importing the rest of the files in this crate.
+mod contract_state;
+mod contracts;
+mod utilities;
+use contract_state::*;
+use contracts::*;
+use utilities::*;
+
 // Defines an alias for the Result type. It has the name MyResult because Substrate already uses
 // the name Result for their own type Result<(), &'static str>.
 type MyResult<T> = rstd::result::Result<T, &'static str>;
