@@ -1,8 +1,12 @@
-//! Katal Chain runtime. This can be compiled with `#[no_std]`, ready for Wasm.
+//! The Katal runtime. This can be compiled with `#[no_std]`, ready for Wasm.
 
 #![cfg_attr(not(feature = "std"), no_std)]
 // `construct_runtime!` does a lot of recursion and requires us to increase the limit to 256.
 #![recursion_limit = "256"]
+
+// Make the WASM binary available.
+#[cfg(feature = "std")]
+include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
 
 use client::{
     block_builder::api::{self as block_builder_api, CheckInherentsResult, InherentData},
@@ -30,7 +34,7 @@ pub use balances::Call as BalancesCall;
 #[cfg(any(feature = "std", test))]
 pub use runtime_primitives::BuildStorage;
 pub use runtime_primitives::{Perbill, Permill};
-pub use support::{construct_runtime, StorageValue};
+pub use support::{construct_runtime, parameter_types, StorageValue};
 pub use timestamp::BlockPeriod;
 pub use timestamp::Call as TimestampCall;
 
@@ -54,9 +58,6 @@ pub type BlockNumber = u64;
 
 /// Index of an account's extrinsic in the chain.
 pub type Nonce = u64;
-
-// /// Used for the module template in `./template.rs`
-// mod template;
 
 /// Opaque types. These are used by the CLI to instantiate machinery that don't need to know
 /// the specifics of the runtime. They can then be made to be agnostic over specific formats
@@ -109,6 +110,10 @@ pub fn native_version() -> NativeVersion {
     }
 }
 
+parameter_types! {
+    pub const BlockHashCount: BlockNumber = 250;
+}
+
 impl system::Trait for Runtime {
     /// The identifier used to distinguish between accounts.
     type AccountId = AccountId;
@@ -128,6 +133,8 @@ impl system::Trait for Runtime {
     type Event = Event;
     /// The ubiquitous origin type.
     type Origin = Origin;
+    /// Maximum number of block number to block hash mappings to keep (oldest pruned first).
+    type BlockHashCount = BlockHashCount;
 }
 
 impl aura::Trait for Runtime {
@@ -153,6 +160,14 @@ impl timestamp::Trait for Runtime {
     type OnTimestampSet = Aura;
 }
 
+parameter_types! {
+    pub const ExistentialDeposit: u128 = 500;
+    pub const TransferFee: u128 = 0;
+    pub const CreationFee: u128 = 0;
+    pub const TransactionBaseFee: u128 = 1;
+    pub const TransactionByteFee: u128 = 0;
+}
+
 impl balances::Trait for Runtime {
     /// The type for recording an account's balance.
     type Balance = u128;
@@ -166,6 +181,11 @@ impl balances::Trait for Runtime {
     type TransactionPayment = ();
     type DustRemoval = ();
     type TransferPayment = ();
+    type ExistentialDeposit = ExistentialDeposit;
+    type TransferFee = TransferFee;
+    type CreationFee = CreationFee;
+    type TransactionBaseFee = TransactionBaseFee;
+    type TransactionByteFee = TransactionByteFee;
 }
 
 impl sudo::Trait for Runtime {
@@ -174,7 +194,29 @@ impl sudo::Trait for Runtime {
     type Proposal = Call;
 }
 
-impl actus::Trait for Runtime {
+impl assets::Trait for Runtime {
+    /// The overarching event type.
+    type Event = Event;
+
+    /// The units in which we record balances.
+    type Balance = u128;
+
+    /// The arithmetic type of asset identifier.
+    type AssetId = u128; // TODO: Validate assumption using interface
+}
+
+impl ownership::Trait for Runtime {
+    /// The overarching event type.
+    type Event = Event;
+
+    /// The units in which we record balances.
+    type Balance = u128;
+
+    /// The arithmetic type of asset identifier.
+    type AssetId = u128; // TODO: Validate assumption using interface
+}
+
+impl oracle::Trait for Runtime {
     type Event = Event;
 }
 
@@ -184,13 +226,15 @@ construct_runtime!(
 		NodeBlock = opaque::Block,
 		UncheckedExtrinsic = UncheckedExtrinsic
 	{
-		System: system::{default, Config<T>},
+		System: system::{Module, Call, Storage, Config, Event},
 		Timestamp: timestamp::{Module, Call, Storage, Config<T>, Inherent},
 		Aura: aura::{Module, Config<T>, Inherent(Timestamp)},
 		Indices: indices::{default, Config<T>},
 		Balances: balances,
 		Sudo: sudo,
-		Actus: actus::{Module, Call, Storage, Event<T>},
+        Assets: assets::{Module, Call, Storage, Event<T>},
+        Ownership: ownership::{Module, Call, Storage, Event<T>},
+        Oracle: oracle::{Module, Call, Storage, Event<T>},
 	}
 );
 

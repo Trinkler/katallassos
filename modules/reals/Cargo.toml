@@ -11,12 +11,6 @@ std = [
 	"parity-codec/std",
 ]
 
-# Rust crates
-[dependencies.serde]
-version = "1.0"
-optional = true
-
-[dependencies.parity-codec]
-version = "3.3"
-default-features = false
-features = ["derive"]
+[dependencies]
+serde = { version = "1.0", optional = true }
+parity-codec = { version = "4.1.1", default-features = false }

@@ -6,7 +6,7 @@ use basic_authorship::ProposerFactory;
 use consensus::{import_queue, start_aura, AuraImportQueue, SlotDuration};
 use futures::prelude::*;
 use inherents::InherentDataProviders;
-use katal_runtime::{self, opaque::Block, GenesisConfig, RuntimeApi};
+use katal_runtime::{self, opaque::Block, GenesisConfig, RuntimeApi, WASM_BINARY};
 use log::info;
 use network::construct_simple_protocol;
 use primitives::{ed25519::Pair, Pair as PairT};
@@ -17,7 +17,6 @@ use substrate_service::construct_service_factory;
 use substrate_service::{
     error::Error as ServiceError, FactoryFullConfiguration, FullBackend, FullClient,
     FullComponents, FullExecutor, LightBackend, LightClient, LightComponents, LightExecutor,
-    TaskExecutor,
 };
 use transaction_pool::{self, txpool::Pool as TransactionPool};
 
@@ -27,7 +26,7 @@ native_executor_instance!(
 	pub Executor,
 	katal_runtime::api::dispatch,
 	katal_runtime::native_version,
-	include_bytes!("../runtime/wasm/target/wasm32-unknown-unknown/release/katal_runtime_wasm.compact.wasm")
+	WASM_BINARY
 );
 
 #[derive(Default)]
@@ -61,12 +60,12 @@ construct_service_factory! {
         Genesis = GenesisConfig,
         Configuration = NodeConfig,
         FullService = FullComponents<Self>
-            { |config: FactoryFullConfiguration<Self>, executor: TaskExecutor|
-                FullComponents::<Factory>::new(config, executor)
+            { |config: FactoryFullConfiguration<Self>|
+                FullComponents::<Factory>::new(config)
             },
         AuthoritySetup = {
-            |service: Self::FullService, executor: TaskExecutor, key: Option<Arc<Pair>>| {
-                if let Some(key) = key {
+            |service: Self::FullService| {
+                if let Some(key) = service.authority_key::<Pair>() {
                     info!("Using authority key {}", key.public());
                     let proposer = Arc::new(ProposerFactory {
                         client: service.client(),
@@ -77,7 +76,7 @@ construct_service_factory! {
                         .ok_or_else(|| ServiceError::SelectChainRequired)?;
                     let aura = start_aura(
                         SlotDuration::get_or_compute(&*client)?,
-                        key.clone(),
+                        Arc::new(key),
                         client.clone(),
                         select_chain,
                         client,
@@ -86,21 +85,21 @@ construct_service_factory! {
                         service.config.custom.inherent_data_providers.clone(),
                         service.config.force_authoring,
                     )?;
-                    executor.spawn(aura.select(service.on_exit()).then(|_| Ok(())));
+                    service.spawn_task(Box::new(aura.select(service.on_exit()).then(|_| Ok(()))));
                 }
 
                 Ok(service)
             }
         },
         LightService = LightComponents<Self>
-            { |config, executor| <LightComponents<Factory>>::new(config, executor) },
+            { |config| <LightComponents<Factory>>::new(config) },
         FullImportQueue = AuraImportQueue<
             Self::Block,
         >
             { |config: &mut FactoryFullConfiguration<Self> , client: Arc<FullClient<Self>>, _select_chain: Self::SelectChain| {
                     import_queue::<_, _, Pair>(
                         SlotDuration::get_or_compute(&*client)?,
-                        client.clone(),
+                        Box::new(client.clone()),
                         None,
                         None,
                         None,
@@ -115,7 +114,7 @@ construct_service_factory! {
             { |config: &mut FactoryFullConfiguration<Self>, client: Arc<LightClient<Self>>| {
                     import_queue::<_, _, Pair>(
                         SlotDuration::get_or_compute(&*client)?,
-                        client.clone(),
+                        Box::new(client.clone()),
                         None,
                         None,
                         None,
