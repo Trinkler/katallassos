@@ -16,9 +16,7 @@
 use super::*;
 
 /// All ACTUS contract attributes as specified in the data dictionary in the Github.
-// P.S. Has a size of 1280 bytes.
 // TODO: Add ContractStructure attribute.
-// TODO: Change u128 to Hash.
 #[derive(Clone, Decode, Encode, Default, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct Attributes {
@@ -44,12 +42,12 @@ pub struct Attributes {
     pub contract_role: Option<ContractRole>,
     // ContractStructure goes here.
     pub contract_type: Option<ContractType>,
-    pub counterparty_id: Option<u128>, // Represents an account object.
+    pub counterparty_id: Option<H256>, // Represents an account object.
     pub coverage_of_credit_enhancement: Real,
-    pub creator_id: Option<u128>, // Represents an account object.
+    pub creator_id: Option<H256>, // Represents an account object.
     pub credit_line_amount: Real,
-    pub currency: Option<u128>,   // Represents an issuance object.
-    pub currency_2: Option<u128>, // Represents an issuance object.
+    pub currency: Option<H256>,   // Represents an issuance object.
+    pub currency_2: Option<H256>, // Represents an issuance object.
     pub cycle_anchor_date_of_dividend: Time,
     pub cycle_anchor_date_of_fee: Time,
     pub cycle_anchor_date_of_interest_calculation_base: Time,
@@ -91,9 +89,9 @@ pub struct Attributes {
     pub life_floor: Real,
     pub maintenance_margin_lower_bound: Real,
     pub maintenance_margin_upper_bound: Real,
-    pub market_object_code: Option<u128>, // Represents an oracle object.
-    pub market_object_code_of_scaling_index: Option<u128>, // Represents an oracle object.
-    pub market_object_code_rate_reset: Option<u128>, // Represents an oracle object.
+    pub market_object_code: Option<H256>, // Represents an oracle object.
+    pub market_object_code_of_scaling_index: Option<H256>, // Represents an oracle object.
+    pub market_object_code_rate_reset: Option<H256>, // Represents an oracle object.
     pub market_value_observed: Real,
     pub maturity_date: Time,
     pub maximum_penalty_free_disbursement: Real,
