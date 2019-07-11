@@ -24,43 +24,43 @@ features = ["derive"]
 package = "sr-std"
 git = "https://github.com/paritytech/substrate.git"
 rev = "dbf3226"
-default_features = false
+default-features = false
 
 [dependencies.runtime-io]
 package = "sr-io"
 git = "https://github.com/paritytech/substrate.git"
 rev = "dbf3226"
-default_features = false
+default-features = false
 
 [dependencies.version]
 package = "sr-version"
 git = "https://github.com/paritytech/substrate.git"
 rev = "dbf3226"
-default_features = false
+default-features = false
 
 [dependencies.primitives]
 package = "substrate-primitives"
 git = "https://github.com/paritytech/substrate.git"
 rev = "dbf3226"
-default_features = false
+default-features = false
 
 [dependencies.runtime-primitives]
 package = "sr-primitives"
 git = "https://github.com/paritytech/substrate.git"
 rev = "dbf3226"
-default_features = false
+default-features = false
 
 [dependencies.client]
 package = "substrate-client"
 git = "https://github.com/paritytech/substrate.git"
 rev = "dbf3226"
-default_features = false
+default-features = false
 
 [dependencies.consensus-aura]
 package = "substrate-consensus-aura-primitives"
 git = "https://github.com/paritytech/substrate.git"
 rev = "dbf3226"
-default_features = false
+default-features = false
 
 [dependencies.offchain-primitives]
 package = "substrate-offchain-primitives"
@@ -73,55 +73,55 @@ default-features = false
 package = "srml-support"
 git = "https://github.com/paritytech/substrate.git"
 rev = "dbf3226"
-default_features = false
+default-features = false
 
 [dependencies.system]
 package = "srml-system"
 git = "https://github.com/paritytech/substrate.git"
 rev = "dbf3226"
-default_features = false
+default-features = false
 
 [dependencies.executive]
 package = "srml-executive"
 git = "https://github.com/paritytech/substrate.git"
 rev = "dbf3226"
-default_features = false
+default-features = false
 
 [dependencies.balances]
 package = "srml-balances"
 git = "https://github.com/paritytech/substrate.git"
 rev = "dbf3226"
-default_features = false
+default-features = false
 
 [dependencies.aura]
 package = "srml-aura"
 git = "https://github.com/paritytech/substrate.git"
 rev = "dbf3226"
-default_features = false
+default-features = false
 
 [dependencies.indices]
 package = "srml-indices"
 git = "https://github.com/paritytech/substrate.git"
 rev = "dbf3226"
-default_features = false
+default-features = false
 
 [dependencies.timestamp]
 package = "srml-timestamp"
 git = "https://github.com/paritytech/substrate.git"
 rev = "dbf3226"
-default_features = false
+default-features = false
 
 [dependencies.sudo]
 package = "srml-sudo"
 git = "https://github.com/paritytech/substrate.git"
 rev = "dbf3226"
-default_features = false
+default-features = false
 
 # Katal crates
 [dependencies.actus]
 package="modules-actus"
 path="../../modules/actus"
-default_features = false
+default-features = false
 
 [features]
 default = ["std"]

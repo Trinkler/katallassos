@@ -10,6 +10,7 @@ std = [
 	"serde",
 	"parity-codec/std",
 	"rstd/std",
+	"primitives/std",
 	"runtime_primitives/std",
 	"support/std",
 	"system/std",
@@ -38,6 +39,7 @@ default-features = false
 package = "substrate-primitives"
 git = "https://github.com/paritytech/substrate.git"
 rev = "dbf3226"
+default-features = false
 
 [dependencies.runtime_primitives]
 package = "sr-primitives"
