@@ -68,7 +68,7 @@ decl_module! {
             let id = attributes.contract_id;
 
             // Checking if ID is available.
-            if <ContractStorage<T>>::exists(id) {
+            if <Self as Store>::ContractStorage::exists(id) {
                 return Err("Contract ID already exists");
             }
 
@@ -79,7 +79,7 @@ decl_module! {
             let state = contracts::initialize(t0, attributes)?;
 
             // Storing the contract state.
-            <ContractStorage<T>>::insert(id, state);
+            <Self as Store>::ContractStorage::insert(id, state);
 
             Ok(())
         }
