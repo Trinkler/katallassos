@@ -14,6 +14,9 @@
 // Ensure we're `no_std` when compiling for Wasm.
 #![cfg_attr(not(feature = "std"), no_std)]
 
+#![cfg_attr(not(feature = "std"), no_std)]
+// The above line is needed to compile the Wasm binaries.
+
 use parity_codec::{Decode, Encode};
 // use primitives::H256;
 use reals::Real;

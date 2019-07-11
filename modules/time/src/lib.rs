@@ -56,6 +56,9 @@
 //! instance. If the input unix time exceeds the range of allowed ISO8601 times, it will return 'None'.
 //! When converting between the two formats leap seconds are ignored.
 
+#![cfg_attr(not(feature = "std"), no_std)]
+// The above line is needed to compile the Wasm binaries.
+
 /// These are necessary to work with Substrate.
 use parity_codec::{Decode, Encode};
 
