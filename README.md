@@ -17,7 +17,7 @@
 ```sh
 # Install Rustup
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-./init.sh
+./scripts/init.sh
 ```
 
 ### Building
@@ -25,8 +25,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```sh
 git clone git@github.com:Trinkler/katal-chain.git
 cd katal-chain/
-# Build wasm and native binaries
-cargo build # Alternatively run: cargo build --release
+cargo build # Build wasm and native binaries
 ```
 
 ### Run
