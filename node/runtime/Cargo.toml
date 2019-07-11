@@ -145,5 +145,9 @@ std = [
 	"safe-mix/std",
 	"consensus-aura/std",
 	"offchain-primitives/std",
+	"assets/std",
+	"ownership/std",
+	"oracle/std",
 	"actus/std",
 ]
+no_std = []

@@ -1,6 +1,6 @@
 use katal_runtime::{
-    AccountId, AuraConfig, AuraId as AuthorityId, BalancesConfig, GenesisConfig, IndicesConfig,
-    SudoConfig, SystemConfig, TimestampConfig,
+    AccountId, AuraConfig, AuraId, BalancesConfig, GenesisConfig, IndicesConfig, SudoConfig,
+    SystemConfig, TimestampConfig, WASM_BINARY,
 };
 use primitives::{ed25519, sr25519, Pair};
 use substrate_service;
@@ -22,7 +22,7 @@ pub enum Alternative {
     LocalTestnet,
 }
 
-fn authority_key(s: &str) -> AuthorityId {
+fn authority_key(s: &str) -> AuraId {
     ed25519::Pair::from_string(&format!("//{}", s), None)
         .expect("static values are valid; qed")
         .public()
@@ -90,36 +90,32 @@ impl Alternative {
 }
 
 fn testnet_genesis(
-    initial_authorities: Vec<AuthorityId>,
+    initial_authorities: Vec<AuraId>,
     endowed_accounts: Vec<AccountId>,
     root_key: AccountId,
 ) -> GenesisConfig {
     GenesisConfig {
-		system: Some(SystemConfig {
-			code: include_bytes!("../runtime/wasm/target/wasm32-unknown-unknown/release/katal_runtime_wasm.compact.wasm").to_vec(),
-			changes_trie_config: Default::default(),
-			_genesis_phantom_data: Default::default(),
-		}),
-		aura: Some(AuraConfig {
-			authorities: initial_authorities.clone(),
-		}),
-		timestamp: Some(TimestampConfig {
-			minimum_period: 5, // 10 second block time.
-		}),
-		indices: Some(IndicesConfig {
-			ids: endowed_accounts.clone(),
-		}),
-		balances: Some(BalancesConfig {
-			transaction_base_fee: 1,
-			transaction_byte_fee: 0,
-			existential_deposit: 500,
-			transfer_fee: 0,
-			creation_fee: 0,
-			balances: endowed_accounts.iter().cloned().map(|k|(k, 1 << 60)).collect(),
-			vesting: vec![],
-		}),
-		sudo: Some(SudoConfig {
-			key: root_key,
-		}),
-	}
+        system: Some(SystemConfig {
+            code: WASM_BINARY.to_vec(),
+            changes_trie_config: Default::default(),
+        }),
+        aura: Some(AuraConfig {
+            authorities: initial_authorities.clone(),
+        }),
+        timestamp: Some(TimestampConfig {
+            minimum_period: 5, // 10 second block time.
+        }),
+        indices: Some(IndicesConfig {
+            ids: endowed_accounts.clone(),
+        }),
+        balances: Some(BalancesConfig {
+            balances: endowed_accounts
+                .iter()
+                .cloned()
+                .map(|k| (k, 1 << 60))
+                .collect(),
+            vesting: vec![],
+        }),
+        sudo: Some(SudoConfig { key: root_key }),
+    }
 }

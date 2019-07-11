@@ -2,95 +2,35 @@
 name = "katal"
 version = "0.0.1"
 authors = ["Trinkler Software <company@trinkler.software>"]
-build = "build.rs"
+build = "node/build.rs"
 edition = "2018"
 
 [[bin]]
 name = "katal"
 path = "node/src/main.rs"
 
-# Rust crates
-[dependencies.derive_more]
-version = "0.14.0"
-
-[dependencies.futures]
-version = "0.1"
-
-[dependencies.log]
-version = "0.4"
-
-[dependencies.tokio]
-version = "0.1"
-
-[dependencies.exit-future]
-version = "0.1"
-
-[dependencies.parking_lot]
-version = "0.8.0"
-
-[dependencies.trie-root]
-version = "0.12.2"
-
-[dependencies.parity-codec]
-version = "3.3"
-
-[dependencies.ctrlc]
-version = "3.1.3"
-features = ["termination"]
-
-# Substrate Core crates
-[dependencies.sr-io]
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-
-[dependencies.primitives]
-package = "substrate-primitives"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-
-[dependencies.substrate-client]
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-
-[dependencies.consensus]
-package = "substrate-consensus-aura"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-
-[dependencies.substrate-cli]
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-
-[dependencies.substrate-executor]
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-
-[dependencies.substrate-service]
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-
-[dependencies.inherents]
-package = "substrate-inherents"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-
-[dependencies.transaction-pool]
-package = "substrate-transaction-pool"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-
-[dependencies.network]
-package = "substrate-network"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-
-[dependencies.basic-authorship]
-package = "substrate-basic-authorship"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-
-[dependencies.katal-runtime]
-path = "node/runtime"
+[dependencies]
+derive_more = "0.14.0"
+futures = "0.1"
+ctrlc = { version = "3.0", features = ["termination"] }
+log = "0.4"
+tokio = "0.1"
+exit-future = "0.1"
+parking_lot = "0.8.0"
+parity-codec = "4.1.1"
+trie-root = "0.14.0"
+sr-io = { git = "https://github.com/paritytech/substrate" }
+substrate-cli = { git = "https://github.com/paritytech/substrate" }
+primitives = { package = "substrate-primitives", git = "https://github.com/paritytech/substrate" }
+substrate-executor = { git = "https://github.com/paritytech/substrate" }
+substrate-service = { git = "https://github.com/paritytech/substrate" }
+inherents = { package = "substrate-inherents", git = "https://github.com/paritytech/substrate" }
+transaction-pool = { package = "substrate-transaction-pool", git = "https://github.com/paritytech/substrate" }
+network = { package = "substrate-network", git = "https://github.com/paritytech/substrate" }
+consensus = { package = "substrate-consensus-aura", git = "https://github.com/paritytech/substrate" }
+substrate-client = {  git = "https://github.com/paritytech/substrate" }
+basic-authorship = { package = "substrate-basic-authorship", git = "https://github.com/paritytech/substrate" }
+katal-runtime = { path = "node/runtime"}
 
 [build-dependencies]
 vergen = "3"
