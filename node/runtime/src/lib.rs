@@ -220,6 +220,10 @@ impl oracle::Trait for Runtime {
     type Event = Event;
 }
 
+impl actus::Trait for Runtime {
+    type Event = Event;
+}
+
 construct_runtime!(
 	pub enum Runtime where
 		Block = Block,
@@ -235,6 +239,7 @@ construct_runtime!(
         Assets: assets::{Module, Call, Storage, Event<T>},
         Ownership: ownership::{Module, Call, Storage, Event<T>},
         Oracle: oracle::{Module, Call, Storage, Event<T>},
+        Actus: actus::{Module, Call, Storage, Event<T>},
 	}
 );
 
