@@ -4,124 +4,33 @@ version = "0.0.1"
 authors = ["Trinkler Software <company@trinkler.software>"]
 edition = "2018"
 
-# External crates
-[dependencies.serde]
-version = "1.0"
-optional = true
-features = ["derive"]
+[dependencies]
+serde = { version = "1.0", optional = true, features = ["derive"] }
+safe-mix = { version = "1.0", default-features = false }
+parity-codec = { version = "4.1.1", default-features = false, features = ["derive"] }
+rstd = { package = "sr-std", git = "https://github.com/paritytech/substrate", default-features = false }
+runtime-io = { package = "sr-io", git = "https://github.com/paritytech/substrate", default-features = false }
+version = { package = "sr-version", git = "https://github.com/paritytech/substrate", default-features = false }
+support = { package = "srml-support", git = "https://github.com/paritytech/substrate", default-features = false }
+primitives = { package = "substrate-primitives", git = "https://github.com/paritytech/substrate", default-features = false }
+balances = { package = "srml-balances", git = "https://github.com/paritytech/substrate", default-features = false }
+aura = { package = "srml-aura", git = "https://github.com/paritytech/substrate", default-features = false }
+executive = { package = "srml-executive", git = "https://github.com/paritytech/substrate", default-features = false }
+indices = { package = "srml-indices", git = "https://github.com/paritytech/substrate", default-features = false }
+system = { package = "srml-system", git = "https://github.com/paritytech/substrate", default-features = false }
+timestamp = { package = "srml-timestamp", git = "https://github.com/paritytech/substrate", default-features = false }
+sudo = { package = "srml-sudo", git = "https://github.com/paritytech/substrate", default-features = false }
+runtime-primitives = { package = "sr-primitives", git = "https://github.com/paritytech/substrate", default-features = false }
+client = { package = "substrate-client", git = "https://github.com/paritytech/substrate", default-features = false }
+consensus-aura = { package = "substrate-consensus-aura-primitives", git = "https://github.com/paritytech/substrate", default-features = false }
+offchain-primitives = { package = "substrate-offchain-primitives", git = "https://github.com/paritytech/substrate", default-features = false }
+assets = { package = "srml-assets", git = "https://github.com/paritytech/substrate", default-features = false }
+ownership = { package = "modules-ownership", path="../../modules/ownership", default-features = false }
+oracle = { package = "modules-oracle", path="../../modules/oracle", default-features = false }
+actus = { package = "modules-actus", path="../../modules/actus", default-features = false }
 
-[dependencies.safe-mix]
-version = "1.0"
-default-features = false
-
-[dependencies.parity-codec]
-version = "3.3"
-default-features = false
-features = ["derive"]
-
-# Substrate Core crates
-[dependencies.rstd]
-package = "sr-std"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-default-features = false
-
-[dependencies.runtime-io]
-package = "sr-io"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-default-features = false
-
-[dependencies.version]
-package = "sr-version"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-default-features = false
-
-[dependencies.primitives]
-package = "substrate-primitives"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-default-features = false
-
-[dependencies.runtime-primitives]
-package = "sr-primitives"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-default-features = false
-
-[dependencies.client]
-package = "substrate-client"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-default-features = false
-
-[dependencies.consensus-aura]
-package = "substrate-consensus-aura-primitives"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-default-features = false
-
-[dependencies.offchain-primitives]
-package = "substrate-offchain-primitives"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-default-features = false
-
-# SRML crates
-[dependencies.support]
-package = "srml-support"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-default-features = false
-
-[dependencies.system]
-package = "srml-system"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-default-features = false
-
-[dependencies.executive]
-package = "srml-executive"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-default-features = false
-
-[dependencies.balances]
-package = "srml-balances"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-default-features = false
-
-[dependencies.aura]
-package = "srml-aura"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-default-features = false
-
-[dependencies.indices]
-package = "srml-indices"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-default-features = false
-
-[dependencies.timestamp]
-package = "srml-timestamp"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-default-features = false
-
-[dependencies.sudo]
-package = "srml-sudo"
-git = "https://github.com/paritytech/substrate.git"
-rev = "dbf3226"
-default-features = false
-
-# Katal crates
-[dependencies.actus]
-package="modules-actus"
-path="../../modules/actus"
-default-features = false
+[build-dependencies]
+wasm-builder-runner = { package = "substrate-wasm-builder-runner", version = "1.0.2" }
 
 [features]
 default = ["std"]
