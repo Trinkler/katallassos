@@ -86,8 +86,8 @@ impl Alternative {
                 None,
             ),
             Alternative::Testnet => ChainSpec::from_genesis(
-                "Katal Testnet v0.0.1", // Name
-                "testnet",              // Id
+                "Katal v0.0.1", // Name
+                "testnet",      // Id
                 || {
                     testnet_genesis(
                         vec![authority_key("Alice")], // Initial Authorities
@@ -100,15 +100,15 @@ impl Alternative {
                     )
                 }, // Constructor
                 vec![
-					"/ip4/134.209.192.55/tcp/30333/p2p/Qmds2R7fLXwj6VFsZHodS2PvZrH8Pb7gYpANqtCHXhUgFo".to_string(),
+					"/ip4/134.209.192.55/tcp/30333/p2p/QmVUFyyWFkiDgMV2aQH6qLX5TutaxYSkDTPjeaJhjYBEhK".to_string(),
 				], // Boot Nodes
                 Some(TelemetryEndpoints::new(vec![(
                     STAGING_TELEMETRY_URL.to_string(),
                     0,
                 )])), // Telemetry Endpoints
-                None,                   // Protocol Id
-                None,                   // Consensus Engine
-                None,                   // Properties
+                None,           // Protocol Id
+                None,           // Consensus Engine
+                None,           // Properties
             ),
         })
     }
