@@ -90,10 +90,7 @@ impl Alternative {
                 "testnet",              // Id
                 || {
                     testnet_genesis(
-                        vec![hex![
-                            "be9128704d6642083e4f9f5fc55e5216dc7b22cba74578c2a553b32391297530"
-                        ] // 5FnqauongW5TPgo8KKxmn75b7rr8NSWy9SARu54vkxag7Ncc
-                        .unchecked_into()], // Initial Authorities
+                        vec![authority_key("Alice")], // Initial Authorities
                         vec![hex![
                             "be9128704d6642083e4f9f5fc55e5216dc7b22cba74578c2a553b32391297530"
                         ] // 5FnqauongW5TPgo8KKxmn75b7rr8NSWy9SARu54vkxag7Ncc
