@@ -27,6 +27,10 @@ consensus-aura = { package = "substrate-consensus-aura-primitives", git = "https
 offchain-primitives = { package = "substrate-offchain-primitives", git = "https://github.com/paritytech/substrate", branch = "v1.0", default-features = false }
 consensus_authorities = { package = "substrate-consensus-authorities", git = "https://github.com/paritytech/substrate", branch = "v1.0", default-features = false }
 
+actus = { package = "modules-actus", path = "../../modules/actus", default-features = false }
+# oracle = { package = "modules-oracle", path = "../../modules/oracle", default-features = false }
+# ownership = { package = "modules-ownership", path = "../../modules/ownership", default-features = false }
+
 [features]
 default = ["std"]
 std = [
@@ -49,4 +53,7 @@ std = [
 	"safe-mix/std",
 	"consensus-aura/std",
 	"offchain-primitives/std",
+	"actus/std",
+	# "oracle/std",
+	# "ownership/std",
 ]

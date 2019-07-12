@@ -190,6 +190,18 @@ impl sudo::Trait for Runtime {
     type Proposal = Call;
 }
 
+impl actus::Trait for Runtime {
+    type Event = Event;
+}
+
+// impl oracle::Trait for Runtime {
+//     type Event = Event;
+// }
+//
+// impl ownership::Trait for Runtime {
+//     type Event = Event;
+// }
+
 construct_runtime!(
 	pub enum Runtime with Log(InternalLog: DigestItem<Hash, AuthorityId, AuthoritySignature>) where
 		Block = Block,
@@ -203,6 +215,9 @@ construct_runtime!(
 		Indices: indices,
 		Balances: balances,
 		Sudo: sudo,
+		Actus: actus::{Module, Call, Storage, Event<T>},
+		// Oracle: oracle::{Module, Call, Storage, Event<T>},
+		// Ownership: ownership::{Module, Call, Storage, Event<T>},
 	}
 );
 
