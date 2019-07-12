@@ -29,7 +29,7 @@ consensus_authorities = { package = "substrate-consensus-authorities", git = "ht
 
 actus = { package = "modules-actus", path = "../../modules/actus", default-features = false }
 oracle = { package = "modules-oracle", path = "../../modules/oracle", default-features = false }
-# ownership = { package = "modules-ownership", path = "../../modules/ownership", default-features = false }
+ownership = { package = "modules-ownership", path = "../../modules/ownership", default-features = false }
 
 [features]
 default = ["std"]
@@ -55,5 +55,5 @@ std = [
 	"offchain-primitives/std",
 	"actus/std",
 	"oracle/std",
-	# "ownership/std",
+	"ownership/std",
 ]

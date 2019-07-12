@@ -198,9 +198,11 @@ impl oracle::Trait for Runtime {
     type Event = Event;
 }
 
-// impl ownership::Trait for Runtime {
-//     type Event = Event;
-// }
+impl ownership::Trait for Runtime {
+    type Event = Event;
+    type Balance = u128;
+    type AssetId = u128;
+}
 
 construct_runtime!(
 	pub enum Runtime with Log(InternalLog: DigestItem<Hash, AuthorityId, AuthoritySignature>) where
@@ -217,7 +219,7 @@ construct_runtime!(
 		Sudo: sudo,
 		Actus: actus::{Module, Call, Storage, Event<T>},
 		Oracle: oracle::{Module, Call, Storage, Event<T>},
-		// Ownership: ownership::{Module, Call, Storage, Event<T>},
+		Ownership: ownership::{Module, Call, Storage, Event<T>},
 	}
 );
 
