@@ -85,11 +85,11 @@ impl Alternative {
                 None,
             ),
             Alternative::Testnet => ChainSpec::from_genesis(
-                "Testnet", // Name
-                "testnet", // Id
+                "Katal Testnet v0.0.1", // Name
+                "testnet",              // Id
                 || {
                     testnet_genesis(
-                        vec![authority_key("Alice"), authority_key("Bob")],
+                        vec![authority_key("Alice")],
                         vec![
                             account_key("Alice"),
                             account_key("Bob"),
@@ -108,9 +108,9 @@ impl Alternative {
                     STAGING_TELEMETRY_URL.to_string(),
                     0,
                 )])), // Telemetry Endpoints
-                None,      // Protocol Id
-                None,      // Consensus Engine
-                None,      // Properties
+                None,                   // Protocol Id
+                None,                   // Consensus Engine
+                None,                   // Properties
             ),
         })
     }
