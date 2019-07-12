@@ -1,8 +1,9 @@
+use hex_literal::{hex, hex_impl};
 use katal_runtime::{
     AccountId, BalancesConfig, ConsensusConfig, GenesisConfig, IndicesConfig, SudoConfig,
     TimestampConfig,
 };
-use primitives::{ed25519, sr25519, Pair};
+use primitives::{crypto::UncheckedInto, ed25519, sr25519, Pair};
 use substrate_service;
 use substrate_telemetry::TelemetryEndpoints;
 
@@ -89,16 +90,16 @@ impl Alternative {
                 "testnet",              // Id
                 || {
                     testnet_genesis(
-                        vec![authority_key("Alice")],
-                        vec![
-                            account_key("Alice"),
-                            account_key("Bob"),
-                            account_key("Charlie"),
-                            account_key("Dave"),
-                            account_key("Eve"),
-                            account_key("Ferdie"),
-                        ],
-                        account_key("Alice"),
+                        vec![hex![
+                            "be9128704d6642083e4f9f5fc55e5216dc7b22cba74578c2a553b32391297530"
+                        ] // 5FnqauongW5TPgo8KKxmn75b7rr8NSWy9SARu54vkxag7Ncc
+                        .unchecked_into()], // Initial Authorities
+                        vec![hex![
+                            "be9128704d6642083e4f9f5fc55e5216dc7b22cba74578c2a553b32391297530"
+                        ] // 5FnqauongW5TPgo8KKxmn75b7rr8NSWy9SARu54vkxag7Ncc
+                        .unchecked_into()], // Endowed Accounts
+                        hex!["be9128704d6642083e4f9f5fc55e5216dc7b22cba74578c2a553b32391297530"] // 5FnqauongW5TPgo8KKxmn75b7rr8NSWy9SARu54vkxag7Ncc
+                            .unchecked_into(), // Root Key
                     )
                 }, // Constructor
                 vec![
