@@ -31,6 +31,7 @@ network = { package = "substrate-network", git = "https://github.com/paritytech/
 consensus = { package = "substrate-consensus-aura", git = "https://github.com/paritytech/substrate", branch = "v1.0" }
 substrate-client = {  git = "https://github.com/paritytech/substrate", branch = "v1.0" }
 basic-authorship = { package = "substrate-basic-authorship", git = "https://github.com/paritytech/substrate", branch = "v1.0" }
+substrate-telemetry = { package = "substrate-telemetry", git = "https://github.com/paritytech/substrate", branch = "v1.0" }
 katal-runtime = { path = "node/runtime" }
 
 [build-dependencies]
