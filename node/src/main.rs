@@ -15,9 +15,9 @@ fn run() -> cli::error::Result<()> {
         commit: env!("VERGEN_SHA_SHORT"),
         version: env!("CARGO_PKG_VERSION"),
         executable_name: "katal",
-        author: "brunoffranca, sophieraderm, retotrinkler",
-        description: "Template Node",
-        support_url: "support.anonymous.an",
+        author: "Trinkler Software <company@trinkler.software>",
+        description: "Standard Framework for Finance",
+        support_url: "https://github.com/Trinkler/katal-chain/issues/new",
     };
     cli::run(::std::env::args(), cli::Exit, version)
 }
