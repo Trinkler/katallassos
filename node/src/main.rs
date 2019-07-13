@@ -15,7 +15,7 @@ fn run() -> cli::error::Result<()> {
         commit: env!("VERGEN_SHA_SHORT"),
         version: env!("CARGO_PKG_VERSION"),
         executable_name: "katal",
-        author: "Trinkler Software <company@trinkler.software>",
+        author: "brunoffranca, sophieraderm, retotrinkler",
         description: "Standard Framework for Finance",
         support_url: "https://github.com/Trinkler/katal-chain/issues/new",
     };
