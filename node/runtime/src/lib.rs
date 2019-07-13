@@ -1,4 +1,4 @@
-//! The Substrate Node Template runtime. This can be compiled with `#[no_std]`, ready for Wasm.
+//! The Katal runtime. This can be compiled with `#[no_std]`, ready for Wasm.
 
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(not(feature = "std"), feature(alloc))]
@@ -159,7 +159,7 @@ impl indices::Trait for Runtime {
     type ResolveHint = indices::SimpleResolveHint<Self::AccountId, Self::AccountIndex>;
     /// Determine whether an account is dead.
     type IsDeadAccount = Balances;
-    /// The uniquitous event type.
+    /// The ubiquitous event type.
     type Event = Event;
 }
 
@@ -176,7 +176,7 @@ impl balances::Trait for Runtime {
     type OnFreeBalanceZero = ();
     /// What to do if a new account is created.
     type OnNewAccount = Indices;
-    /// The uniquitous event type.
+    /// The ubiquitous event type.
     type Event = Event;
 
     type TransactionPayment = ();
@@ -185,7 +185,7 @@ impl balances::Trait for Runtime {
 }
 
 impl sudo::Trait for Runtime {
-    /// The uniquitous event type.
+    /// The ubiquitous event type.
     type Event = Event;
     type Proposal = Call;
 }
