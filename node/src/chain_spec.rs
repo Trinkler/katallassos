@@ -1,9 +1,15 @@
+use hex_literal::{hex, hex_impl};
 use katal_runtime::{
-    AccountId, AuraConfig, AuraId, BalancesConfig, GenesisConfig, IndicesConfig, SudoConfig,
-    SystemConfig, TimestampConfig, WASM_BINARY,
+    AccountId, BalancesConfig, ConsensusConfig, GenesisConfig, IndicesConfig, SudoConfig,
+    TimestampConfig,
 };
-use primitives::{ed25519, sr25519, Pair};
+use primitives::{crypto::UncheckedInto, ed25519, sr25519, Pair};
 use substrate_service;
+use substrate_telemetry::TelemetryEndpoints;
+
+const STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
+
+use ed25519::Public as AuthorityId;
 
 // Note this is the URL for the telemetry server
 //const STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
@@ -20,9 +26,11 @@ pub enum Alternative {
     Development,
     /// Whatever the current runtime is, with simple Alice/Bob auths.
     LocalTestnet,
+    /// Hosted testnet with non-standard Validators.
+    Testnet,
 }
 
-fn authority_key(s: &str) -> AuraId {
+fn authority_key(s: &str) -> AuthorityId {
     ed25519::Pair::from_string(&format!("//{}", s), None)
         .expect("static values are valid; qed")
         .public()
@@ -77,45 +85,72 @@ impl Alternative {
                 None,
                 None,
             ),
+            Alternative::Testnet => ChainSpec::from_genesis(
+                "Katal",   // Name
+                "testnet", // Id
+                || {
+                    testnet_genesis(
+                        vec![authority_key("Alice")], // Initial Authorities
+                        vec![hex![
+                            "be9128704d6642083e4f9f5fc55e5216dc7b22cba74578c2a553b32391297530"
+                        ] // 5FnqauongW5TPgo8KKxmn75b7rr8NSWy9SARu54vkxag7Ncc
+                        .unchecked_into()], // Endowed Accounts
+                        hex!["be9128704d6642083e4f9f5fc55e5216dc7b22cba74578c2a553b32391297530"] // 5FnqauongW5TPgo8KKxmn75b7rr8NSWy9SARu54vkxag7Ncc
+                            .unchecked_into(), // Root Key
+                    )
+                }, // Constructor
+                vec![
+					"/ip4/134.209.192.55/tcp/30333/p2p/QmVUFyyWFkiDgMV2aQH6qLX5TutaxYSkDTPjeaJhjYBEhK".to_string(),
+				], // Boot Nodes
+                Some(TelemetryEndpoints::new(vec![(
+                    STAGING_TELEMETRY_URL.to_string(),
+                    0,
+                )])), // Telemetry Endpoints
+                None,      // Protocol Id
+                None,      // Consensus Engine
+                None,      // Properties
+            ),
         })
     }
 
     pub(crate) fn from(s: &str) -> Option<Self> {
         match s {
             "dev" => Some(Alternative::Development),
-            "" | "local" => Some(Alternative::LocalTestnet),
+            "local" => Some(Alternative::LocalTestnet),
+            "" | "testnet" => Some(Alternative::Testnet),
             _ => None,
         }
     }
 }
 
 fn testnet_genesis(
-    initial_authorities: Vec<AuraId>,
+    initial_authorities: Vec<AuthorityId>,
     endowed_accounts: Vec<AccountId>,
     root_key: AccountId,
 ) -> GenesisConfig {
     GenesisConfig {
-        system: Some(SystemConfig {
-            code: WASM_BINARY.to_vec(),
-            changes_trie_config: Default::default(),
-        }),
-        aura: Some(AuraConfig {
-            authorities: initial_authorities.clone(),
-        }),
-        timestamp: Some(TimestampConfig {
-            minimum_period: 5, // 10 second block time.
-        }),
-        indices: Some(IndicesConfig {
-            ids: endowed_accounts.clone(),
-        }),
-        balances: Some(BalancesConfig {
-            balances: endowed_accounts
-                .iter()
-                .cloned()
-                .map(|k| (k, 1 << 60))
-                .collect(),
-            vesting: vec![],
-        }),
-        sudo: Some(SudoConfig { key: root_key }),
-    }
+		consensus: Some(ConsensusConfig {
+			code: include_bytes!("../runtime/wasm/target/wasm32-unknown-unknown/release/katal_runtime_wasm.compact.wasm").to_vec(),
+			authorities: initial_authorities.clone(),
+		}),
+		system: None,
+		timestamp: Some(TimestampConfig {
+			minimum_period: 5, // 10 second block time.
+		}),
+		indices: Some(IndicesConfig {
+			ids: endowed_accounts.clone(),
+		}),
+		balances: Some(BalancesConfig {
+			transaction_base_fee: 1,
+			transaction_byte_fee: 0,
+			existential_deposit: 500,
+			transfer_fee: 0,
+			creation_fee: 0,
+			balances: endowed_accounts.iter().cloned().map(|k|(k, 1 << 60)).collect(),
+			vesting: vec![],
+		}),
+		sudo: Some(SudoConfig {
+			key: root_key,
+		}),
+	}
 }

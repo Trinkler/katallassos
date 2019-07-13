@@ -2,18 +2,22 @@
 
 set -e
 
-PROJECT_ROOT=`git rev-parse --show-toplevel`
+PROJECT_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )/.." >/dev/null && pwd )"
 
-cd "$PROJECT_ROOT"
+export CARGO_INCREMENTAL=0
+
+bold=$(tput bold)
+normal=$(tput sgr0)
 
 # Save current directory.
 pushd . >/dev/null
 
 for SRC in node/runtime/wasm
 do
-  echo "Building webassembly binary in $SRC..."
-  cd "$SRC"
-  ./build.sh "$@"
+  echo "${bold}Building webassembly binary in $SRC...${normal}"
+  cd "$PROJECT_ROOT/$SRC"
+
+  ./build.sh
 
   cd - >> /dev/null
 done

@@ -11,8 +11,8 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Ensure we're `no_std` when compiling for Wasm.
 #![cfg_attr(not(feature = "std"), no_std)]
+// The above line is needed to compile the Wasm binaries.
 
 use parity_codec::{Decode, Encode};
 use primitives::H256;
@@ -115,12 +115,12 @@ mod tests {
         type BlockNumber = u64;
         type Hash = H256;
         type Hashing = BlakeTwo256;
-        // type Digest = Digest; // This must be commented out for tests to work.
+        type Digest = Digest;
         type AccountId = u64;
         type Lookup = IdentityLookup<Self::AccountId>;
         type Header = Header;
         type Event = ();
-        // type Log = DigestItem; // This must be commented out for tests to work.
+        type Log = DigestItem;
     }
     impl Trait for Test {
         type Event = ();

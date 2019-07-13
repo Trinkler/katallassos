@@ -7,35 +7,35 @@ edition = "2018"
 [dependencies]
 serde = { version = "1.0", optional = true, features = ["derive"] }
 safe-mix = { version = "1.0", default-features = false }
-parity-codec = { version = "4.1.1", default-features = false, features = ["derive"] }
-rstd = { package = "sr-std", git = "https://github.com/paritytech/substrate", default-features = false }
-runtime-io = { package = "sr-io", git = "https://github.com/paritytech/substrate", default-features = false }
-version = { package = "sr-version", git = "https://github.com/paritytech/substrate", default-features = false }
-support = { package = "srml-support", git = "https://github.com/paritytech/substrate", default-features = false }
-primitives = { package = "substrate-primitives", git = "https://github.com/paritytech/substrate", default-features = false }
-balances = { package = "srml-balances", git = "https://github.com/paritytech/substrate", default-features = false }
-aura = { package = "srml-aura", git = "https://github.com/paritytech/substrate", default-features = false }
-executive = { package = "srml-executive", git = "https://github.com/paritytech/substrate", default-features = false }
-indices = { package = "srml-indices", git = "https://github.com/paritytech/substrate", default-features = false }
-system = { package = "srml-system", git = "https://github.com/paritytech/substrate", default-features = false }
-timestamp = { package = "srml-timestamp", git = "https://github.com/paritytech/substrate", default-features = false }
-sudo = { package = "srml-sudo", git = "https://github.com/paritytech/substrate", default-features = false }
-runtime-primitives = { package = "sr-primitives", git = "https://github.com/paritytech/substrate", default-features = false }
-client = { package = "substrate-client", git = "https://github.com/paritytech/substrate", default-features = false }
-consensus-aura = { package = "substrate-consensus-aura-primitives", git = "https://github.com/paritytech/substrate", default-features = false }
-offchain-primitives = { package = "substrate-offchain-primitives", git = "https://github.com/paritytech/substrate", default-features = false }
-assets = { package = "srml-assets", git = "https://github.com/paritytech/substrate", default-features = false }
-ownership = { package = "modules-ownership", path="../../modules/ownership", default-features = false }
-oracle = { package = "modules-oracle", path="../../modules/oracle", default-features = false }
-actus = { package = "modules-actus", path="../../modules/actus", default-features = false }
+parity-codec = { version = "3.5", default-features = false, features = ["derive"] }
+rstd = { package = "sr-std", git = "https://github.com/paritytech/substrate", branch = "v1.0", default_features = false }
+runtime-io = { package = "sr-io", git = "https://github.com/paritytech/substrate", branch = "v1.0", default_features = false }
+version = { package = "sr-version", git = "https://github.com/paritytech/substrate", branch = "v1.0", default_features = false }
+support = { package = "srml-support", git = "https://github.com/paritytech/substrate", branch = "v1.0", default_features = false }
+primitives = { package = "substrate-primitives", git = "https://github.com/paritytech/substrate", branch = "v1.0", default_features = false }
+balances = { package = "srml-balances", git = "https://github.com/paritytech/substrate", branch = "v1.0", default_features = false }
+consensus = { package = "srml-consensus", git = "https://github.com/paritytech/substrate", branch = "v1.0", default_features = false }
+aura = { package = "srml-aura", git = "https://github.com/paritytech/substrate", branch = "v1.0", default_features = false }
+executive = { package = "srml-executive", git = "https://github.com/paritytech/substrate", branch = "v1.0", default_features = false }
+indices = { package = "srml-indices", git = "https://github.com/paritytech/substrate", branch = "v1.0", default_features = false }
+system = { package = "srml-system", git = "https://github.com/paritytech/substrate", branch = "v1.0", default_features = false }
+timestamp = { package = "srml-timestamp", git = "https://github.com/paritytech/substrate", branch = "v1.0", default_features = false }
+sudo = { package = "srml-sudo", git = "https://github.com/paritytech/substrate", branch = "v1.0", default_features = false }
+runtime-primitives = { package = "sr-primitives", git = "https://github.com/paritytech/substrate", branch = "v1.0", default_features = false }
+client = { package = "substrate-client", git = "https://github.com/paritytech/substrate", branch = "v1.0", default_features = false }
+consensus-aura = { package = "substrate-consensus-aura-primitives", git = "https://github.com/paritytech/substrate", branch = "v1.0", default_features = false }
+offchain-primitives = { package = "substrate-offchain-primitives", git = "https://github.com/paritytech/substrate", branch = "v1.0", default-features = false }
+consensus_authorities = { package = "substrate-consensus-authorities", git = "https://github.com/paritytech/substrate", branch = "v1.0", default-features = false }
 
-[build-dependencies]
-wasm-builder-runner = { package = "substrate-wasm-builder-runner", version = "1.0.2" }
+actus = { package = "modules-actus", path = "../../modules/actus", default-features = false }
+oracle = { package = "modules-oracle", path = "../../modules/oracle", default-features = false }
+ownership = { package = "modules-ownership", path = "../../modules/ownership", default-features = false }
 
 [features]
 default = ["std"]
 std = [
 	"parity-codec/std",
+	"primitives/std",
 	"client/std",
 	"rstd/std",
 	"runtime-io/std",
@@ -45,7 +45,6 @@ std = [
 	"aura/std",
 	"indices/std",
 	"primitives/std",
-	"runtime-primitives/std",
 	"system/std",
 	"timestamp/std",
 	"sudo/std",
@@ -54,9 +53,7 @@ std = [
 	"safe-mix/std",
 	"consensus-aura/std",
 	"offchain-primitives/std",
-	"assets/std",
-	"ownership/std",
-	"oracle/std",
 	"actus/std",
+	"oracle/std",
+	"ownership/std",
 ]
-no_std = []
