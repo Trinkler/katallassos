@@ -2,7 +2,6 @@ use super::*;
 
 // TODO: Handle ContractStructure. It is non-applicable.
 // TODO: Check that all non-applicable attributes are None.
-// TODO: Take out all the check parent/child relation warnings. PAM is always a standalone contract.
 pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
     // The ContractID, necessary to create any contract.
     let mut attributes = Attributes::new(input.contract_id);
@@ -32,7 +31,6 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
 
     // Mandatory on stand-alone and parent contracts only and
     // not applicable on child contracts -> NN(_,_,1)
-    // TODO: check for parent/child relationship
     if input.contract_deal_date.0.is_none()
         || input.contract_role.is_none()
         || input.creator_id.is_none()
@@ -46,7 +44,6 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
 
     // Mandatory on stand-alone and parent contracts only and
     // optional on child contracts -> NN(_,_,2)
-    // TODO: check for parent/child relationship
     if input.counterparty_id.is_none() {
         return Err("Error while initializing attributes. [2]");
     } else {
@@ -64,7 +61,6 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
 
     // Optional on stand-alone and parent contracts only and
     // not applicable on child contracts -> x(_,_,1)
-    // TODO: check for parent/child relationship
     attributes.contract_performance = input.contract_performance;
     attributes.delinquency_period = input.delinquency_period;
     attributes.delinquency_rate = input.delinquency_rate;
@@ -113,7 +109,6 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
 
     // Group 5
     // Business rule ‘a’ applies unconditionally
-    // TODO: check for parent/child relationship
     attributes.purchase_date = input.purchase_date; // -> x(5,0,1)
 
     // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
@@ -121,14 +116,12 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
         if input.price_at_purchase_date.0.is_none() {
             return Err("Error while initializing attributes. [6]");
         } else {
-            // TODO: check for parent/child relationship
             attributes.price_at_purchase_date = input.price_at_purchase_date; // -> NN(5,1,1)
         }
     }
 
     // Group 6
     // Business rule ‘a’ applies unconditionally
-    // TODO: check for parent/child relationship
     attributes.termination_date = input.termination_date; // -> x(6,0,1)
 
     // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
@@ -136,7 +129,6 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
         if input.price_at_termination_date.0.is_none() {
             return Err("Error while initializing attributes. [7]");
         } else {
-            // TODO: check for parent/child relationship
             attributes.price_at_termination_date = input.price_at_termination_date; // -> NN(6,1,1)
         }
     }
@@ -178,8 +170,6 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
         attributes.option_exercise_end_date = input.option_exercise_end_date; // -> x(8,1,_)
         attributes.penalty_rate = input.penalty_rate; // -> x(8,1,_)
         attributes.penalty_type = input.penalty_type; // -> x(8,1,_)
-
-        // TODO: check for parent/child relationship
         attributes.prepayment_period = input.prepayment_period; // -> x(8,1,1)
     }
 

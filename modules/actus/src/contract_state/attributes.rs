@@ -16,7 +16,6 @@
 use super::*;
 
 /// All ACTUS contract attributes as specified in the data dictionary in the Github.
-// TODO: Add ContractStructure attribute.
 #[derive(Clone, Decode, Encode, Default, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct Attributes {
@@ -520,10 +519,11 @@ impl Attributes {
         }
     }
 
-    // Checks if an Attribute instance is valid. It just guarantees that each field has a value that
-    // is allowed (as defined in the ACTUS dictionary as "allowed values").
+    /// Checks if an Attribute instance is valid.
     pub fn is_valid(&self) -> bool {
-        if ((self.coverage_of_credit_enhancement >= Real::from(0)
+        // Guaranteeing that each field has a value that is in fact
+        // allowed (as defined in the ACTUS dictionary as "allowed values").
+        if !((self.coverage_of_credit_enhancement >= Real::from(0)
             && self.coverage_of_credit_enhancement <= Real::from(1))
             || self.coverage_of_credit_enhancement == Real(None))
             && (self.credit_line_amount >= Real::from(0) || self.credit_line_amount == Real(None))
@@ -554,9 +554,93 @@ impl Attributes {
                 || self.scaling_index_at_status_date == Real(None))
             && (self.variation_margin >= Real::from(0) || self.variation_margin == Real(None))
         {
-            true
-        } else {
-            false
+            return false;
         }
+        // Verifying the Time Consistency Business Rules defined in ACTUS
+        // TODO: Verify this implementation with Nils
+        // Rule 1
+        if !((self.contract_deal_date <= self.initial_exchange_date
+            || self.initial_exchange_date == Time(None))
+            && (self.initial_exchange_date <= self.capitalization_end_date
+                || self.capitalization_end_date == Time(None))
+            && (self.initial_exchange_date <= self.purchase_date
+                || self.purchase_date == Time(None))
+            && (self.initial_exchange_date <= self.termination_date
+                || self.termination_date == Time(None))
+            && (self.initial_exchange_date <= self.cycle_anchor_date_of_dividend
+                || self.cycle_anchor_date_of_dividend == Time(None))
+            && (self.initial_exchange_date <= self.cycle_anchor_date_of_fee
+                || self.cycle_anchor_date_of_fee == Time(None))
+            && (self.initial_exchange_date <= self.cycle_anchor_date_of_interest_calculation_base
+                || self.cycle_anchor_date_of_interest_calculation_base == Time(None))
+            && (self.initial_exchange_date <= self.cycle_anchor_date_of_margining
+                || self.cycle_anchor_date_of_margining == Time(None))
+            && (self.initial_exchange_date <= self.cycle_anchor_date_of_optionality
+                || self.cycle_anchor_date_of_optionality == Time(None))
+            && (self.initial_exchange_date <= self.cycle_anchor_date_of_principal_redemption
+                || self.cycle_anchor_date_of_principal_redemption == Time(None))
+            && (self.initial_exchange_date <= self.cycle_anchor_date_of_rate_reset
+                || self.cycle_anchor_date_of_rate_reset == Time(None))
+            && (self.initial_exchange_date <= self.cycle_anchor_date_of_scaling_index
+                || self.cycle_anchor_date_of_scaling_index == Time(None))
+            && (self.capitalization_end_date <= self.option_exercise_end_date
+                || self.option_exercise_end_date == Time(None))
+            && (self.purchase_date <= self.option_exercise_end_date
+                || self.option_exercise_end_date == Time(None))
+            && (self.termination_date <= self.option_exercise_end_date
+                || self.option_exercise_end_date == Time(None))
+            && (self.cycle_anchor_date_of_dividend <= self.option_exercise_end_date
+                || self.option_exercise_end_date == Time(None))
+            && (self.cycle_anchor_date_of_fee <= self.option_exercise_end_date
+                || self.option_exercise_end_date == Time(None))
+            && (self.cycle_anchor_date_of_interest_calculation_base
+                <= self.option_exercise_end_date
+                || self.option_exercise_end_date == Time(None))
+            && (self.cycle_anchor_date_of_margining <= self.option_exercise_end_date
+                || self.option_exercise_end_date == Time(None))
+            && (self.cycle_anchor_date_of_optionality <= self.option_exercise_end_date
+                || self.option_exercise_end_date == Time(None))
+            && (self.cycle_anchor_date_of_principal_redemption <= self.option_exercise_end_date
+                || self.option_exercise_end_date == Time(None))
+            && (self.cycle_anchor_date_of_rate_reset <= self.option_exercise_end_date
+                || self.option_exercise_end_date == Time(None))
+            && (self.cycle_anchor_date_of_scaling_index <= self.option_exercise_end_date
+                || self.option_exercise_end_date == Time(None))
+            && (self.option_exercise_end_date <= self.maturity_date
+                || self.maturity_date == Time(None))
+            && (self.maturity_date <= self.amortization_date
+                || self.amortization_date == Time(None))
+            && (self.amortization_date <= self.settlement_date
+                || self.settlement_date == Time(None)))
+        {
+            return false;
+        }
+        // Rule 2
+        if !((self.cycle_anchor_date_of_interest_payment < self.maturity_date
+            || self.maturity_date == Time(None))
+            && (self.maturity_date <= self.amortization_date
+                || self.amortization_date == Time(None)))
+        {
+            return false;
+        }
+        // Rule 3
+        if !((self.contract_deal_date <= self.status_date || self.status_date == Time(None))
+            && (self.status_date <= self.maturity_date || self.maturity_date == Time(None))
+            && (self.status_date <= self.settlement_date || self.settlement_date == Time(None))
+            && (self.status_date <= self.option_exercise_end_date
+                || self.option_exercise_end_date == Time(None))
+            && (self.status_date <= self.termination_date || self.termination_date == Time(None)))
+        {
+            return false;
+        }
+        // Rule 4
+        if self.next_dividend_payment_amount.0.is_some() && self.cycle_of_dividend.is_none() {
+            if !(self.status_date < self.cycle_anchor_date_of_dividend
+                || self.cycle_anchor_date_of_dividend == Time(None))
+            {
+                return false;
+            }
+        }
+        true
     }
 }

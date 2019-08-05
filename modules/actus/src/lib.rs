@@ -155,7 +155,7 @@ mod tests {
             attributes.maturity_date = Time::from_values(1979, 07, 21, 02, 56, 15);
             attributes.nominal_interest_rate = Real::from(1000);
             attributes.notional_principal = Real(Some(50000000));
-            attributes.contract_deal_date = Time::from_values(1969, 07, 21, 02, 56, 15);
+            attributes.contract_deal_date = Time::from_values(1968, 07, 21, 02, 56, 15);
             attributes.contract_role = Some(ContractRole::RPA);
             attributes.creator_id = Some(H256::zero());
             attributes.counterparty_id = Some(H256::zero());
