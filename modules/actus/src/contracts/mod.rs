@@ -15,13 +15,22 @@
 
 use super::*;
 
-mod pam;
+mod initialize_pam;
+mod progress_pam;
 
-pub use pam::*;
+pub use initialize_pam::*;
+pub use progress_pam::*;
 
 pub fn initialize(t0: Time, input: Attributes) -> MyResult<ContractState> {
     match input.contract_type {
         Some(ContractType::PAM) => initialize_pam(t0, input),
+        _ => Err("Contract type not supported"),
+    }
+}
+
+pub fn progress(event: ContractEvent, mut state: ContractState) -> MyResult<ContractState> {
+    match state.attributes.contract_type {
+        Some(ContractType::PAM) => progress_pam(event, state),
         _ => Err("Contract type not supported"),
     }
 }
