@@ -1,7 +1,5 @@
 use super::*;
 
-// TODO: Handle ContractStructure. It is non-applicable.
-// TODO: Check that all non-applicable attributes are None.
 pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
     // The ContractID, necessary to create any contract.
     let mut attributes = Attributes::new(input.contract_id);
@@ -55,7 +53,9 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
     attributes.business_day_convention = input.business_day_convention;
     attributes.calendar = input.calendar;
     attributes.capitalization_end_date = input.capitalization_end_date;
+    attributes.credit_line_amount = input.credit_line_amount;
     attributes.end_of_month_convention = input.end_of_month_convention;
+    attributes.market_object_code = input.market_object_code;
     attributes.market_value_observed = input.market_value_observed;
     attributes.premium_discount_at_ied = input.premium_discount_at_ied;
 
