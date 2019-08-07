@@ -80,6 +80,34 @@ impl Real {
             Real(None)
         }
     }
+
+    /// Returns the maximum of two reals. If both are equal, it will return the first real.
+    /// If any of the inputs is 'None' it will return 'None'.
+    pub fn max(x: Real, y: Real) -> Real {
+        if x.0.is_some() && y.0.is_some() {
+            if x < y {
+                y
+            } else {
+                x
+            }
+        } else {
+            Real(None)
+        }
+    }
+
+    /// Returns the minimum of two reals. If both are equal, it will return the first real.
+    /// If any of the inputs is 'None' it will return 'None'.
+    pub fn min(x: Real, y: Real) -> Real {
+        if x.0.is_some() && y.0.is_some() {
+            if x > y {
+                y
+            } else {
+                x
+            }
+        } else {
+            Real(None)
+        }
+    }
 }
 
 /// Calculates the sum of two reals. If any of the inputs is 'None' (or the result over/underflows),

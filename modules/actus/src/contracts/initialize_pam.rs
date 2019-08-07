@@ -213,7 +213,7 @@ pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
     schedule.push(event);
 
     // Principal prepayment event
-    // TODO: Consider the user-initiated event.
+    // TODO: Consider the user-initiated events based on the "OPMO".
     if attributes.prepayment_effect == Some(PrepaymentEffect::N) {
     } else {
         let mut s: Time = Time(None);
