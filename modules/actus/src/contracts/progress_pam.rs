@@ -349,7 +349,7 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
 
             state.variables.last_event_date = event.time;
         }
-        ContractEventType::RR => {
+        ContractEventType::RRF => {
             // State Transition Function
             state.variables.nominal_accrued_1 = state.variables.nominal_accrued_1
                 + utilities::year_fraction(
@@ -394,7 +394,114 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
 
             state.variables.last_event_date = event.time;
         }
-        _ => (),
+        ContractEventType::SC => {
+            // State Transition Function
+            state.variables.nominal_accrued_1 = state.variables.nominal_accrued_1
+                + utilities::year_fraction(
+                    state.variables.last_event_date,
+                    event.time,
+                    state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                ) * state.variables.nominal_rate
+                    * state.variables.nominal_value_1;
+
+            if state.attributes.fee_basis == Some(FeeBasis::N) {
+                state.variables.fee_accrued = state.variables.fee_accrued
+                    + utilities::year_fraction(
+                        state.variables.last_event_date,
+                        event.time,
+                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                    ) * state.variables.nominal_value_1
+                        * state.attributes.fee_rate;
+            } else {
+                let mut t_minus = Time(None);
+                let mut t_plus = Time(None);
+                for e in state.schedule.clone() {
+                    if e.event_type == ContractEventType::FP {
+                        if e.time >= t0 {
+                            t_plus = e.time;
+                            break;
+                        }
+                        t_minus = e.time;
+                    }
+                }
+                state.variables.fee_accrued = utilities::year_fraction(
+                    t_minus,
+                    event.time,
+                    state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                ) / year_fraction(
+                    t_minus,
+                    t_plus,
+                    state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                ) * state.attributes.fee_rate;
+            }
+
+            if state.attributes.scaling_effect.y == false {
+                state.variables.notional_scaling_multiplier =
+                    state.variables.notional_scaling_multiplier;
+            } else {
+                // TODO: Consider the oracle based on the "SCMO" attribute.
+                state.variables.notional_scaling_multiplier =
+                    (state.attributes.scaling_index_at_status_date)
+                        / state.attributes.scaling_index_at_status_date;
+            }
+
+            if state.attributes.scaling_effect.x == false {
+                state.variables.interest_scaling_multiplier =
+                    state.variables.interest_scaling_multiplier;
+            } else {
+                // TODO: Consider the oracle based on the "SCMO" attribute.
+                state.variables.interest_scaling_multiplier =
+                    (state.attributes.scaling_index_at_status_date)
+                        / state.attributes.scaling_index_at_status_date;
+            }
+
+            state.variables.last_event_date = event.time;
+        }
+        ContractEventType::CD => {
+            // State Transition Function
+            state.variables.nominal_accrued_1 = state.variables.nominal_accrued_1
+                + utilities::year_fraction(
+                    state.variables.last_event_date,
+                    event.time,
+                    state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                ) * state.variables.nominal_rate
+                    * state.variables.nominal_value_1;
+
+            if state.attributes.fee_basis == Some(FeeBasis::N) {
+                state.variables.fee_accrued = state.variables.fee_accrued
+                    + utilities::year_fraction(
+                        state.variables.last_event_date,
+                        event.time,
+                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                    ) * state.variables.nominal_value_1
+                        * state.attributes.fee_rate;
+            } else {
+                let mut t_minus = Time(None);
+                let mut t_plus = Time(None);
+                for e in state.schedule.clone() {
+                    if e.event_type == ContractEventType::FP {
+                        if e.time >= t0 {
+                            t_plus = e.time;
+                            break;
+                        }
+                        t_minus = e.time;
+                    }
+                }
+                state.variables.fee_accrued = utilities::year_fraction(
+                    t_minus,
+                    event.time,
+                    state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                ) / year_fraction(
+                    t_minus,
+                    t_plus,
+                    state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                ) * state.attributes.fee_rate;
+            }
+
+            state.variables.performance = ContractPerformance::DF;
+
+            state.variables.last_event_date = event.time;
+        }
     }
     // Return the contract state
     Ok(state)
