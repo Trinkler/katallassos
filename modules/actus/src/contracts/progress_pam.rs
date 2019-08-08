@@ -435,7 +435,10 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
                 ) * state.attributes.fee_rate;
             }
 
-            if state.attributes.scaling_effect.y == false {
+            // Unwrap will never panic because of the lazy evaluation.
+            if state.attributes.scaling_effect.is_some()
+                && state.attributes.scaling_effect.unwrap().y == false
+            {
                 state.variables.notional_scaling_multiplier =
                     state.variables.notional_scaling_multiplier;
             } else {
@@ -445,7 +448,10 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
                         / state.attributes.scaling_index_at_status_date;
             }
 
-            if state.attributes.scaling_effect.x == false {
+            // Unwrap will never panic because of the lazy evaluation.
+            if state.attributes.scaling_effect.is_some()
+                && state.attributes.scaling_effect.unwrap().x == false
+            {
                 state.variables.interest_scaling_multiplier =
                     state.variables.interest_scaling_multiplier;
             } else {
@@ -498,10 +504,11 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
                 ) * state.attributes.fee_rate;
             }
 
-            state.variables.performance = ContractPerformance::DF;
+            state.variables.performance = Some(ContractPerformance::DF);
 
             state.variables.last_event_date = event.time;
         }
+        _ => {}
     }
     // Return the contract state
     Ok(state)
