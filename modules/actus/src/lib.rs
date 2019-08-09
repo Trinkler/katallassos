@@ -16,10 +16,10 @@
 
 use parity_codec::{Decode, Encode};
 use primitives::H256;
-use reals::Real;
+use reals::*;
 use rstd::prelude::*;
-use support::{decl_event, decl_module, decl_storage, dispatch::Result, StorageMap};
-use time::{Time, UncheckedTime};
+use support::{decl_module, decl_storage, dispatch::Result, StorageMap};
+use time::*;
 
 // Importing the rest of the files in this crate.
 mod contract_state;
@@ -34,19 +34,7 @@ use utilities::*;
 type MyResult<T> = rstd::result::Result<T, &'static str>;
 
 // This module's configuration trait.
-pub trait Trait: system::Trait {
-    type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
-}
-
-// This module's events.
-decl_event!(
-    pub enum Event<T>
-    where
-        AccountId = <T as system::Trait>::AccountId,
-    {
-        Nothing(AccountId),
-    }
-);
+pub trait Trait: system::Trait {}
 
 // This module's storage items.
 decl_storage! {
@@ -59,9 +47,6 @@ decl_storage! {
 decl_module! {
     /// The module declaration.
     pub struct Module<T: Trait> for enum Call where origin: T::Origin {
-        // Initializing events
-        // this is needed only if you are using events in your module
-        fn deposit_event<T>() = default;
 
         fn deploy_contract(origin, attributes: Attributes) -> Result {
             // Getting the contract ID.

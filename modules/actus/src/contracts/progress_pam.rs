@@ -1,6 +1,7 @@
 use super::*;
 
 // TODO: Add the payoff functions.
+// TODO: Add "event not applicable" error.
 pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<ContractState> {
     // Getting t0 from the status_date attribute since they are equal.
     // (And status_date is not supposed to change)
@@ -443,6 +444,7 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
                     state.variables.notional_scaling_multiplier;
             } else {
                 // TODO: Consider the oracle based on the "SCMO" attribute.
+                // TODO: Verify with Nils that it is indeed "scaling_index_at_status_date".
                 state.variables.notional_scaling_multiplier =
                     (state.attributes.scaling_index_at_status_date)
                         / state.attributes.scaling_index_at_status_date;
@@ -456,6 +458,7 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
                     state.variables.interest_scaling_multiplier;
             } else {
                 // TODO: Consider the oracle based on the "SCMO" attribute.
+                // TODO: Verify with Nils that it is indeed "scaling_index_at_status_date".
                 state.variables.interest_scaling_multiplier =
                     (state.attributes.scaling_index_at_status_date)
                         / state.attributes.scaling_index_at_status_date;
