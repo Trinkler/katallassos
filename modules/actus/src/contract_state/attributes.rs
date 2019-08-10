@@ -45,8 +45,8 @@ pub struct Attributes {
     pub coverage_of_credit_enhancement: Real,
     pub creator_id: Option<H256>, // Represents an account object.
     pub credit_line_amount: Real,
-    pub currency: Option<H256>,   // Represents an mint object.
-    pub currency_2: Option<H256>, // Represents an mint object.
+    pub currency: Option<H256>,   // Represents an issuer object.
+    pub currency_2: Option<H256>, // Represents an issuer object.
     pub cycle_anchor_date_of_dividend: Time,
     pub cycle_anchor_date_of_fee: Time,
     pub cycle_anchor_date_of_interest_calculation_base: Time,

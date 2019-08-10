@@ -1,6 +1,8 @@
 use super::*;
 
-// TODO: Add the payoff functions.
+// TODO: Add support for user-initiated events.
+// TODO: Add support for basic oracles.
+// TODO: Add the calls to transfer tokens (issuer module?).
 pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<ContractState> {
     // Getting t0 from the status_date attribute since they are equal.
     // (And status_date is not supposed to change)
