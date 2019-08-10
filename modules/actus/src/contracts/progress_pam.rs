@@ -1,7 +1,6 @@
 use super::*;
 
 // TODO: Add the payoff functions.
-// TODO: Add "event not applicable" error.
 pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<ContractState> {
     // Getting t0 from the status_date attribute since they are equal.
     // (And status_date is not supposed to change)
@@ -9,6 +8,12 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
 
     match event.event_type {
         ContractEventType::IED => {
+            // Payoff Function
+            let payoff = utilities::contract_default(state.variables.performance)
+                * utilities::contract_role_sign(state.attributes.contract_role)
+                * Real::from(-1)
+                * (state.attributes.notional_principal + state.attributes.premium_discount_at_ied);
+
             // State Transition Function
             state.variables.nominal_value_1 =
                 utilities::contract_role_sign(state.attributes.contract_role)
@@ -37,16 +42,31 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
             }
 
             state.variables.last_event_date = event.time;
+
+            // Return the contract state
+            Ok(state)
         }
         ContractEventType::PR => {
+            // Payoff Function
+            let payoff = utilities::contract_default(state.variables.performance)
+                * state.variables.notional_scaling_multiplier
+                * state.variables.nominal_value_1;
+
             // State Transition Function
             state.variables.nominal_value_1 = Real::from(0);
 
             state.variables.nominal_rate = Real::from(0);
 
             state.variables.last_event_date = event.time;
+
+            // Return the contract state
+            Ok(state)
         }
         ContractEventType::PP => {
+            // Payoff Function
+            // TODO: Add the user-initiated events based on the "OPMO".
+            let payoff = utilities::contract_default(state.variables.performance);
+
             // State Transition Function
             state.variables.nominal_accrued_1 = state.variables.nominal_accrued_1
                 + utilities::year_fraction(
@@ -87,12 +107,45 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
                 ) * state.attributes.fee_rate;
             }
 
-            // TODO: Consider the user-initiated events based on the "OPMO".
+            // TODO: Add the user-initiated events based on the "OPMO".
             state.variables.nominal_value_1 = state.variables.nominal_value_1;
 
             state.variables.last_event_date = event.time;
+
+            // Return the contract state
+            Ok(state)
         }
         ContractEventType::PY => {
+            // Payoff Function
+            // TODO: Add the oracle based on the "RRMO" attribute.
+            if state.attributes.penalty_type == Some(PenaltyType::A) {
+                let payoff = utilities::contract_default(state.variables.performance)
+                    * utilities::contract_role_sign(state.attributes.contract_role)
+                    * state.attributes.penalty_rate;
+            }
+            if state.attributes.penalty_type == Some(PenaltyType::N) {
+                let payoff = utilities::contract_default(state.variables.performance)
+                    * utilities::contract_role_sign(state.attributes.contract_role)
+                    * utilities::year_fraction(
+                        state.variables.last_event_date,
+                        event.time,
+                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                    )
+                    * state.variables.nominal_value_1
+                    * state.attributes.penalty_rate;
+            }
+            if state.attributes.penalty_type == Some(PenaltyType::I) {
+                let payoff = utilities::contract_default(state.variables.performance)
+                    * utilities::contract_role_sign(state.attributes.contract_role)
+                    * utilities::year_fraction(
+                        state.variables.last_event_date,
+                        event.time,
+                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                    )
+                    * state.variables.nominal_value_1
+                    * Real::max(Real::from(0), state.variables.nominal_rate);
+            }
+
             // State Transition Function
             state.variables.nominal_accrued_1 = state.variables.nominal_accrued_1
                 + utilities::year_fraction(
@@ -134,8 +187,30 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
             }
 
             state.variables.last_event_date = event.time;
+
+            // Return the contract state
+            Ok(state)
         }
         ContractEventType::FP => {
+            // Payoff Function
+            if state.attributes.fee_basis == Some(FeeBasis::A) {
+                let payoff = utilities::contract_default(state.variables.performance)
+                    * utilities::contract_role_sign(state.attributes.contract_role)
+                    * state.attributes.fee_rate;
+            }
+            if state.attributes.fee_basis == Some(FeeBasis::N) {
+                let payoff = utilities::contract_default(state.variables.performance)
+                    * utilities::contract_role_sign(state.attributes.contract_role)
+                    * state.attributes.fee_rate
+                    * utilities::year_fraction(
+                        state.variables.last_event_date,
+                        event.time,
+                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                    )
+                    * state.variables.nominal_value_1
+                    + state.variables.fee_accrued;
+            }
+
             // State Transition Function
             state.variables.nominal_accrued_1 = state.variables.nominal_accrued_1
                 + utilities::year_fraction(
@@ -148,8 +223,24 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
             state.variables.fee_accrued = Real::from(0);
 
             state.variables.last_event_date = event.time;
+
+            // Return the contract state
+            Ok(state)
         }
         ContractEventType::PRD => {
+            // Payoff Function
+            let payoff = utilities::contract_default(state.variables.performance)
+                * utilities::contract_role_sign(state.attributes.contract_role)
+                * Real::from(-1)
+                * (state.attributes.price_at_purchase_date
+                    + state.variables.nominal_accrued_1
+                    + utilities::year_fraction(
+                        state.variables.last_event_date,
+                        event.time,
+                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                    ) * state.variables.nominal_rate
+                        * state.variables.nominal_value_1);
+
             // State Transition Function
             state.variables.nominal_accrued_1 = state.variables.nominal_accrued_1
                 + utilities::year_fraction(
@@ -191,8 +282,23 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
             }
 
             state.variables.last_event_date = event.time;
+
+            // Return the contract state
+            Ok(state)
         }
         ContractEventType::TD => {
+            // Payoff Function
+            let payoff = utilities::contract_default(state.variables.performance)
+                * utilities::contract_role_sign(state.attributes.contract_role)
+                * (state.attributes.price_at_termination_date
+                    + state.variables.nominal_accrued_1
+                    + utilities::year_fraction(
+                        state.variables.last_event_date,
+                        event.time,
+                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                    ) * state.variables.nominal_rate
+                        * state.variables.nominal_value_1);
+
             // State Transition Function
             state.variables.nominal_value_1 = Real::from(0);
 
@@ -203,8 +309,22 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
             state.variables.nominal_rate = Real::from(0);
 
             state.variables.last_event_date = event.time;
+
+            // Return the contract state
+            Ok(state)
         }
         ContractEventType::IP => {
+            // Payoff Function
+            let payoff = utilities::contract_default(state.variables.performance)
+                * state.variables.interest_scaling_multiplier
+                * (state.variables.nominal_accrued_1
+                    + utilities::year_fraction(
+                        state.variables.last_event_date,
+                        event.time,
+                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                    ) * state.variables.nominal_rate
+                        * state.variables.nominal_value_1);
+
             // State Transition Function
             state.variables.nominal_accrued_1 = Real::from(0);
 
@@ -240,8 +360,14 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
             }
 
             state.variables.last_event_date = event.time;
+
+            // Return the contract state
+            Ok(state)
         }
         ContractEventType::IPCI => {
+            // Payoff Function
+            // 0.0 (no payoff)
+
             // State Transition Function
             let nominal_value_1_minus = state.variables.nominal_value_1; // Temporary variable.
 
@@ -288,8 +414,14 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
             }
 
             state.variables.last_event_date = event.time;
+
+            // Return the contract state
+            Ok(state)
         }
         ContractEventType::RR => {
+            // Payoff Function
+            // 0.0 (no payoff)
+
             // State Transition Function
             state.variables.nominal_accrued_1 = state.variables.nominal_accrued_1
                 + utilities::year_fraction(
@@ -330,7 +462,7 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
                 ) * state.attributes.fee_rate;
             }
 
-            // TODO: Consider the oracle based on the "RRMO" attribute.
+            // TODO: Add the oracle based on the "RRMO" attribute.
             // TODO: Verify with Nils that it is indeed rate_multiplier.
             let delta_r = Real::min(
                 Real::max(
@@ -349,8 +481,14 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
             );
 
             state.variables.last_event_date = event.time;
+
+            // Return the contract state
+            Ok(state)
         }
         ContractEventType::RRF => {
+            // Payoff Function
+            // 0.0 (no payoff)
+
             // State Transition Function
             state.variables.nominal_accrued_1 = state.variables.nominal_accrued_1
                 + utilities::year_fraction(
@@ -394,8 +532,14 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
             state.variables.nominal_rate = state.attributes.next_reset_rate;
 
             state.variables.last_event_date = event.time;
+
+            // Return the contract state
+            Ok(state)
         }
         ContractEventType::SC => {
+            // Payoff Function
+            // 0.0 (no payoff)
+
             // State Transition Function
             state.variables.nominal_accrued_1 = state.variables.nominal_accrued_1
                 + utilities::year_fraction(
@@ -443,7 +587,7 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
                 state.variables.notional_scaling_multiplier =
                     state.variables.notional_scaling_multiplier;
             } else {
-                // TODO: Consider the oracle based on the "SCMO" attribute.
+                // TODO: Add the oracle based on the "SCMO" attribute.
                 // TODO: Verify with Nils that it is indeed "scaling_index_at_status_date".
                 state.variables.notional_scaling_multiplier =
                     (state.attributes.scaling_index_at_status_date)
@@ -457,7 +601,7 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
                 state.variables.interest_scaling_multiplier =
                     state.variables.interest_scaling_multiplier;
             } else {
-                // TODO: Consider the oracle based on the "SCMO" attribute.
+                // TODO: Add the oracle based on the "SCMO" attribute.
                 // TODO: Verify with Nils that it is indeed "scaling_index_at_status_date".
                 state.variables.interest_scaling_multiplier =
                     (state.attributes.scaling_index_at_status_date)
@@ -465,8 +609,14 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
             }
 
             state.variables.last_event_date = event.time;
+
+            // Return the contract state
+            Ok(state)
         }
         ContractEventType::CD => {
+            // Payoff Function
+            // 0.0 (no payoff)
+
             // State Transition Function
             state.variables.nominal_accrued_1 = state.variables.nominal_accrued_1
                 + utilities::year_fraction(
@@ -510,9 +660,10 @@ pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<
             state.variables.performance = Some(ContractPerformance::DF);
 
             state.variables.last_event_date = event.time;
+
+            // Return the contract state
+            Ok(state)
         }
-        _ => {}
+        _ => Err("Event not applicable"),
     }
-    // Return the contract state
-    Ok(state)
 }
