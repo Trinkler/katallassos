@@ -4,28 +4,71 @@ version = "0.0.1"
 authors = ["Trinkler Software <company@trinkler.software>"]
 edition = "2018"
 
-[dependencies]
-serde = { version = "1.0", optional = true }
-parity-codec = { version = "3.5", default-features = false }
-# Needed for various traits. In our case, `OnFinalize`.
-primitives = { package = "sr-primitives", git = "https://github.com/paritytech/substrate.git", branch = "v1.0", default-features = false }
-# Needed for type-safe access to storage DB.
-support = { package = "srml-support", git = "https://github.com/paritytech/substrate.git", branch = "v1.0", default-features = false }
-# `system` module provides us with all sorts of useful stuff and macros depend on it being around.
-system = { package = "srml-system", git = "https://github.com/paritytech/substrate.git", branch = "v1.0", default-features = false }
-
-[dev-dependencies]
-substrate-primitives = { git = "https://github.com/paritytech/substrate.git", branch = "v1.0"}
-sr-std = { git = "https://github.com/paritytech/substrate.git", branch = "v1.0"}
-runtime-io = { package = "sr-io", git = "https://github.com/paritytech/substrate.git", branch = "v1.0" }
-rand = { version = "0.6.5"}
-
 [features]
 default = ["std"]
 std = [
-	"serde",
-	"parity-codec/std",
-	"primitives/std",
-	"support/std",
-	"system/std",
+  "serde",
+  "parity-codec/std",
+  "primitives/std",
+  "support/std",
+  "system/std",
+	"reals/std",
+	"time/std",
 ]
+
+# Rust crates
+[dependencies.serde]
+version = "1.0"
+optional = true
+
+[dependencies.parity-codec]
+version = "3.5"
+default-features = false
+features = ["derive"]
+
+# Substrate Core crates
+[dependencies.primitives]
+package = "substrate-primitives"
+git = "https://github.com/paritytech/substrate.git"
+branch = "v1.0"
+default-features = false
+
+# SRML crates
+[dependencies.support]
+package = "srml-support"
+git = "https://github.com/paritytech/substrate.git"
+branch = "v1.0"
+default-features = false
+
+[dependencies.system]
+package = "srml-system"
+git = "https://github.com/paritytech/substrate.git"
+branch = "v1.0"
+default-features = false
+
+# Katal crates
+[dependencies.reals]
+package = "modules-reals"
+path = "../reals"
+default-features = false
+
+[dependencies.time]
+package = "modules-time"
+path = "../time"
+default-features = false
+
+# Debug crates
+[dev-dependencies.runtime_io]
+package = "sr-io"
+git = "https://github.com/paritytech/substrate.git"
+branch = "v1.0"
+
+[dev-dependencies.runtime_primitives]
+package = "sr-primitives"
+git = "https://github.com/paritytech/substrate.git"
+branch = "v1.0"
+
+[dev-dependencies.runtime_std]
+package = "sr-std"
+git = "https://github.com/paritytech/substrate.git"
+branch = "v1.0"
