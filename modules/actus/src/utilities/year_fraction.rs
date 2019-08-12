@@ -18,11 +18,11 @@ use super::*;
 /// Year Fraction Convention: given two input time *s* and *t*, with *s<t*, and the desired day count
 /// convention it calculates the fraction of a year between the two times and returns it as a Real.
 /// See section 4.6 of the ACTUS paper for details.
-pub fn year_fraction(s: Time, t: Time, day_cont_convention: DayCountConvention) -> Real {
+pub fn year_fraction(s: Time, t: Time, day_count_convention: DayCountConvention) -> Real {
     if s == Time(None) || t == Time(None) || s > t {
         return Real(None);
     }
-    match day_cont_convention {
+    match day_count_convention {
         DayCountConvention::_AAISDA => {
             let mut year_1 = s.0.unwrap().year;
             let mut month_1 = s.0.unwrap().month;

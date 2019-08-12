@@ -16,10 +16,10 @@
 
 use parity_codec::{Decode, Encode};
 use primitives::H256;
-use reals::Real;
+use reals::*;
 use rstd::prelude::*;
-use support::{decl_event, decl_module, decl_storage, dispatch::Result, StorageMap};
-use time::{Time, UncheckedTime};
+use support::{decl_module, decl_storage, dispatch::Result, StorageMap};
+use time::*;
 
 // Importing the rest of the files in this crate.
 mod contract_state;
@@ -34,19 +34,7 @@ use utilities::*;
 type MyResult<T> = rstd::result::Result<T, &'static str>;
 
 // This module's configuration trait.
-pub trait Trait: system::Trait {
-    type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
-}
-
-// This module's events.
-decl_event!(
-    pub enum Event<T>
-    where
-        AccountId = <T as system::Trait>::AccountId,
-    {
-        Nothing(AccountId),
-    }
-);
+pub trait Trait: system::Trait {}
 
 // This module's storage items.
 decl_storage! {
@@ -59,9 +47,6 @@ decl_storage! {
 decl_module! {
     /// The module declaration.
     pub struct Module<T: Trait> for enum Call where origin: T::Origin {
-        // Initializing events
-        // this is needed only if you are using events in your module
-        fn deposit_event<T>() = default;
 
         fn deploy_contract(origin, attributes: Attributes) -> Result {
             // Getting the contract ID.
@@ -155,7 +140,7 @@ mod tests {
             attributes.maturity_date = Time::from_values(1979, 07, 21, 02, 56, 15);
             attributes.nominal_interest_rate = Real::from(1000);
             attributes.notional_principal = Real(Some(50000000));
-            attributes.contract_deal_date = Time::from_values(1969, 07, 21, 02, 56, 15);
+            attributes.contract_deal_date = Time::from_values(1968, 07, 21, 02, 56, 15);
             attributes.contract_role = Some(ContractRole::RPA);
             attributes.creator_id = Some(H256::zero());
             attributes.counterparty_id = Some(H256::zero());
