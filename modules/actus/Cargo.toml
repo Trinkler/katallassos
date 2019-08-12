@@ -70,7 +70,7 @@ package = "sr-io"
 git = "https://github.com/paritytech/substrate.git"
 branch = "v1.0"
 
-[dependencies.runtime_primitives]
+[dev-dependencies.runtime_primitives]
 package = "sr-primitives"
 git = "https://github.com/paritytech/substrate.git"
 branch = "v1.0"
