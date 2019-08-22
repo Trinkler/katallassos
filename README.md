@@ -4,14 +4,6 @@
 
 > [Katal](https://katal.dev): Standard Framework for Finance.
 
-### Usage
-
-- [Read Research Papers](https://github.com/Trinkler/katal-research)
-- [Read Reference Docs](https://katal.dev/docs)
-- [Subscribe to Newsletter](https://software.us19.list-manage.com/subscribe?u=48964a7b4b5e9480604838bf2&id=982968577c)
-- [Join Telegram](https://t.me/katalchain)
-- [Join Reddit](https://www.reddit.com/r/katalchain)
-
 ### Initial Setup
 
 ```sh
@@ -34,3 +26,11 @@ cargo build --release # Build native binaries
 ```sh
 ./target/release/katal
 ```
+
+### Additional Resources
+
+- [Read Research Papers](https://github.com/Trinkler/katal-research)
+- [Read Reference Docs](https://katal.dev/docs)
+- [Subscribe to Newsletter](https://software.us19.list-manage.com/subscribe?u=48964a7b4b5e9480604838bf2&id=982968577c)
+- [Join Telegram](https://t.me/katalchain)
+- [Join Reddit](https://www.reddit.com/r/katalchain)
