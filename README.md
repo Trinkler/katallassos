@@ -1,16 +1,8 @@
-[<img src = "https://raw.githubusercontent.com/Trinkler/brand/master/assets/katal/banner.png" width = "100%">](https://katal.io)
+[<img src = "https://raw.githubusercontent.com/Trinkler/brand/master/assets/katal/banner.png" width = "100%">](https://katal.dev)
 
 # katal-chain [![buddy pipeline](https://app.buddy.works/trinkler/katal-chain/pipelines/pipeline/195629/badge.svg?token=3a967ff05891e3690d97195573654d05994285b9798ed78a42d7178be77fa4c3 "buddy pipeline")](https://app.buddy.works/trinkler/katal-chain/pipelines/pipeline/195629)
 
-> [Katal](https://katal.io): Standard Framework for Finance.
-
-### Usage
-
-- [Read Research Papers](https://github.com/Trinkler/katal-research)
-- [Read Reference Docs](https://katal.io/docs)
-- [Subscribe to Newsletter](https://software.us19.list-manage.com/subscribe?u=48964a7b4b5e9480604838bf2&id=982968577c)
-- [Join Telegram](https://t.me/katalchain)
-- [Join Reddit](https://www.reddit.com/r/katalchain)
+> [Katal](https://katal.dev): Standard Framework for Finance. View on [Telemetry](https://telemetry.polkadot.io/#list/Katal).
 
 ### Initial Setup
 
@@ -34,3 +26,9 @@ cargo build --release # Build native binaries
 ```sh
 ./target/release/katal
 ```
+
+### Additional Resources
+
+- [Read Research Papers](https://github.com/Trinkler/katal-research)
+- [Subscribe to Newsletter](https://software.us19.list-manage.com/subscribe?u=48964a7b4b5e9480604838bf2&id=982968577c)
+- [Join Telegram](https://t.me/katalchain)

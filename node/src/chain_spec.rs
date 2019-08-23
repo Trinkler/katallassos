@@ -90,7 +90,10 @@ impl Alternative {
                 "testnet", // Id
                 || {
                     testnet_genesis(
-                        vec![authority_key("Alice")], // Initial Authorities
+                        vec![hex![
+                            "a4d705ef67f4a1bc2e59ac97823e3793aaa559110f7d3a3e0f3594f6aebcb387"
+                        ] // 5FnqauongW5TPgo8KKxmn75b7rr8NSWy9SARu54vkxag7Ncc
+                        .unchecked_into()], // Initial Authorities
                         vec![hex![
                             "be9128704d6642083e4f9f5fc55e5216dc7b22cba74578c2a553b32391297530"
                         ] // 5FnqauongW5TPgo8KKxmn75b7rr8NSWy9SARu54vkxag7Ncc
@@ -135,7 +138,7 @@ fn testnet_genesis(
 		}),
 		system: None,
 		timestamp: Some(TimestampConfig {
-			minimum_period: 5, // 10 second block time.
+			minimum_period: 1, // 10 second block time.
 		}),
 		indices: Some(IndicesConfig {
 			ids: endowed_accounts.clone(),
