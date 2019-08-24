@@ -59,10 +59,10 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 // The above line is needed to compile the Wasm binaries.
 
-/// These are necessary to work with Substrate.
+// These are necessary to work with Substrate.
 use parity_codec::{Decode, Encode};
 
-/// The struct that represents the ISO8601 time format.
+/// This struct represents the ISO8601 time format.
 #[derive(Copy, Clone, Decode, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct UncheckedTime {
@@ -75,7 +75,7 @@ pub struct UncheckedTime {
     pub second: i8,
 }
 
-/// The struct that implements the Time data type. It is a tuple containing a single Option of
+/// This struct implements the Time data type. It is a tuple containing a single Option of
 /// the type UncheckedTime.
 #[derive(Copy, Clone, Decode, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "std", derive(Debug))]

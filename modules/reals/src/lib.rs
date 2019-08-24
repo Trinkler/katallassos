@@ -39,9 +39,9 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 // The above line is needed to compile the Wasm binaries.
 
-/// These are necessary to do operator overloading.
+// These are necessary to do operator overloading.
 use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
-/// These are necessary to work with Substrate.
+// These are necessary to work with Substrate.
 use parity_codec::{Decode, Encode};
 
 /// The scale factor (must be positive).
@@ -52,7 +52,7 @@ const SF: i128 = 1000000000;
 const MAX: i128 = i64::max_value() as i128;
 const MIN: i128 = i64::min_value() as i128;
 
-/// The struct that implements the real data type. It is a tuple containing a single Option of
+/// This struct implements the real data type. It is a tuple containing a single Option of
 /// an i64.
 #[derive(Copy, Clone, Decode, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "std", derive(Debug))]
@@ -124,7 +124,8 @@ impl Add for Real {
     }
 }
 
-/// Implements the addition assignment operator +=.
+/// Implements the addition assignment operator +=. Follows the same rules as the
+/// addition operator.
 impl AddAssign for Real {
     fn add_assign(&mut self, rhs: Self) {
         *self = *self + rhs;
@@ -174,7 +175,8 @@ impl Div for Real {
     }
 }
 
-/// Implements the division assignment operator /=.
+/// Implements the division assignment operator /=. Follows the same rules as the
+/// division operator.
 impl DivAssign for Real {
     fn div_assign(&mut self, rhs: Self) {
         *self = *self / rhs;
@@ -219,7 +221,8 @@ impl Mul for Real {
     }
 }
 
-/// Implements the multiplication assignment operator *=.
+/// Implements the multiplication assignment operator *=. Follows the same rules as the
+/// multiplication operator.
 impl MulAssign for Real {
     fn mul_assign(&mut self, rhs: Self) {
         *self = *self * rhs;
@@ -255,7 +258,8 @@ impl Sub for Real {
     }
 }
 
-/// Implements the subtraction assignment operator -=.
+/// Implements the subtraction assignment operator -=. Follows the same rules as the
+/// subtraction operator.
 impl SubAssign for Real {
     fn sub_assign(&mut self, rhs: Self) {
         *self = *self - rhs;
@@ -304,6 +308,40 @@ mod tests {
         // Check overflow.
         let x = Real(Some(i64::min_value()));
         assert_eq!(Real(None), x.abs());
+    }
+
+    #[test]
+    fn max_works() {
+        // Check case where both are None.
+        let x = Real(None);
+        assert_eq!(Real(None), Real::max(x, x));
+        // Check case where one is None.
+        let y = Real(Some(1));
+        assert_eq!(Real(None), Real::max(x, y));
+        assert_eq!(Real(None), Real::max(y, x));
+        // Check regular case.
+        let x = Real(Some(4));
+        let y = Real(Some(2));
+        assert_eq!(Real(Some(4)), Real::max(x, y));
+        assert_eq!(Real(Some(4)), Real::max(y, x));
+        assert_eq!(Real(Some(4)), Real::max(x, x));
+    }
+
+    #[test]
+    fn min_works() {
+        // Check case where both are None.
+        let x = Real(None);
+        assert_eq!(Real(None), Real::min(x, x));
+        // Check case where one is None.
+        let y = Real(Some(1));
+        assert_eq!(Real(None), Real::min(x, y));
+        assert_eq!(Real(None), Real::min(y, x));
+        // Check regular case.
+        let x = Real(Some(4));
+        let y = Real(Some(2));
+        assert_eq!(Real(Some(2)), Real::min(x, y));
+        assert_eq!(Real(Some(2)), Real::min(y, x));
+        assert_eq!(Real(Some(2)), Real::min(y, y));
     }
 
     #[test]

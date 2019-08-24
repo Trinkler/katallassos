@@ -11,60 +11,67 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-// Ensure we're `no_std` when compiling for Wasm.
+//! # Oracle module
+//!
+//! ## Overview
+//! The Oracle module allows the root user to create and update oracles. An oracle in this
+//! context is simply a structure that holds a value (implemented using Real) and a timestamp
+//! (implemented using Time). Each oracle is uniquely identified by a 256-bit integer
+//! (implemented using H256).
+
 #![cfg_attr(not(feature = "std"), no_std)]
+// The above line is needed to compile the Wasm binaries.
 
-// use rand::random;
-use support::{decl_event, decl_module, decl_storage, dispatch::Result, StorageValue};
+use parity_codec::{Decode, Encode};
+use primitives::H256;
+use reals::*;
+use support::{decl_module, decl_storage, dispatch::Result, StorageMap};
 use system::ensure_root;
+use time::*;
 
-/// The module's configuration trait.
-pub trait Trait: system::Trait {
-    /// The overarching event type.
-    type Event: From<Event<Self>> + Into<<Self as system::Trait>::Event>;
+// This struct defines the state of an oracle.
+#[derive(Clone, Decode, Encode, Default, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub struct OracleState {
+    pub time: Time,
+    pub value: Real,
 }
 
-/// This module's storage items.
+// The module's configuration trait.
+pub trait Trait: system::Trait {}
+
+// This module's storage items.
 decl_storage! {
-    trait Store for Module<T: Trait> as oracle {
-        Oracle get(price): Option<u64>;
+    trait Store for Module<T: Trait> as OracleStorage {
+        OracleStorage: map H256 => OracleState;
     }
 }
 
+// This module's dispatchable functions.
 decl_module! {
-    /// The module declaration.
+    // The module declaration.
     pub struct Module<T: Trait> for enum Call where origin: T::Origin {
-        // Initializing events
-        // this is needed only if you are using events in your module
-        fn deposit_event<T>() = default;
 
         // Set the value of an existing data feed or creating a new one.
-        pub fn set(origin, price: u64) -> Result {
+        pub fn set(origin, id: H256, time: Time, value: Real) -> Result {
             // Only chain root should be able to set this value.
             ensure_root(origin)?;
 
-            // Store input value in storage.
-            <Self as Store>::Oracle::put(price);
+            // Create the oracle state struct.
+            let state = OracleState {
+                time: time,
+                value: value,
+            };
 
-            // Raise event after price has been set.
-            Self::deposit_event(RawEvent::NewPriceSet(price));
+            // Store input value in storage.
+            <Self as Store>::OracleStorage::insert(id, state);
 
             Ok(())
         }
     }
 }
 
-decl_event!(
-    pub enum Event<T>
-    where
-        AccountId = <T as system::Trait>::AccountId,
-    {
-        Nothing(AccountId),
-        NewPriceSet(u64),
-    }
-);
-
-/// tests for this module
+// tests for this module
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -101,9 +108,11 @@ mod tests {
         type Log = DigestItem;
     }
     impl Trait for Test {
-        type Event = ();
+        // This needed to be commented out in order for tests to work,
+        // most likely because Events are not supported by the module.
+        // type Event = ();
     }
-    type oracle = Module<Test>;
+    type Oracle = Module<Test>;
 
     // This function basically just builds a genesis storage key/value store according to
     // our desired mockup.
@@ -115,14 +124,18 @@ mod tests {
             .into()
     }
 
-    // #[test]
-    // fn it_can_set_and_get_random_values() {
-    //     with_externalities(&mut new_test_ext(), || {
-    //         let price: u64 = rand::random::<u64>();
-    //         // Set price to storage
-    //         assert_ok!(oracle::set(Origin::ROOT, price));
-    //         // Get price from storage
-    //         assert_eq!(oracle::price(), price);
-    //     });
-    // }
+    #[test]
+    fn set_works() {
+        with_externalities(&mut new_test_ext(), || {
+            let id = H256::zero();
+            let time = Time::from_values(1969, 07, 20, 20, 17, 00);
+            let value = Real::from(1000);
+            // Set oracle state to storage
+            assert_ok!(Oracle::set(Origin::ROOT, id, time, value));
+            // Get oracle state from storage.
+            // Notice the use of <Oracle as Store> instead of <Self as Store>!
+            assert_eq!(time, <Oracle as Store>::OracleStorage::get(id).time);
+            assert_eq!(value, <Oracle as Store>::OracleStorage::get(id).value);
+        });
+    }
 }

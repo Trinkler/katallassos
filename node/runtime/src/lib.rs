@@ -192,9 +192,7 @@ impl sudo::Trait for Runtime {
 
 impl actus::Trait for Runtime {}
 
-impl oracle::Trait for Runtime {
-    type Event = Event;
-}
+impl oracle::Trait for Runtime {}
 
 impl ownership::Trait for Runtime {
     type Event = Event;
@@ -216,7 +214,7 @@ construct_runtime!(
 		Balances: balances,
 		Sudo: sudo,
 		Actus: actus::{Module, Call, Storage},
-		Oracle: oracle::{Module, Call, Storage, Event<T>},
+		Oracle: oracle::{Module, Call, Storage},
 		Ownership: ownership::{Module, Call, Storage, Event<T>},
 	}
 );
