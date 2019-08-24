@@ -108,7 +108,9 @@ mod tests {
         type Log = DigestItem;
     }
     impl Trait for Test {
-        type Event = ();
+        // This needed to be commented out in order for tests to work,
+        // most likely because Events are not supported by the module.
+        // type Event = ();
     }
     type Actus = Module<Test>;
 

@@ -11,6 +11,14 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
+//! # Oracle module
+//!
+//! ## Overview
+//! The Oracle module allows the root user to create and update oracles. An oracle in this
+//! context is simply a structure that holds a value (implemented using Real) and a timestamp
+//! (implemented using Time). Each oracle is uniquely identified by a 256-bit integer
+//! (implemented using H256).
+
 #![cfg_attr(not(feature = "std"), no_std)]
 // The above line is needed to compile the Wasm binaries.
 
@@ -100,9 +108,11 @@ mod tests {
         type Log = DigestItem;
     }
     impl Trait for Test {
-        type Event = ();
+        // This needed to be commented out in order for tests to work,
+        // most likely because Events are not supported by the module.
+        // type Event = ();
     }
-    type oracle = Module<Test>;
+    type Oracle = Module<Test>;
 
     // This function basically just builds a genesis storage key/value store according to
     // our desired mockup.
@@ -114,14 +124,18 @@ mod tests {
             .into()
     }
 
-    // #[test]
-    // fn it_can_set_and_get_random_values() {
-    //     with_externalities(&mut new_test_ext(), || {
-    //         let price: u64 = rand::random::<u64>();
-    //         // Set price to storage
-    //         assert_ok!(oracle::set(Origin::ROOT, price));
-    //         // Get price from storage
-    //         assert_eq!(oracle::price(), price);
-    //     });
-    // }
+    #[test]
+    fn set_works() {
+        with_externalities(&mut new_test_ext(), || {
+            let id = H256::zero();
+            let time = Time::from_values(1969, 07, 20, 20, 17, 00);
+            let value = Real::from(1000);
+            // Set oracle state to storage
+            assert_ok!(Oracle::set(Origin::ROOT, id, time, value));
+            // Get oracle state from storage.
+            // Notice the use of <Oracle as Store> instead of <Self as Store>!
+            assert_eq!(time, <Oracle as Store>::OracleStorage::get(id).time);
+            assert_eq!(value, <Oracle as Store>::OracleStorage::get(id).value);
+        });
+    }
 }
