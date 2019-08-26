@@ -34,7 +34,9 @@ use utilities::*;
 type MyResult<T> = runtime_std::result::Result<T, &'static str>;
 
 // This module's configuration trait.
-pub trait Trait: system::Trait {}
+// Importing oracle's trait is necessary to be able to call its functions
+// and read its storage.
+pub trait Trait: system::Trait + oracle::Trait {}
 
 // This module's storage items.
 decl_storage! {
@@ -107,6 +109,7 @@ mod tests {
         type Event = ();
         type Log = DigestItem;
     }
+    impl oracle::Trait for Test {}
     impl Trait for Test {
         // This needed to be commented out in order for tests to work,
         // most likely because Events are not supported by the module.

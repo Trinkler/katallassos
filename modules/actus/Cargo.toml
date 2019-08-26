@@ -13,6 +13,7 @@ std = [
 	"primitives/std",
 	"support/std",
 	"system/std",
+	"oracle/std",
 	"reals/std",
 	"time/std",
 ]
@@ -54,6 +55,11 @@ branch = "v1.0"
 default-features = false
 
 # Katal crates
+[dependencies.oracle]
+package = "modules-oracle"
+path = "../oracle"
+default-features = false
+
 [dependencies.reals]
 package = "modules-reals"
 path = "../reals"
