@@ -14,6 +14,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 // The above line is needed to compile the Wasm binaries.
 
+// Importing crates declared in the cargo.toml file.
 use parity_codec::{Decode, Encode};
 use primitives::H256;
 use reals::*;
@@ -29,8 +30,8 @@ use contract_state::*;
 use contracts::*;
 use utilities::*;
 
-// Defines an alias for the Result type. It has the name MyResult because Substrate already uses
-// the name Result for their own type Result<(), &'static str>.
+// Defines an alias for the Result type. It has the name MyResult because Substrate
+// already uses the name Result for their own type Result<(), &'static str>.
 type MyResult<T> = runtime_std::result::Result<T, &'static str>;
 
 // This module's configuration trait.
@@ -50,26 +51,38 @@ decl_module! {
     // The module declaration.
     pub struct Module<T: Trait> for enum Call where origin: T::Origin {
 
-        fn deploy_contract(origin, attributes: Attributes) -> Result {
-            // Getting the contract ID.
-            let id = attributes.contract_id;
+        pub fn dispatch_deploy_contract(origin, attributes: Attributes) -> Result {
+            // Call corresponding internal function.
+            Self::deploy_contract(attributes)?;
 
-            // Checking if ID is available.
-            if <Self as Store>::ContractStorage::exists(id) {
-                return Err("Contract ID already exists");
-            }
-
-            // TODO: Get current time.
-            let t0 = Time::from_values(1969, 07, 20, 20, 17, 00);
-
-            // Calculating the initial contract state.
-            let state = contracts::initialize(t0, attributes)?;
-
-            // Storing the contract state.
-            <Self as Store>::ContractStorage::insert(id, state);
-
+            // Return Ok if successful.
             Ok(())
         }
+    }
+}
+
+// This module's internal functions.
+impl<T: Trait> Module<T> {
+    pub fn deploy_contract(attributes: Attributes) -> Result {
+        // Getting the contract ID.
+        let id = attributes.contract_id;
+
+        // Checking if ID is available.
+        if <Self as Store>::ContractStorage::exists(id) {
+            return Err("Contract ID already exists");
+        }
+
+        // TODO: Get current time.
+        let t0 = Time::from_values(1969, 07, 20, 20, 17, 00);
+
+        // Calculating the initial contract state.
+        let state = contracts::initialize(t0, attributes)?;
+
+        // Storing the contract state.
+        <Self as Store>::ContractStorage::insert(id, state);
+
+        // Return Ok if successful.
+        Ok(())
     }
 }
 
@@ -133,7 +146,7 @@ mod tests {
             // Tries to start a contract with the wrong type.
             let id = H256::zero();
             let mut attributes = Attributes::new(id);
-            let result = Actus::deploy_contract(Origin::signed(1), attributes.clone());
+            let result = Actus::dispatch_deploy_contract(Origin::signed(1), attributes.clone());
             assert!(result.is_err());
 
             // Starts a PAM contract with the wrong attributes.
@@ -149,17 +162,17 @@ mod tests {
             attributes.contract_role = Some(ContractRole::RPA);
             attributes.creator_id = Some(H256::zero());
             attributes.counterparty_id = Some(H256::zero());
-            let result = Actus::deploy_contract(Origin::signed(1), attributes.clone());
+            let result = Actus::dispatch_deploy_contract(Origin::signed(1), attributes.clone());
             assert!(result.is_err());
 
             // Starts a PAM contract with the right attributes.
             attributes.scaling_effect = None;
-            let result = Actus::deploy_contract(Origin::signed(1), attributes.clone());
+            let result = Actus::dispatch_deploy_contract(Origin::signed(1), attributes.clone());
             assert!(result.is_ok());
 
             // Starts another contract with the same ID.
             attributes.scaling_effect = None;
-            let result = Actus::deploy_contract(Origin::signed(1), attributes.clone());
+            let result = Actus::dispatch_deploy_contract(Origin::signed(1), attributes.clone());
             assert!(result.is_err());
         });
     }

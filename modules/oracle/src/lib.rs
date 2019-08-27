@@ -22,6 +22,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 // The above line is needed to compile the Wasm binaries.
 
+// Importing crates declared in the cargo.toml file.
 use parity_codec::{Decode, Encode};
 use primitives::H256;
 use reals::*;
@@ -29,15 +30,11 @@ use support::{decl_module, decl_storage, dispatch::Result, StorageMap};
 use system::ensure_root;
 use time::*;
 
-// This struct defines the state of an oracle.
-#[derive(Clone, Decode, Encode, Default, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
-pub struct OracleState {
-    pub time: Time,
-    pub value: Real,
-}
+// Importing the rest of the files in this crate.
+mod oracle_state;
+use oracle_state::*;
 
-// The module's configuration trait.
+// This module's configuration trait.
 pub trait Trait: system::Trait {}
 
 // This module's storage items.
@@ -53,21 +50,33 @@ decl_module! {
     pub struct Module<T: Trait> for enum Call where origin: T::Origin {
 
         // Set the value of an existing data feed or creating a new one.
-        pub fn set(origin, id: H256, time: Time, value: Real) -> Result {
+        pub fn dispatch_set(origin, id: H256, time: Time, value: Real) -> Result {
             // Only chain root should be able to set this value.
             ensure_root(origin)?;
 
-            // Create the oracle state struct.
-            let state = OracleState {
-                time: time,
-                value: value,
-            };
+            // Call corresponding internal function.
+            Self::set(id, time, value)?;
 
-            // Store input value in storage.
-            <Self as Store>::OracleStorage::insert(id, state);
-
+            // Return Ok if successful.
             Ok(())
         }
+    }
+}
+
+// This module's internal functions.
+impl<T: Trait> Module<T> {
+    pub fn set(id: H256, time: Time, value: Real) -> Result {
+        // Create the oracle state struct.
+        let state = OracleState {
+            time: time,
+            value: value,
+        };
+
+        // Store input value in storage.
+        <Self as Store>::OracleStorage::insert(id, state);
+
+        // Return Ok if successful.
+        Ok(())
     }
 }
 
@@ -131,7 +140,7 @@ mod tests {
             let time = Time::from_values(1969, 07, 20, 20, 17, 00);
             let value = Real::from(1000);
             // Set oracle state to storage
-            assert_ok!(Oracle::set(Origin::ROOT, id, time, value));
+            assert_ok!(Oracle::dispatch_set(Origin::ROOT, id, time, value));
             // Get oracle state from storage.
             // Notice the use of <Oracle as Store> instead of <Self as Store>!
             assert_eq!(time, <Oracle as Store>::OracleStorage::get(id).time);
