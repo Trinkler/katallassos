@@ -32,6 +32,7 @@ cargo build --release # Build native binaries
 -   [Fixed-point arithmetic](https://github.com/Trinkler/katal-chain/tree/master/modules/reals)
 -   [Time in ISO8601 format](https://github.com/Trinkler/katal-chain/tree/master/modules/time)
 -   [Permissioned Oracle](https://github.com/Trinkler/katal-chain/tree/master/modules/oracle)
+-   [Algorithmic Contract Types Unified Standard](https://github.com/Trinkler/katal-chain/tree/master/modules/actus)
 
 ### Additional Resources
 
