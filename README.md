@@ -27,8 +27,14 @@ cargo build --release # Build native binaries
 ./target/release/katal
 ```
 
+### Custom Modules
+
+-   [Fixed-point arithmetic](https://github.com/Trinkler/katal-chain/tree/master/modules/reals)
+-   [Time in ISO8601 format](https://github.com/Trinkler/katal-chain/tree/master/modules/time)
+-   [Permissioned Oracle](https://github.com/Trinkler/katal-chain/tree/master/modules/oracle)
+
 ### Additional Resources
 
-- [Read Research Papers](https://github.com/Trinkler/katal-research)
-- [Subscribe to Newsletter](https://software.us19.list-manage.com/subscribe?u=48964a7b4b5e9480604838bf2&id=982968577c)
-- [Join Telegram](https://t.me/katalchain)
+-   [Read Research Papers](https://github.com/Trinkler/katal-research)
+-   [Subscribe to Newsletter](https://software.us19.list-manage.com/subscribe?u=48964a7b4b5e9480604838bf2&id=982968577c)
+-   [Join Telegram](https://t.me/katalchain)
