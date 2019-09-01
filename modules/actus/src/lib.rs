@@ -42,7 +42,7 @@ pub trait Trait: system::Trait + oracle::Trait {}
 // This module's storage items.
 decl_storage! {
     trait Store for Module<T: Trait> as ContractStorage {
-        ContractStorage: map H256 => ContractState;
+        pub ContractStorage: map H256 => ContractState;
     }
 }
 

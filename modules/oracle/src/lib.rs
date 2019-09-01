@@ -40,7 +40,7 @@ pub trait Trait: system::Trait {}
 // This module's storage items.
 decl_storage! {
     trait Store for Module<T: Trait> as OracleStorage {
-        OracleStorage: map H256 => OracleState;
+        pub OracleStorage: map H256 => OracleState;
     }
 }
 
