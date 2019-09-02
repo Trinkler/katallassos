@@ -21,16 +21,20 @@ mod progress_pam;
 pub use initialize_pam::*;
 pub use progress_pam::*;
 
-pub fn initialize(t0: Time, input: Attributes) -> MyResult<ContractState> {
-    match input.contract_type {
-        Some(ContractType::PAM) => initialize_pam(t0, input),
-        _ => Err("Contract type not supported"),
+impl<T: Trait> Module<T> {
+    pub fn initialize(t0: Time, input: Attributes) -> MyResult<ContractState> {
+        match input.contract_type {
+            Some(ContractType::PAM) => Self::initialize_pam(t0, input),
+            _ => Err("Contract type not supported"),
+        }
     }
 }
 
-pub fn progress(event: ContractEvent, mut state: ContractState) -> MyResult<ContractState> {
-    match state.attributes.contract_type {
-        Some(ContractType::PAM) => progress_pam(event, state),
-        _ => Err("Contract type not supported"),
+impl<T: Trait> Module<T> {
+    pub fn progress(event: ContractEvent, mut state: ContractState) -> MyResult<ContractState> {
+        match state.attributes.contract_type {
+            Some(ContractType::PAM) => Self::progress_pam(event, state),
+            _ => Err("Contract type not supported"),
+        }
     }
 }

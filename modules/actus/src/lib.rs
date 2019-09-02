@@ -76,7 +76,7 @@ impl<T: Trait> Module<T> {
         let t0 = Time::from_values(1969, 07, 20, 20, 17, 00);
 
         // Calculating the initial contract state.
-        let state = contracts::initialize(t0, attributes)?;
+        let state = Self::initialize(t0, attributes)?;
 
         // Storing the contract state.
         <Self as Store>::ContractStorage::insert(id, state);
