@@ -32,7 +32,9 @@ use time::*;
 
 // Importing the rest of the files in this crate.
 mod oracle_state;
+mod set;
 use oracle_state::*;
+use set::*;
 
 // This module's configuration trait.
 pub trait Trait: system::Trait {}
@@ -60,23 +62,6 @@ decl_module! {
             // Return Ok if successful.
             Ok(())
         }
-    }
-}
-
-// This module's internal functions.
-impl<T: Trait> Module<T> {
-    pub fn set(id: H256, time: Time, value: Real) -> Result {
-        // Create the oracle state struct.
-        let state = OracleState {
-            time: time,
-            value: value,
-        };
-
-        // Store input value in storage.
-        <Self as Store>::Oracles::insert(id, state);
-
-        // Return Ok if successful.
-        Ok(())
     }
 }
 

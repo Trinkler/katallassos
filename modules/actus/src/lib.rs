@@ -25,9 +25,11 @@ use time::*;
 // Importing the rest of the files in this crate.
 mod contract_state;
 mod contracts;
+mod deploy_contract;
 mod utilities;
 use contract_state::*;
 use contracts::*;
+use deploy_contract::*;
 use utilities::*;
 
 // Defines an alias for the Result type. It has the name MyResult because Substrate
@@ -58,31 +60,6 @@ decl_module! {
             // Return Ok if successful.
             Ok(())
         }
-    }
-}
-
-// This module's internal functions.
-impl<T: Trait> Module<T> {
-    pub fn deploy_contract(attributes: Attributes) -> Result {
-        // Getting the contract ID.
-        let id = attributes.contract_id;
-
-        // Checking if ID is available.
-        if <Self as Store>::Contracts::exists(id) {
-            return Err("Contract ID already exists");
-        }
-
-        // TODO: Get current time.
-        let t0 = Time::from_values(1969, 07, 20, 20, 17, 00);
-
-        // Calculating the initial contract state.
-        let state = Self::initialize(t0, attributes)?;
-
-        // Storing the contract state.
-        <Self as Store>::Contracts::insert(id, state);
-
-        // Return Ok if successful.
-        Ok(())
     }
 }
 
