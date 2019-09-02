@@ -40,7 +40,7 @@ pub trait Trait: system::Trait {}
 // This module's storage items.
 decl_storage! {
     trait Store for Module<T: Trait> as OracleStorage {
-        pub OracleStorage: map H256 => OracleState;
+        pub Oracles: map H256 => OracleState;
     }
 }
 
@@ -73,7 +73,7 @@ impl<T: Trait> Module<T> {
         };
 
         // Store input value in storage.
-        <Self as Store>::OracleStorage::insert(id, state);
+        <Self as Store>::Oracles::insert(id, state);
 
         // Return Ok if successful.
         Ok(())
@@ -143,8 +143,8 @@ mod tests {
             assert_ok!(Oracle::dispatch_set(Origin::ROOT, id, time, value));
             // Get oracle state from storage.
             // Notice the use of <Oracle as Store> instead of <Self as Store>!
-            assert_eq!(time, <Oracle as Store>::OracleStorage::get(id).time);
-            assert_eq!(value, <Oracle as Store>::OracleStorage::get(id).value);
+            assert_eq!(time, <Oracle as Store>::Oracles::get(id).time);
+            assert_eq!(value, <Oracle as Store>::Oracles::get(id).value);
         });
     }
 }

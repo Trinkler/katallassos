@@ -1,7 +1,6 @@
 use super::*;
 
 // TODO: Add support for user-initiated events.
-// TODO: Add support for basic oracles.
 // TODO: Add the calls to transfer tokens (issuer module?).
 impl<T: Trait> Module<T> {
     pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<ContractState> {
@@ -121,7 +120,6 @@ impl<T: Trait> Module<T> {
             }
             ContractEventType::PY => {
                 // Payoff Function
-                // TODO: Add the oracle based on the "RRMO" attribute.
                 if state.attributes.penalty_type == Some(PenaltyType::A) {
                     let payoff = utilities::contract_default(state.variables.performance)
                         * utilities::contract_role_sign(state.attributes.contract_role)
@@ -147,7 +145,14 @@ impl<T: Trait> Module<T> {
                             state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
                         )
                         * state.variables.nominal_value_1
-                        * Real::max(Real::from(0), state.variables.nominal_rate);
+                        * Real::max(
+                            Real::from(0),
+                            state.variables.nominal_rate
+                                - <oracle::Oracles<T>>::get(
+                                    state.attributes.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
+                                )
+                                .value,
+                        );
                 }
 
                 // State Transition Function
@@ -466,11 +471,15 @@ impl<T: Trait> Module<T> {
                     ) * state.attributes.fee_rate;
                 }
 
-                // TODO: Add the oracle based on the "RRMO" attribute.
                 // TODO: Verify with Nils that it is indeed rate_multiplier.
                 let delta_r = Real::min(
                     Real::max(
-                        state.attributes.rate_multiplier + state.attributes.rate_spread
+                        <oracle::Oracles<T>>::get(
+                            state.attributes.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
+                        )
+                        .value
+                            * state.attributes.rate_multiplier
+                            + state.attributes.rate_spread
                             - state.variables.nominal_rate,
                         state.attributes.period_floor,
                     ),
@@ -591,11 +600,13 @@ impl<T: Trait> Module<T> {
                     state.variables.notional_scaling_multiplier =
                         state.variables.notional_scaling_multiplier;
                 } else {
-                    // TODO: Add the oracle based on the "SCMO" attribute.
                     // TODO: Verify with Nils that it is indeed "scaling_index_at_status_date".
-                    state.variables.notional_scaling_multiplier =
-                        (state.attributes.scaling_index_at_status_date)
-                            / state.attributes.scaling_index_at_status_date;
+                    state.variables.notional_scaling_multiplier = (<oracle::Oracles<T>>::get(
+                        state.attributes.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
+                    )
+                    .value
+                        - state.attributes.scaling_index_at_status_date)
+                        / state.attributes.scaling_index_at_status_date;
                 }
 
                 // Unwrap will never panic because of the lazy evaluation.
@@ -605,11 +616,13 @@ impl<T: Trait> Module<T> {
                     state.variables.interest_scaling_multiplier =
                         state.variables.interest_scaling_multiplier;
                 } else {
-                    // TODO: Add the oracle based on the "SCMO" attribute.
                     // TODO: Verify with Nils that it is indeed "scaling_index_at_status_date".
-                    state.variables.interest_scaling_multiplier =
-                        (state.attributes.scaling_index_at_status_date)
-                            / state.attributes.scaling_index_at_status_date;
+                    state.variables.interest_scaling_multiplier = (<oracle::Oracles<T>>::get(
+                        state.attributes.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
+                    )
+                    .value
+                        - state.attributes.scaling_index_at_status_date)
+                        / state.attributes.scaling_index_at_status_date;
                 }
 
                 state.variables.last_event_date = event.time;

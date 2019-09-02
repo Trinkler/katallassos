@@ -42,7 +42,7 @@ pub trait Trait: system::Trait + oracle::Trait {}
 // This module's storage items.
 decl_storage! {
     trait Store for Module<T: Trait> as ContractStorage {
-        pub ContractStorage: map H256 => ContractState;
+        pub Contracts: map H256 => ContractState;
     }
 }
 
@@ -68,7 +68,7 @@ impl<T: Trait> Module<T> {
         let id = attributes.contract_id;
 
         // Checking if ID is available.
-        if <Self as Store>::ContractStorage::exists(id) {
+        if <Self as Store>::Contracts::exists(id) {
             return Err("Contract ID already exists");
         }
 
@@ -79,7 +79,7 @@ impl<T: Trait> Module<T> {
         let state = Self::initialize(t0, attributes)?;
 
         // Storing the contract state.
-        <Self as Store>::ContractStorage::insert(id, state);
+        <Self as Store>::Contracts::insert(id, state);
 
         // Return Ok if successful.
         Ok(())
