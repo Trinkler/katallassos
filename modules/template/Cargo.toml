@@ -1,21 +1,18 @@
+#This Cargo.toml imports the minimal dependencies needed for any module to work.
 [package]
-name = "modules-actus"
-version = "0.0.2"
+name = "modules-template"
+version = "1.0.0"
 authors = ["Trinkler Software <company@trinkler.software>"]
 edition = "2018"
 
 [features]
 default = ["std"]
 std = [
-	"serde",
-	"parity-codec/std",
-	"runtime_std/std",
-	"primitives/std",
-	"support/std",
-	"system/std",
-	"oracle/std",
-	"reals/std",
-	"time/std",
+  "serde",
+  "parity-codec/std",
+  "primitives/std",
+  "support/std",
+  "system/std",
 ]
 
 # Rust crates
@@ -29,12 +26,6 @@ default-features = false
 features = ["derive"]
 
 # Substrate Core crates
-[dependencies.runtime_std]
-package = "sr-std"
-git = "https://github.com/paritytech/substrate.git"
-branch = "v1.0"
-default-features = false
-
 [dependencies.primitives]
 package = "substrate-primitives"
 git = "https://github.com/paritytech/substrate.git"
@@ -55,20 +46,6 @@ branch = "v1.0"
 default-features = false
 
 # Katal crates
-[dependencies.oracle]
-package = "modules-oracle"
-path = "../oracle"
-default-features = false
-
-[dependencies.reals]
-package = "modules-reals"
-path = "../reals"
-default-features = false
-
-[dependencies.time]
-package = "modules-time"
-path = "../time"
-default-features = false
 
 # Debug crates
 [dev-dependencies.runtime_io]
@@ -78,5 +55,10 @@ branch = "v1.0"
 
 [dev-dependencies.runtime_primitives]
 package = "sr-primitives"
+git = "https://github.com/paritytech/substrate.git"
+branch = "v1.0"
+
+[dev-dependencies.runtime_std]
+package = "sr-std"
 git = "https://github.com/paritytech/substrate.git"
 branch = "v1.0"

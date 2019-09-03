@@ -14,6 +14,7 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 // The above line is needed to compile the Wasm binaries.
 
+// Importing crates declared in the cargo.toml file.
 use parity_codec::{Decode, Encode};
 use primitives::H256;
 use reals::*;
@@ -24,22 +25,26 @@ use time::*;
 // Importing the rest of the files in this crate.
 mod contract_state;
 mod contracts;
+mod deploy_contract;
 mod utilities;
 use contract_state::*;
 use contracts::*;
+use deploy_contract::*;
 use utilities::*;
 
-// Defines an alias for the Result type. It has the name MyResult because Substrate already uses
-// the name Result for their own type Result<(), &'static str>.
+// Defines an alias for the Result type. It has the name MyResult because Substrate
+// already uses the name Result for their own type Result<(), &'static str>.
 type MyResult<T> = runtime_std::result::Result<T, &'static str>;
 
 // This module's configuration trait.
-pub trait Trait: system::Trait {}
+// Importing oracle's trait is necessary to be able to call its functions
+// and read its storage.
+pub trait Trait: system::Trait + oracle::Trait {}
 
 // This module's storage items.
 decl_storage! {
     trait Store for Module<T: Trait> as ContractStorage {
-        ContractStorage: map H256 => ContractState;
+        pub Contracts: map H256 => ContractState;
     }
 }
 
@@ -48,34 +53,20 @@ decl_module! {
     // The module declaration.
     pub struct Module<T: Trait> for enum Call where origin: T::Origin {
 
-        fn deploy_contract(origin, attributes: Attributes) -> Result {
-            // Getting the contract ID.
-            let id = attributes.contract_id;
+        pub fn dispatch_deploy_contract(origin, attributes: Attributes) -> Result {
+            // Call corresponding internal function.
+            Self::deploy_contract(attributes)?;
 
-            // Checking if ID is available.
-            if <Self as Store>::ContractStorage::exists(id) {
-                return Err("Contract ID already exists");
-            }
-
-            // TODO: Get current time.
-            let t0 = Time::from_values(1969, 07, 20, 20, 17, 00);
-
-            // Calculating the initial contract state.
-            let state = contracts::initialize(t0, attributes)?;
-
-            // Storing the contract state.
-            <Self as Store>::ContractStorage::insert(id, state);
-
+            // Return Ok if successful.
             Ok(())
         }
     }
 }
 
-// tests for this module
+// Tests for this module.
 #[cfg(test)]
 mod tests {
     use super::*;
-
     use primitives::{Blake2Hasher, H256};
     use runtime_io::with_externalities;
     use runtime_primitives::{
@@ -89,9 +80,6 @@ mod tests {
         pub enum Origin for Test {}
     }
 
-    // For testing the module, we construct most of a mock runtime. This means
-    // first constructing a configuration type (`Test`) which `impl`s each of the
-    // configuration traits of modules we want to use.
     #[derive(Clone, Eq, PartialEq)]
     pub struct Test;
     impl system::Trait for Test {
@@ -107,15 +95,10 @@ mod tests {
         type Event = ();
         type Log = DigestItem;
     }
-    impl Trait for Test {
-        // This needed to be commented out in order for tests to work,
-        // most likely because Events are not supported by the module.
-        // type Event = ();
-    }
+    impl oracle::Trait for Test {}
+    impl Trait for Test {}
     type Actus = Module<Test>;
 
-    // This function basically just builds a genesis storage key/value store according to
-    // our desired mockup.
     fn new_test_ext() -> runtime_io::TestExternalities<Blake2Hasher> {
         system::GenesisConfig::<Test>::default()
             .build_storage()
@@ -127,10 +110,10 @@ mod tests {
     #[test]
     fn deploy_contract_works() {
         with_externalities(&mut new_test_ext(), || {
-            // Tries to start a contract with the wrong type.
+            // Tries to start a contract with the wrong attributes.
             let id = H256::zero();
             let mut attributes = Attributes::new(id);
-            let result = Actus::deploy_contract(Origin::signed(1), attributes.clone());
+            let result = Actus::dispatch_deploy_contract(Origin::signed(1), attributes.clone());
             assert!(result.is_err());
 
             // Starts a PAM contract with the wrong attributes.
@@ -146,17 +129,17 @@ mod tests {
             attributes.contract_role = Some(ContractRole::RPA);
             attributes.creator_id = Some(H256::zero());
             attributes.counterparty_id = Some(H256::zero());
-            let result = Actus::deploy_contract(Origin::signed(1), attributes.clone());
+            let result = Actus::dispatch_deploy_contract(Origin::signed(1), attributes.clone());
             assert!(result.is_err());
 
             // Starts a PAM contract with the right attributes.
             attributes.scaling_effect = None;
-            let result = Actus::deploy_contract(Origin::signed(1), attributes.clone());
+            let result = Actus::dispatch_deploy_contract(Origin::signed(1), attributes.clone());
             assert!(result.is_ok());
 
             // Starts another contract with the same ID.
             attributes.scaling_effect = None;
-            let result = Actus::deploy_contract(Origin::signed(1), attributes.clone());
+            let result = Actus::dispatch_deploy_contract(Origin::signed(1), attributes.clone());
             assert!(result.is_err());
         });
     }
