@@ -63,11 +63,10 @@ decl_module! {
     }
 }
 
-// tests for this module
+// Tests for this module.
 #[cfg(test)]
 mod tests {
     use super::*;
-
     use primitives::{Blake2Hasher, H256};
     use runtime_io::with_externalities;
     use runtime_primitives::{
@@ -81,9 +80,6 @@ mod tests {
         pub enum Origin for Test {}
     }
 
-    // For testing the module, we construct most of a mock runtime. This means
-    // first constructing a configuration type (`Test`) which `impl`s each of the
-    // configuration traits of modules we want to use.
     #[derive(Clone, Eq, PartialEq)]
     pub struct Test;
     impl system::Trait for Test {
@@ -100,15 +96,9 @@ mod tests {
         type Log = DigestItem;
     }
     impl oracle::Trait for Test {}
-    impl Trait for Test {
-        // This needed to be commented out in order for tests to work,
-        // most likely because Events are not supported by the module.
-        // type Event = ();
-    }
+    impl Trait for Test {}
     type Actus = Module<Test>;
 
-    // This function basically just builds a genesis storage key/value store according to
-    // our desired mockup.
     fn new_test_ext() -> runtime_io::TestExternalities<Blake2Hasher> {
         system::GenesisConfig::<Test>::default()
             .build_storage()
@@ -120,7 +110,7 @@ mod tests {
     #[test]
     fn deploy_contract_works() {
         with_externalities(&mut new_test_ext(), || {
-            // Tries to start a contract with the wrong type.
+            // Tries to start a contract with the wrong attributes.
             let id = H256::zero();
             let mut attributes = Attributes::new(id);
             let result = Actus::dispatch_deploy_contract(Origin::signed(1), attributes.clone());

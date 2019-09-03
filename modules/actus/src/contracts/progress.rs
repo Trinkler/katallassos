@@ -15,12 +15,11 @@
 
 use super::*;
 
-mod initialize;
-mod initialize_pam;
-mod progress;
-mod progress_pam;
-
-pub use initialize::*;
-pub use initialize_pam::*;
-pub use progress::*;
-pub use progress_pam::*;
+impl<T: Trait> Module<T> {
+    pub fn progress(event: ContractEvent, mut state: ContractState) -> MyResult<ContractState> {
+        match state.attributes.contract_type {
+            Some(ContractType::PAM) => Self::progress_pam(event, state),
+            _ => Err("Contract type not supported"),
+        }
+    }
+}

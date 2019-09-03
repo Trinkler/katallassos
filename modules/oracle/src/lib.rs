@@ -65,11 +65,10 @@ decl_module! {
     }
 }
 
-// tests for this module
+// Tests for this module.
 #[cfg(test)]
 mod tests {
     use super::*;
-
     use primitives::{Blake2Hasher, H256};
     use runtime_io::with_externalities;
     use runtime_primitives::{
@@ -83,9 +82,6 @@ mod tests {
         pub enum Origin for Test {}
     }
 
-    // For testing the module, we construct most of a mock runtime. This means
-    // first constructing a configuration type (`Test`) which `impl`s each of the
-    // configuration traits of modules we want to use.
     #[derive(Clone, Eq, PartialEq)]
     pub struct Test;
     impl system::Trait for Test {
@@ -101,15 +97,9 @@ mod tests {
         type Event = ();
         type Log = DigestItem;
     }
-    impl Trait for Test {
-        // This needed to be commented out in order for tests to work,
-        // most likely because Events are not supported by the module.
-        // type Event = ();
-    }
+    impl Trait for Test {}
     type Oracle = Module<Test>;
 
-    // This function basically just builds a genesis storage key/value store according to
-    // our desired mockup.
     fn new_test_ext() -> runtime_io::TestExternalities<Blake2Hasher> {
         system::GenesisConfig::<Test>::default()
             .build_storage()
@@ -124,12 +114,13 @@ mod tests {
             let id = H256::zero();
             let time = Time::from_values(1969, 07, 20, 20, 17, 00);
             let value = Real::from(1000);
+
             // Set oracle state to storage
             assert_ok!(Oracle::dispatch_set(Origin::ROOT, id, time, value));
+
             // Get oracle state from storage.
-            // Notice the use of <Oracle as Store> instead of <Self as Store>!
-            assert_eq!(time, <Oracle as Store>::Oracles::get(id).time);
-            assert_eq!(value, <Oracle as Store>::Oracles::get(id).value);
+            assert_eq!(time, <Oracles<Test>>::get(id).time);
+            assert_eq!(value, <Oracles<Test>>::get(id).value);
         });
     }
 }

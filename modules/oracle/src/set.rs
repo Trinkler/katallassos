@@ -10,7 +10,7 @@ impl<T: Trait> Module<T> {
         };
 
         // Store input value in storage.
-        <Self as Store>::Oracles::insert(id, state);
+        <Oracles<T>>::insert(id, state);
 
         // Return Ok if successful.
         Ok(())

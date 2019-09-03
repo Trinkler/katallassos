@@ -7,7 +7,7 @@ impl<T: Trait> Module<T> {
         let id = attributes.contract_id;
 
         // Checking if ID is available.
-        if <Self as Store>::Contracts::exists(id) {
+        if <Contracts<T>>::exists(id) {
             return Err("Contract ID already exists");
         }
 
@@ -18,7 +18,7 @@ impl<T: Trait> Module<T> {
         let state = Self::initialize(t0, attributes)?;
 
         // Storing the contract state.
-        <Self as Store>::Contracts::insert(id, state);
+        <Contracts<T>>::insert(id, state);
 
         // Return Ok if successful.
         Ok(())
