@@ -685,3 +685,71 @@ impl<T: Trait> Module<T> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use primitives::{Blake2Hasher, H256};
+    use runtime_io::with_externalities;
+    use runtime_primitives::{
+        testing::{Digest, DigestItem, Header},
+        traits::{BlakeTwo256, IdentityLookup},
+        BuildStorage,
+    };
+    use support::{assert_ok, impl_outer_origin};
+
+    impl_outer_origin! {
+        pub enum Origin for Test {}
+    }
+
+    #[derive(Clone, Eq, PartialEq)]
+    pub struct Test;
+    impl system::Trait for Test {
+        type Origin = Origin;
+        type Index = u64;
+        type BlockNumber = u64;
+        type Hash = H256;
+        type Hashing = BlakeTwo256;
+        type Digest = Digest;
+        type AccountId = u64;
+        type Lookup = IdentityLookup<Self::AccountId>;
+        type Header = Header;
+        type Event = ();
+        type Log = DigestItem;
+    }
+    impl oracle::Trait for Test {}
+    impl Trait for Test {}
+    type Actus = Module<Test>;
+
+    fn new_test_ext() -> runtime_io::TestExternalities<Blake2Hasher> {
+        system::GenesisConfig::<Test>::default()
+            .build_storage()
+            .unwrap()
+            .0
+            .into()
+    }
+
+    #[test]
+    fn progress_pam_works() {
+        with_externalities(&mut new_test_ext(), || {
+            // TODO: Use instead a call to initialize_pam to get an entire contract state.
+            // Then use the schedule to simulate the life of a contract.
+            let t0 = Time::from_values(1969, 07, 20, 20, 17, 00);
+            let id = H256::zero();
+            let mut attributes = Attributes::new(id);
+            attributes.contract_id = id;
+            attributes.contract_type = Some(ContractType::PAM);
+            attributes.currency = Some(H256::zero());
+            attributes.day_count_convention = Some(DayCountConvention::_A365);
+            attributes.initial_exchange_date = Time::from_values(1969, 07, 21, 02, 56, 15);
+            attributes.maturity_date = Time::from_values(1979, 07, 21, 02, 56, 15);
+            attributes.nominal_interest_rate = Real::from(1000);
+            attributes.notional_principal = Real(Some(50000000));
+            attributes.contract_deal_date = Time::from_values(1968, 07, 21, 02, 56, 15);
+            attributes.contract_role = Some(ContractRole::RPA);
+            attributes.creator_id = Some(H256::zero());
+            attributes.counterparty_id = Some(H256::zero());
+            attributes.scaling_effect = None;
+        });
+    }
+}

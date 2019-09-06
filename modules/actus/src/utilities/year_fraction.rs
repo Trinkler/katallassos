@@ -18,6 +18,8 @@ use super::*;
 /// Year Fraction Convention: given two input time *s* and *t*, with *s<t*, and the desired day count
 /// convention it calculates the fraction of a year between the two times and returns it as a Real.
 /// See section 4.6 of the ACTUS paper for details.
+/// The difference between two dates is calculated on a Julian day difference basis. In this
+/// convention the first day of the period is included and the last day is excluded.
 pub fn year_fraction(s: Time, t: Time, day_count_convention: DayCountConvention) -> Real {
     if s == Time(None) || t == Time(None) || s > t {
         return Real(None);
@@ -168,9 +170,8 @@ pub fn year_fraction(s: Time, t: Time, day_count_convention: DayCountConvention)
                 + Real::from(30) * (month_2 - month_1)
                 + (day_2 - day_1))
                 / Real::from(360)
-        }
-        // DayCountConvention::_30E360ISDA => (),
-        // DayCountConvention::_BUS252 => (),
+        } // DayCountConvention::_30E360ISDA => (),
+          // DayCountConvention::_BUS252 => (),
     }
 }
 
@@ -180,20 +181,44 @@ mod tests {
 
     #[test]
     fn year_fraction_works() {
-        let s = Time::from_values(2012, 2, 10, 00, 00, 00);
-        let t = Time::from_values(2017, 4, 9, 16, 20, 00);
+        let r = Time::from_values(2019, 9, 5, 12, 00, 00);
+        let s = Time::from_values(2019, 12, 31, 12, 00, 00);
+        let t = Time::from_values(2020, 6, 1, 12, 00, 00);
 
+        // Testing error cases.
         assert_eq!(
             year_fraction(Time(None), t, DayCountConvention::_AAISDA),
             Real(None)
         );
         assert_eq!(
-            year_fraction(s, Time(None), DayCountConvention::_AAISDA),
+            year_fraction(r, Time(None), DayCountConvention::_AAISDA),
             Real(None)
         );
-        assert_eq!(year_fraction(t, s, DayCountConvention::_AAISDA), Real(None));
+        assert_eq!(year_fraction(t, r, DayCountConvention::_AAISDA), Real(None));
 
-        // Test values are needed for the day count conventions!
+        // Testing some normal cases.
+        // assert_eq!(
+        //     year_fraction(s, t, DayCountConvention::_AAISDA),
+        //     Real::from(118) / Real::from(365) + Real::from(152) / Real::from(366)
+        // );
+        assert_eq!(
+            year_fraction(r, t, DayCountConvention::_A360),
+            Real::from(270) / Real::from(360)
+        );
+        assert_eq!(
+            year_fraction(r, t, DayCountConvention::_A365),
+            Real::from(270) / Real::from(365)
+        );
+        assert_eq!(
+            year_fraction(s, t, DayCountConvention::_30E360),
+            (Real::from(360) * Real::from(1) + Real::from(30) * Real::from(-6) + Real::from(-29))
+                / Real::from(360)
+        );
+        assert_eq!(
+            year_fraction(r, t, DayCountConvention::_30360),
+            (Real::from(360) * Real::from(1) + Real::from(30) * Real::from(-3) + Real::from(-4))
+                / Real::from(360)
+        );
     }
 
 }
