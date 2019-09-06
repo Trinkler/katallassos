@@ -18,8 +18,6 @@ use super::*;
 /// Year Fraction Convention: given two input time *s* and *t*, with *s<t*, and the desired day count
 /// convention it calculates the fraction of a year between the two times and returns it as a Real.
 /// See section 4.6 of the ACTUS paper for details.
-/// The difference between two dates is calculated on a Julian day difference basis. In this
-/// convention the first day of the period is included and the last day is excluded.
 pub fn year_fraction(s: Time, t: Time, day_count_convention: DayCountConvention) -> Real {
     if s == Time(None) || t == Time(None) || s > t {
         return Real(None);
@@ -83,59 +81,15 @@ pub fn year_fraction(s: Time, t: Time, day_count_convention: DayCountConvention)
             Real::from(diff_normal) / Real::from(365) + Real::from(diff_leap) / Real::from(366)
         }
         DayCountConvention::_A360 => {
-            let mut year_1 = s.0.unwrap().year;
-            let mut month_1 = s.0.unwrap().month;
-            let day_1 = s.0.unwrap().day;
-            let year_2 = t.0.unwrap().year;
-            let mut month_2 = t.0.unwrap().month;
-            let day_2 = t.0.unwrap().day;
-
-            let mut diff: i64 = 0;
-
-            diff += (day_2 - day_1) as i64;
-
-            while month_1 != 0 {
-                diff -= Time::days_in_month(year_1, month_1) as i64;
-                month_1 -= 1;
-            }
-            while month_2 != 0 {
-                diff += Time::days_in_month(year_2, month_2) as i64;
-                month_2 -= 1;
-            }
-
-            while year_1 < year_2 {
-                diff += 365 + (Time::is_leap_year(year_1) as i64);
-                year_1 += 1;
-            }
-
+            // This will never panic since the check was already done at
+            // the beginning of this function.
+            let diff = Time::diff_days(s, t).unwrap();
             Real::from(diff) / Real::from(360)
         }
         DayCountConvention::_A365 => {
-            let mut year_1 = s.0.unwrap().year;
-            let mut month_1 = s.0.unwrap().month;
-            let day_1 = s.0.unwrap().day;
-            let year_2 = t.0.unwrap().year;
-            let mut month_2 = t.0.unwrap().month;
-            let day_2 = t.0.unwrap().day;
-
-            let mut diff: i64 = 0;
-
-            diff += (day_2 - day_1) as i64;
-
-            while month_1 != 0 {
-                diff -= Time::days_in_month(year_1, month_1) as i64;
-                month_1 -= 1;
-            }
-            while month_2 != 0 {
-                diff += Time::days_in_month(year_2, month_2) as i64;
-                month_2 -= 1;
-            }
-
-            while year_1 < year_2 {
-                diff += 365 + (Time::is_leap_year(year_1) as i64);
-                year_1 += 1;
-            }
-
+            // This will never panic since the check was already done at
+            // the beginning of this function.
+            let diff = Time::diff_days(s, t).unwrap();
             Real::from(diff) / Real::from(365)
         }
         DayCountConvention::_30E360 => {
