@@ -29,9 +29,52 @@ pub fn annuity_amount(
 
     // This is a reverse range, it starts at arr.len()-2 and ends at 0 (both inclusive).
     for i in (0..(arr.len() - 1)).rev() {
-        x1 *= Real::from(1) + nominal_rate * year_fraction(arr[i], arr[i + 1], day_count_convention);
+        x1 *=
+            Real::from(1) + nominal_rate * year_fraction(arr[i], arr[i + 1], day_count_convention);
         x2 += x1;
     }
 
     (nominal_value + nominal_accrued) * x1 / (Real::from(1) + x2)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn annuity_amount_works() {
+        let p = Time::from_values(1969, 07, 16, 13, 32, 00);
+        let q = Time::from_values(1969, 07, 20, 20, 17, 00);
+        let r = Time::from_values(1969, 07, 21, 02, 56, 15);
+        let s = Time::from_values(1969, 07, 24, 16, 51, 00);
+        let nominal_value = Real::from(1000);
+        let nominal_accrued = Real::from(42);
+        let nominal_rate = Real::from(2);
+
+        let numerator = (Real::from(1)
+            + nominal_rate * year_fraction(p, q, DayCountConvention::_A365))
+            * (Real::from(1) + nominal_rate * year_fraction(q, r, DayCountConvention::_A365))
+            * (Real::from(1) + nominal_rate * year_fraction(r, s, DayCountConvention::_A365));
+
+        let denominator = Real::from(1)
+            + (Real::from(1) + nominal_rate * year_fraction(p, q, DayCountConvention::_A365))
+                * (Real::from(1) + nominal_rate * year_fraction(q, r, DayCountConvention::_A365))
+                * (Real::from(1) + nominal_rate * year_fraction(r, s, DayCountConvention::_A365))
+            + (Real::from(1) + nominal_rate * year_fraction(q, r, DayCountConvention::_A365))
+                * (Real::from(1) + nominal_rate * year_fraction(r, s, DayCountConvention::_A365))
+            + (Real::from(1) + nominal_rate * year_fraction(r, s, DayCountConvention::_A365));
+
+        let result = (nominal_value + nominal_accrued) * numerator / denominator;
+
+        assert_eq!(
+            result,
+            annuity_amount(
+                vec![p, q, r, s],
+                DayCountConvention::_A365,
+                nominal_value,
+                nominal_accrued,
+                nominal_rate
+            )
+        );
+    }
 }

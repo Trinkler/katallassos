@@ -25,115 +25,53 @@ pub fn year_fraction(s: Time, t: Time, day_count_convention: DayCountConvention)
     match day_count_convention {
         DayCountConvention::_AAISDA => {
             let mut year_1 = s.0.unwrap().year;
-            let mut month_1 = s.0.unwrap().month;
-            let day_1 = s.0.unwrap().day;
             let year_2 = t.0.unwrap().year;
-            let mut month_2 = t.0.unwrap().month;
-            let day_2 = t.0.unwrap().day;
 
             let mut diff_leap: i64 = 0;
             let mut diff_normal: i64 = 0;
 
-            let flag_1 = Time::is_leap_year(year_1);
-            let flag_2 = Time::is_leap_year(year_2);
-
-            if flag_1 {
-                diff_leap -= day_1 as i64;
-            } else {
-                diff_normal -= day_1 as i64;
-            }
-            if flag_2 {
-                diff_leap += day_2 as i64;
-            } else {
-                diff_normal += day_2 as i64;
-            }
-
-            let mut x: i64 = 0;
-            while month_1 != 0 {
-                x += Time::days_in_month(year_1, month_1) as i64;
-                month_1 -= 1;
-            }
-            if flag_1 {
-                diff_leap -= x;
-            } else {
-                diff_normal -= x;
-            }
-            x = 0;
-            while month_2 != 0 {
-                x += Time::days_in_month(year_2, month_2) as i64;
-                month_2 -= 1;
-            }
-            if flag_2 {
-                diff_leap += x;
-            } else {
-                diff_normal += x;
-            }
-
-            while year_1 < year_2 {
+            if year_1 == year_2 {
                 if Time::is_leap_year(year_1) {
-                    diff_leap += 366;
+                    diff_leap += Time::diff_days(s, t).unwrap();
                 } else {
-                    diff_normal += 365;
+                    diff_normal += Time::diff_days(s, t).unwrap();
                 }
-                year_1 += 1;
-            }
+            } else {
+                if Time::is_leap_year(year_1) {
+                    diff_leap +=
+                        Time::diff_days(s, Time::from_values(year_1 + 1, 01, 01, 00, 00, 00))
+                            .unwrap();
+                } else {
+                    diff_normal +=
+                        Time::diff_days(s, Time::from_values(year_1 + 1, 01, 01, 00, 00, 00))
+                            .unwrap();
+                }
 
+                while year_1 + 1 < year_2 {
+                    year_1 += 1;
+                    if Time::is_leap_year(year_1) {
+                        diff_leap += 366;
+                    } else {
+                        diff_normal += 365;
+                    }
+                }
+
+                if Time::is_leap_year(year_2) {
+                    diff_leap +=
+                        Time::diff_days(Time::from_values(year_2, 01, 01, 00, 00, 00), t).unwrap();
+                } else {
+                    diff_normal +=
+                        Time::diff_days(Time::from_values(year_2, 01, 01, 00, 00, 00), t).unwrap();
+                }
+            }
             Real::from(diff_normal) / Real::from(365) + Real::from(diff_leap) / Real::from(366)
         }
         DayCountConvention::_A360 => {
-            let mut year_1 = s.0.unwrap().year;
-            let mut month_1 = s.0.unwrap().month;
-            let day_1 = s.0.unwrap().day;
-            let year_2 = t.0.unwrap().year;
-            let mut month_2 = t.0.unwrap().month;
-            let day_2 = t.0.unwrap().day;
-
-            let mut diff: i64 = 0;
-
-            diff += (day_2 - day_1) as i64;
-
-            while month_1 != 0 {
-                diff -= Time::days_in_month(year_1, month_1) as i64;
-                month_1 -= 1;
-            }
-            while month_2 != 0 {
-                diff += Time::days_in_month(year_2, month_2) as i64;
-                month_2 -= 1;
-            }
-
-            while year_1 < year_2 {
-                diff += 365 + (Time::is_leap_year(year_1) as i64);
-                year_1 += 1;
-            }
-
+            let diff = Time::diff_days(s, t).unwrap();
             Real::from(diff) / Real::from(360)
         }
         DayCountConvention::_A365 => {
-            let mut year_1 = s.0.unwrap().year;
-            let mut month_1 = s.0.unwrap().month;
-            let day_1 = s.0.unwrap().day;
-            let year_2 = t.0.unwrap().year;
-            let mut month_2 = t.0.unwrap().month;
-            let day_2 = t.0.unwrap().day;
-
-            let mut diff: i64 = 0;
-
-            diff += (day_2 - day_1) as i64;
-
-            while month_1 != 0 {
-                diff -= Time::days_in_month(year_1, month_1) as i64;
-                month_1 -= 1;
-            }
-            while month_2 != 0 {
-                diff += Time::days_in_month(year_2, month_2) as i64;
-                month_2 -= 1;
-            }
-
-            while year_1 < year_2 {
-                diff += 365 + (Time::is_leap_year(year_1) as i64);
-                year_1 += 1;
-            }
-
+            let diff = Time::diff_days(s, t).unwrap();
             Real::from(diff) / Real::from(365)
         }
         DayCountConvention::_30E360 => {
@@ -169,8 +107,6 @@ pub fn year_fraction(s: Time, t: Time, day_count_convention: DayCountConvention)
                 + (day_2 - day_1))
                 / Real::from(360)
         }
-        // DayCountConvention::_30E360ISDA => (),
-        // DayCountConvention::_BUS252 => (),
     }
 }
 
@@ -180,20 +116,48 @@ mod tests {
 
     #[test]
     fn year_fraction_works() {
-        let s = Time::from_values(2012, 2, 10, 00, 00, 00);
-        let t = Time::from_values(2017, 4, 9, 16, 20, 00);
+        let r = Time::from_values(2019, 9, 5, 12, 00, 00);
+        let s = Time::from_values(2019, 12, 31, 12, 00, 00);
+        let t = Time::from_values(2020, 6, 1, 12, 00, 00);
 
+        // Testing error cases.
         assert_eq!(
             year_fraction(Time(None), t, DayCountConvention::_AAISDA),
             Real(None)
         );
         assert_eq!(
-            year_fraction(s, Time(None), DayCountConvention::_AAISDA),
+            year_fraction(r, Time(None), DayCountConvention::_AAISDA),
             Real(None)
         );
-        assert_eq!(year_fraction(t, s, DayCountConvention::_AAISDA), Real(None));
+        assert_eq!(year_fraction(t, r, DayCountConvention::_AAISDA), Real(None));
 
-        // Test values are needed for the day count conventions!
+        // Testing some normal cases.
+        assert_eq!(
+            year_fraction(r, s, DayCountConvention::_AAISDA),
+            Real::from(118) / Real::from(365)
+        );
+        assert_eq!(
+            year_fraction(r, t, DayCountConvention::_AAISDA),
+            Real::from(119) / Real::from(365) + Real::from(151) / Real::from(366)
+        );
+        assert_eq!(
+            year_fraction(r, t, DayCountConvention::_A360),
+            Real::from(270) / Real::from(360)
+        );
+        assert_eq!(
+            year_fraction(r, t, DayCountConvention::_A365),
+            Real::from(270) / Real::from(365)
+        );
+        assert_eq!(
+            year_fraction(s, t, DayCountConvention::_30E360),
+            (Real::from(360) * Real::from(1) + Real::from(30) * Real::from(-6) + Real::from(-29))
+                / Real::from(360)
+        );
+        assert_eq!(
+            year_fraction(r, t, DayCountConvention::_30360),
+            (Real::from(360) * Real::from(1) + Real::from(30) * Real::from(-3) + Real::from(-4))
+                / Real::from(360)
+        );
     }
 
 }

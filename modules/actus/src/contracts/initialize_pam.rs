@@ -479,6 +479,18 @@ impl<T: Trait> Module<T> {
         // Credit default event
         // TODO: First figure out how to do user-initiated events.
 
+        // Remove any events with Time == None
+        // Note: The unusual control flow is because we want to use the swap_remove method,
+        // which has O(1) complexity but requires a more complex solution to work.
+        let mut i = 0;
+        while i < schedule.len() {
+            if schedule[i].time == Time(None) {
+                schedule.swap_remove(i);
+            } else {
+                i += 1;
+            }
+        }
+
         // Ordering the schedule
         schedule.sort_unstable();
 
@@ -601,5 +613,82 @@ impl<T: Trait> Module<T> {
             variables: variables,
             schedule: schedule,
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use primitives::{Blake2Hasher, H256};
+    use runtime_io::with_externalities;
+    use runtime_primitives::{
+        testing::{Digest, DigestItem, Header},
+        traits::{BlakeTwo256, IdentityLookup},
+        BuildStorage,
+    };
+    use support::{assert_ok, impl_outer_origin};
+
+    impl_outer_origin! {
+        pub enum Origin for Test {}
+    }
+
+    #[derive(Clone, Eq, PartialEq)]
+    pub struct Test;
+    impl system::Trait for Test {
+        type Origin = Origin;
+        type Index = u64;
+        type BlockNumber = u64;
+        type Hash = H256;
+        type Hashing = BlakeTwo256;
+        type Digest = Digest;
+        type AccountId = u64;
+        type Lookup = IdentityLookup<Self::AccountId>;
+        type Header = Header;
+        type Event = ();
+        type Log = DigestItem;
+    }
+    impl oracle::Trait for Test {}
+    impl Trait for Test {}
+    type Actus = Module<Test>;
+
+    fn new_test_ext() -> runtime_io::TestExternalities<Blake2Hasher> {
+        system::GenesisConfig::<Test>::default()
+            .build_storage()
+            .unwrap()
+            .0
+            .into()
+    }
+
+    #[test]
+    fn initialize_pam_works() {
+        with_externalities(&mut new_test_ext(), || {
+            // Tries to start a contract with the wrong attributes.
+            let t0 = Time::from_values(1969, 07, 20, 20, 17, 00);
+            let id = H256::zero();
+            let mut attributes = Attributes::new(id);
+            let result = Actus::initialize_pam(t0, attributes.clone());
+            assert!(result.is_err());
+
+            // Starts a PAM contract with the wrong attributes.
+            attributes.contract_id = id;
+            attributes.contract_type = Some(ContractType::PAM);
+            attributes.currency = Some(H256::zero());
+            attributes.day_count_convention = Some(DayCountConvention::_A365);
+            attributes.initial_exchange_date = Time::from_values(1969, 07, 21, 02, 56, 15);
+            attributes.maturity_date = Time::from_values(1979, 07, 21, 02, 56, 15);
+            attributes.nominal_interest_rate = Real::from(1000);
+            attributes.notional_principal = Real(Some(50000000));
+            attributes.contract_deal_date = Time::from_values(1968, 07, 21, 02, 56, 15);
+            attributes.contract_role = Some(ContractRole::RPA);
+            attributes.creator_id = Some(H256::zero());
+            attributes.counterparty_id = Some(H256::zero());
+            let result = Actus::initialize_pam(t0, attributes.clone());
+            assert!(result.is_err());
+
+            // Starts a PAM contract with the right attributes.
+            attributes.scaling_effect = None;
+            let result = Actus::initialize_pam(t0, attributes.clone());
+            assert!(result.is_ok());
+        });
     }
 }

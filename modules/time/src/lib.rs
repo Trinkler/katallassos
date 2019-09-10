@@ -273,6 +273,44 @@ impl Time {
         Time::from_unchecked(time)
     }
 
+    /// Calculates the difference, in days (as an option of an i64), between two dates (as
+    /// Times). It is calculated on a Julian day difference basis. In this convention the
+    /// first day of the period is included and the last day is excluded.
+    pub fn diff_days(start: Time, end: Time) -> Option<i64> {
+        // Checking the None case and that end>=start. It returns None otherwise.
+        if start == Time(None) || end == Time(None) || end < start {
+            return None;
+        }
+
+        // Getting the fields.
+        let mut year_1 = start.0.unwrap().year;
+        let mut month_1 = start.0.unwrap().month;
+        let day_1 = start.0.unwrap().day;
+        let year_2 = end.0.unwrap().year;
+        let mut month_2 = end.0.unwrap().month;
+        let day_2 = end.0.unwrap().day;
+
+        let mut diff: i64 = 0;
+
+        diff += (day_2 - day_1) as i64;
+
+        while month_1 != 0 {
+            diff -= Time::days_in_month(year_1, month_1) as i64;
+            month_1 -= 1;
+        }
+        while month_2 != 0 {
+            diff += Time::days_in_month(year_2, month_2) as i64;
+            month_2 -= 1;
+        }
+
+        while year_1 < year_2 {
+            diff += 365 + (Time::is_leap_year(year_1) as i64);
+            year_1 += 1;
+        }
+
+        Some(diff)
+    }
+
     /// It returns 'true' if the input year is a leap year and 'false' otherwise.
     pub fn is_leap_year(year: u16) -> bool {
         if year % 4 != 0 {
@@ -536,6 +574,31 @@ mod tests {
         assert_eq!(Time::add_days(a, 0), a);
         assert_eq!(Time::add_days(a, 65535), b);
         assert_eq!(Time::add_days(c, 36500), d);
+    }
+
+    #[test]
+    fn diff_days_works() {
+        let a = Time(Some(UncheckedTime {
+            year: 1969,
+            month: 07,
+            day: 20,
+            hour: 00,
+            minute: 00,
+            second: 00,
+        }));
+        let b = Time(Some(UncheckedTime {
+            year: 2148,
+            month: 12,
+            day: 23,
+            hour: 00,
+            minute: 00,
+            second: 00,
+        }));
+        let c = Time(None);
+        assert_eq!(Time::diff_days(a, c), None);
+        assert_eq!(Time::diff_days(c, a), None);
+        assert_eq!(Time::diff_days(b, a), None);
+        assert_eq!(Time::diff_days(a, b), Some(65535));
     }
 
     #[test]
