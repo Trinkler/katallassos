@@ -479,6 +479,18 @@ impl<T: Trait> Module<T> {
         // Credit default event
         // TODO: First figure out how to do user-initiated events.
 
+        // Remove any events with Time == None
+        // Note: The unusual control flow is because we want to use the swap_remove method,
+        // which has O(1) complexity but requires a more complex solution to work.
+        let mut i = 0;
+        while i < schedule.len() {
+            if schedule[i].time == Time(None) {
+                schedule.swap_remove(i);
+            } else {
+                i += 1;
+            }
+        }
+
         // Ordering the schedule
         schedule.sort_unstable();
 

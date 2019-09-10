@@ -732,24 +732,53 @@ mod tests {
     #[test]
     fn progress_pam_works() {
         with_externalities(&mut new_test_ext(), || {
-            // TODO: Use instead a call to initialize_pam to get an entire contract state.
-            // Then use the schedule to simulate the life of a contract.
-            let t0 = Time::from_values(1969, 07, 20, 20, 17, 00);
+            let t0 = Time::from_values(2015, 01, 01, 00, 00, 00);
             let id = H256::zero();
             let mut attributes = Attributes::new(id);
             attributes.contract_id = id;
             attributes.contract_type = Some(ContractType::PAM);
             attributes.currency = Some(H256::zero());
-            attributes.day_count_convention = Some(DayCountConvention::_A365);
-            attributes.initial_exchange_date = Time::from_values(1969, 07, 21, 02, 56, 15);
-            attributes.maturity_date = Time::from_values(1979, 07, 21, 02, 56, 15);
-            attributes.nominal_interest_rate = Real::from(1000);
-            attributes.notional_principal = Real(Some(50000000));
-            attributes.contract_deal_date = Time::from_values(1968, 07, 21, 02, 56, 15);
+            attributes.day_count_convention = Some(DayCountConvention::_30E360);
+            attributes.initial_exchange_date = Time::from_values(2015, 01, 02, 00, 00, 00);
+            attributes.maturity_date = Time::from_values(2015, 04, 02, 00, 00, 00);
+            attributes.nominal_interest_rate = Real::from(0);
+            attributes.notional_principal = Real::from(1000);
+            attributes.contract_deal_date = Time::from_values(2015, 01, 01, 00, 00, 00);
             attributes.contract_role = Some(ContractRole::RPA);
             attributes.creator_id = Some(H256::zero());
             attributes.counterparty_id = Some(H256::zero());
             attributes.scaling_effect = None;
+            attributes.rate_spread = Real::from(0);
+            attributes.premium_discount_at_ied = Real::from(-5);
+
+            let mut state = Actus::initialize_pam(t0, attributes).unwrap();
+
+            assert_eq!(
+                state.schedule[0],
+                ContractEvent::new(
+                    Time::from_values(2015, 01, 02, 00, 00, 00),
+                    ContractEventType::IED
+                )
+            );
+            state = Actus::progress_pam(state.schedule[0], state).unwrap();
+            assert_eq!(state.variables.nominal_value_1, Real::from(1000));
+            assert_eq!(state.variables.nominal_rate, Real::from(0));
+            assert_eq!(state.variables.nominal_accrued_1, Real::from(0));
+
+            // Event 2 is being used, instead of the next in the sequence 1, because the
+            // given test vectors don't mention event 1 (probably because it has no effect
+            // the state).
+            assert_eq!(
+                state.schedule[2],
+                ContractEvent::new(
+                    Time::from_values(2015, 04, 02, 00, 00, 00),
+                    ContractEventType::PR
+                )
+            );
+            state = Actus::progress_pam(state.schedule[2], state).unwrap();
+            assert_eq!(state.variables.nominal_value_1, Real::from(0));
+            assert_eq!(state.variables.nominal_rate, Real::from(0));
+            assert_eq!(state.variables.nominal_accrued_1, Real::from(0));
         });
     }
 }
