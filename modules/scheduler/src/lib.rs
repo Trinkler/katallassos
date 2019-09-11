@@ -17,46 +17,29 @@
 // Importing crates declared in the cargo.toml file.
 use parity_codec::{Decode, Encode};
 use primitives::H256;
-use reals::*;
 use runtime_std::prelude::*;
-use support::{decl_module, decl_storage, dispatch::Result, StorageMap};
+use support::{decl_module, decl_storage, dispatch::Result, StorageValue};
 use time::*;
 
 // Importing the rest of the files in this crate.
-mod contract_state;
-mod contracts;
-mod deploy_contract;
-mod utilities;
-use contract_state::*;
-use contracts::*;
-use deploy_contract::*;
-use utilities::*;
-
-// Defines an alias for the Result type. It has the name MyResult because Substrate
-// already uses the name Result for their own type Result<(), &'static str>.
-type MyResult<T> = runtime_std::result::Result<T, &'static str>;
+mod add;
+mod scheduled_event;
+use add::*;
+use scheduled_event::*;
 
 // This module's configuration trait.
-pub trait Trait: system::Trait + oracle::Trait {}
+pub trait Trait: system::Trait + actus::Trait {}
 
 // This module's storage items.
 decl_storage! {
-    trait Store for Module<T: Trait> as ActusStorage {
-        pub Contracts: map H256 => ContractState;
+    trait Store for Module<T: Trait> as SchedulerStorage {
+        pub List: Vec<ScheduledEvent> = Vec::new();
+        pub Counter: u32 = 0;
     }
 }
 
 // This module's dispatchable functions.
 decl_module! {
     // The module declaration.
-    pub struct Module<T: Trait> for enum Call where origin: T::Origin {
-
-        pub fn dispatch_deploy_contract(origin, attributes: Attributes) -> Result {
-            // Call corresponding internal function.
-            Self::deploy_contract(attributes)?;
-
-            // Return Ok if successful.
-            Ok(())
-        }
-    }
+    pub struct Module<T: Trait> for enum Call where origin: T::Origin {}
 }
