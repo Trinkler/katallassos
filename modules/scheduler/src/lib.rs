@@ -23,8 +23,10 @@ use time::*;
 
 // Importing the rest of the files in this crate.
 mod add;
+mod remove;
 mod scheduled_event;
 use add::*;
+use remove::*;
 use scheduled_event::*;
 
 // This module's configuration trait.
