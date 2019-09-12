@@ -74,3 +74,7 @@ branch = "v1.0"
 package = "sr-primitives"
 git = "https://github.com/paritytech/substrate.git"
 branch = "v1.0"
+
+[dependencies.oracle]
+package = "modules-oracle"
+path = "../oracle"

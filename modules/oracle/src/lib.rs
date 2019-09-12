@@ -109,7 +109,7 @@ mod tests {
     }
 
     #[test]
-    fn set_works() {
+    fn dispatch_set_works() {
         with_externalities(&mut new_test_ext(), || {
             let id = H256::zero();
             let time = Time::from_values(1969, 07, 20, 20, 17, 00);
