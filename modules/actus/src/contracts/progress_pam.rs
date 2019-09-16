@@ -471,7 +471,6 @@ impl<T: Trait> Module<T> {
                     ) * state.attributes.fee_rate;
                 }
 
-                // TODO: Verify with Nils that it is indeed rate_multiplier.
                 let delta_r = Real::min(
                     Real::max(
                         <oracle::Oracles<T>>::get(
@@ -600,7 +599,6 @@ impl<T: Trait> Module<T> {
                     state.variables.notional_scaling_multiplier =
                         state.variables.notional_scaling_multiplier;
                 } else {
-                    // TODO: Verify with Nils that it is indeed "scaling_index_at_status_date".
                     state.variables.notional_scaling_multiplier = (<oracle::Oracles<T>>::get(
                         state.attributes.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
                     )
@@ -616,7 +614,6 @@ impl<T: Trait> Module<T> {
                     state.variables.interest_scaling_multiplier =
                         state.variables.interest_scaling_multiplier;
                 } else {
-                    // TODO: Verify with Nils that it is indeed "scaling_index_at_status_date".
                     state.variables.interest_scaling_multiplier = (<oracle::Oracles<T>>::get(
                         state.attributes.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
                     )

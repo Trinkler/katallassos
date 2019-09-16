@@ -18,14 +18,16 @@
 use parity_codec::{Decode, Encode};
 use primitives::H256;
 use runtime_std::prelude::*;
-use support::{decl_module, decl_storage, dispatch::Result, StorageValue};
+use support::{decl_module, decl_storage, dispatch::Result, StorageMap, StorageValue};
 use time::*;
 
 // Importing the rest of the files in this crate.
 mod add;
+mod init;
 mod remove;
 mod scheduled_event;
 use add::*;
+use init::*;
 use remove::*;
 use scheduled_event::*;
 
@@ -35,6 +37,10 @@ pub trait Trait: system::Trait + actus::Trait {}
 // This module's storage items.
 decl_storage! {
     trait Store for Module<T: Trait> as SchedulerStorage {
+        // TODO: Substitute this Vector with a better data structure. Desired properties are:
+        //      - O(log n) insertions
+        //      - O(log n) deletions
+        //      - Keeps being sorted after each insertion and deletion
         pub List: Vec<ScheduledEvent> = Vec::new();
         pub Counter: u32 = 0;
     }

@@ -4,7 +4,7 @@ use super::*;
 #[derive(Clone, Decode, Encode, Default, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct ScheduledEvent {
-    pub contract_id: H256,
     pub time: Time,
     pub index: u32,
+    pub contract_id: H256,
 }

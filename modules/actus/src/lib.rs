@@ -26,10 +26,12 @@ use time::*;
 mod contract_state;
 mod contracts;
 mod deploy_contract;
+mod progress_contract;
 mod utilities;
 use contract_state::*;
 use contracts::*;
 use deploy_contract::*;
+use progress_contract::*;
 use utilities::*;
 
 // Defines an alias for the Result type. It has the name MyResult because Substrate
