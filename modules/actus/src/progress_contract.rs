@@ -9,6 +9,8 @@ impl<T: Trait> Module<T> {
         // Calculating the resulting contract state.
         let state = Self::progress(event, state)?;
 
+        // Note: The payoff calls to the issuer module should happen here.
+
         // Storing the contract state.
         <Contracts<T>>::insert(id, state);
 

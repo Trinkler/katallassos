@@ -78,3 +78,7 @@ branch = "v1.0"
 [dev-dependencies.oracle]
 package = "modules-oracle"
 path = "../oracle"
+
+[dev-dependencies.reals]
+package = "modules-reals"
+path = "../reals"

@@ -764,7 +764,7 @@ mod tests {
 
             // Event 2 is being used, instead of the next in the sequence 1, because the
             // given test vectors don't mention event 1 (probably because it has no effect
-            // the state).
+            // on the state).
             assert_eq!(
                 state.schedule[2],
                 ContractEvent::new(
