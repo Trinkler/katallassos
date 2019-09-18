@@ -649,7 +649,7 @@ mod tests {
     }
     impl oracle::Trait for Test {}
     impl Trait for Test {}
-    type Actus = Module<Test>;
+    type Contracts = Module<Test>;
 
     fn new_test_ext() -> runtime_io::TestExternalities<Blake2Hasher> {
         system::GenesisConfig::<Test>::default()
@@ -666,7 +666,7 @@ mod tests {
             let t0 = Time::from_values(1969, 07, 20, 20, 17, 00);
             let id = H256::zero();
             let mut attributes = Attributes::new(id);
-            let result = Actus::initialize_pam(t0, attributes.clone());
+            let result = Contracts::initialize_pam(t0, attributes.clone());
             assert!(result.is_err());
 
             // Starts a PAM contract with the wrong attributes.
@@ -682,12 +682,12 @@ mod tests {
             attributes.contract_role = Some(ContractRole::RPA);
             attributes.creator_id = Some(H256::zero());
             attributes.counterparty_id = Some(H256::zero());
-            let result = Actus::initialize_pam(t0, attributes.clone());
+            let result = Contracts::initialize_pam(t0, attributes.clone());
             assert!(result.is_err());
 
             // Starts a PAM contract with the right attributes.
             attributes.scaling_effect = None;
-            let result = Actus::initialize_pam(t0, attributes.clone());
+            let result = Contracts::initialize_pam(t0, attributes.clone());
             assert!(result.is_ok());
         });
     }

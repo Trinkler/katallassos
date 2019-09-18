@@ -24,12 +24,12 @@ use time::*;
 
 // Importing the rest of the files in this crate.
 mod contract_state;
-mod contracts;
+mod contract_types;
 mod deploy_contract;
 mod progress_contract;
 mod utilities;
 use contract_state::*;
-use contracts::*;
+use contract_types::*;
 use deploy_contract::*;
 use progress_contract::*;
 use utilities::*;
@@ -43,7 +43,7 @@ pub trait Trait: system::Trait + oracle::Trait {}
 
 // This module's storage items.
 decl_storage! {
-    trait Store for Module<T: Trait> as ActusStorage {
+    trait Store for Module<T: Trait> as ContractsStorage {
         pub Contracts: map H256 => ContractState;
     }
 }

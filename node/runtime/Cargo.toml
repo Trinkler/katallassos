@@ -128,9 +128,9 @@ edition = "2018"
   branch = "v1.0"
   default-features = false
 
-  [dependencies.actus]
-  package = "modules-actus"
-  path = "../../modules/actus"
+  [dependencies.contracts]
+  package = "modules-contracts"
+  path = "../../modules/contracts"
   default-features = false
 
   [dependencies.oracle]
@@ -160,6 +160,6 @@ std = [
   "safe-mix/std",
   "consensus-aura/std",
   "offchain-primitives/std",
-  "actus/std",
+  "contracts/std",
   "oracle/std"
 ]

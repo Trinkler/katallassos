@@ -716,7 +716,7 @@ mod tests {
     }
     impl oracle::Trait for Test {}
     impl Trait for Test {}
-    type Actus = Module<Test>;
+    type Contracts = Module<Test>;
 
     fn new_test_ext() -> runtime_io::TestExternalities<Blake2Hasher> {
         system::GenesisConfig::<Test>::default()
@@ -748,7 +748,7 @@ mod tests {
             attributes.rate_spread = Real::from(0);
             attributes.premium_discount_at_ied = Real::from(-5);
 
-            let mut state = Actus::initialize_pam(t0, attributes).unwrap();
+            let mut state = Contracts::initialize_pam(t0, attributes).unwrap();
 
             assert_eq!(
                 state.schedule[0],
@@ -757,7 +757,7 @@ mod tests {
                     ContractEventType::IED
                 )
             );
-            state = Actus::progress_pam(state.schedule[0], state).unwrap();
+            state = Contracts::progress_pam(state.schedule[0], state).unwrap();
             assert_eq!(state.variables.nominal_value_1, Real::from(1000));
             assert_eq!(state.variables.nominal_rate, Real::from(0));
             assert_eq!(state.variables.nominal_accrued_1, Real::from(0));
@@ -772,7 +772,7 @@ mod tests {
                     ContractEventType::PR
                 )
             );
-            state = Actus::progress_pam(state.schedule[2], state).unwrap();
+            state = Contracts::progress_pam(state.schedule[2], state).unwrap();
             assert_eq!(state.variables.nominal_value_1, Real::from(0));
             assert_eq!(state.variables.nominal_rate, Real::from(0));
             assert_eq!(state.variables.nominal_accrued_1, Real::from(0));
