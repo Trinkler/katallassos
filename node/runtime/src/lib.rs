@@ -194,8 +194,6 @@ impl actus::Trait for Runtime {}
 
 impl oracle::Trait for Runtime {}
 
-impl scheduler::Trait for Runtime {}
-
 construct_runtime!(
 	pub enum Runtime with Log(InternalLog: DigestItem<Hash, AuthorityId, AuthoritySignature>) where
 		Block = Block,
@@ -211,7 +209,6 @@ construct_runtime!(
 		Sudo: sudo,
 		Actus: actus::{Module, Call, Storage},
 		Oracle: oracle::{Module, Call, Storage},
-        Scheduler: scheduler::{Module, Call, Storage},
 	}
 );
 
