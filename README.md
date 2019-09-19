@@ -27,6 +27,13 @@ cargo build --release # Build native binaries
 ./target/release/katal
 ```
 
+### Development
+
+```sh
+./target/debug/katal purge-chain --dev # Remove the whole chain data
+./target/debug/katal --dev # Run chain in dev mode
+```
+
 ### Custom Modules
 
 -   [Fixed-point arithmetic](https://github.com/Trinkler/katal-chain/tree/master/modules/reals)
