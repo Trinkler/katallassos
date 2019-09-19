@@ -14,24 +14,20 @@ cd katal-chain/
 ./scripts/init.sh
 ```
 
-### Building
+### Develop
 
 ```sh
 ./scripts/build.sh # Build wasm binaries
-cargo build --release # Build native binaries
-```
-
-### Run
-
-```sh
-./target/release/katal
-```
-
-### Development
-
-```sh
+cargo build # Build native binaries in debug mode
 ./target/debug/katal purge-chain --dev # Remove the whole chain data
 ./target/debug/katal --dev # Run chain in dev mode
+```
+
+### Install
+
+```sh
+cargo install --locked --path . # Build and install native binaries
+katal # Synchronize chain data
 ```
 
 ### Custom Modules
