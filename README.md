@@ -2,7 +2,7 @@
 
 # katal-chain [![buddy pipeline](https://app.buddy.works/trinkler/katal-chain/pipelines/pipeline/195629/badge.svg?token=3a967ff05891e3690d97195573654d05994285b9798ed78a42d7178be77fa4c3 "buddy pipeline")](https://app.buddy.works/trinkler/katal-chain/pipelines/pipeline/195629)
 
-> [Katal](https://katalchain.com)  implements a [taxonomy](./taxonomy.md) for financial contracts. These financial contracts are homogenous in terms of the cash flow patterns they implement. The taxonomy can be seen as a _Standard Framework_ with which nearly every financial contract we see in _Finance_ today can be described. View on [Telemetry](https://telemetry.polkadot.io/#list/Katal).
+> [Katal](https://katalchain.com)  implements a [taxonomy](./taxonomy.md) of financial contracts. These financial contracts are homogenous in terms of the cash flow patterns they express. The taxonomy can be seen as a _standard framework_ with which nearly every financial contract we see in _finance_ today can be described. View on [Telemetry](https://telemetry.polkadot.io/#list/Katal).
 
 ### Initial Setup
 
