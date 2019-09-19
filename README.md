@@ -1,8 +1,8 @@
-[<img src = "https://raw.githubusercontent.com/Trinkler/brand/master/assets/katal/banner.png" width = "100%">](https://katal.dev)
+[<img src = "https://raw.githubusercontent.com/Trinkler/brand/master/assets/katal/banner.png" width = "100%">](https://katalchain.com)
 
 # katal-chain [![buddy pipeline](https://app.buddy.works/trinkler/katal-chain/pipelines/pipeline/195629/badge.svg?token=3a967ff05891e3690d97195573654d05994285b9798ed78a42d7178be77fa4c3 "buddy pipeline")](https://app.buddy.works/trinkler/katal-chain/pipelines/pipeline/195629)
 
-> [Katal](https://katal.dev): Standard Framework for Finance. View on [Telemetry](https://telemetry.polkadot.io/#list/Katal).
+> [Katal](https://katalchain.com): Standard Framework for Finance. View on [Telemetry](https://telemetry.polkadot.io/#list/Katal).
 
 ### Initial Setup
 
