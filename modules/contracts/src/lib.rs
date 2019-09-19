@@ -20,7 +20,7 @@ use parity_codec::{alloc::collections::BinaryHeap, Decode, Encode};
 use primitives::H256;
 use reals::*;
 use runtime_std::prelude::*;
-use support::{decl_module, decl_storage, dispatch::Result, StorageMap};
+use support::{decl_module, decl_storage, dispatch::Result, StorageMap, StorageValue};
 use time::*;
 
 // Importing the rest of the files in this crate.
@@ -48,6 +48,7 @@ pub trait Trait: system::Trait + oracle::Trait {}
 decl_storage! {
     trait Store for Module<T: Trait> as ContractsStorage {
         pub Contracts: map H256 => ContractState;
+        pub Scheduler: BinaryHeap<ScheduledEvent> = BinaryHeap::new();
     }
 }
 
