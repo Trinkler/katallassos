@@ -1,6 +1,6 @@
 # Actus Taxonomy
 
-Katal is based on a [Technical Standard](https://www.actusfrf.org/techspecs) as defined and maintained by the [ACTUS Financial Research Foundation](https://www.actusfrf.org/) specifies a [Taxonomy](https://www.actusfrf.org/taxonomy) of financial contracts. 
+Katal is based on a [Technical Standard](https://www.actusfrf.org/techspecs) as defined and maintained by the [ACTUS Financial Research Foundation](https://www.actusfrf.org/) which specifies a [Taxonomy](https://www.actusfrf.org/taxonomy) of financial contracts. 
 
 Name | Family | Class | Common Use Case
 |:-|:-|:-|:-
