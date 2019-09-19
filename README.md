@@ -7,8 +7,7 @@
 ### Setup
 
 ```sh
-# Install Rustup
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh # Install Rustup
 git clone git@github.com:Trinkler/katal-chain.git
 cd katal-chain/
 ./scripts/init.sh
