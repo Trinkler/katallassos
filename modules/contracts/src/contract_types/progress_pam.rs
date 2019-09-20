@@ -748,7 +748,7 @@ mod tests {
             attributes.rate_spread = Real::from(0);
             attributes.premium_discount_at_ied = Real::from(-5);
 
-            let mut state = Contracts::initialize_pam(t0, attributes).unwrap();
+            let mut state = Contracts::deploy_pam(t0, attributes).unwrap();
 
             assert_eq!(
                 state.schedule[0],

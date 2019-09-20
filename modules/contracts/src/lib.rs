@@ -15,8 +15,7 @@
 // The above line is needed to compile the Wasm binaries.
 
 // Importing crates declared in the cargo.toml file.
-use core::cmp::Ordering;
-use parity_codec::{alloc::collections::BinaryHeap, Decode, Encode};
+use parity_codec::{Decode, Encode};
 use primitives::H256;
 use reals::*;
 use runtime_std::prelude::*;
@@ -26,14 +25,14 @@ use time::*;
 // Importing the rest of the files in this crate.
 mod contract_state;
 mod contract_types;
-mod deploy_contract;
-mod progress_contract;
+mod deploy;
+mod progress;
 mod scheduler;
 mod utilities;
 use contract_state::*;
 use contract_types::*;
-use deploy_contract::*;
-use progress_contract::*;
+use deploy::*;
+use progress::*;
 use scheduler::*;
 use utilities::*;
 
@@ -48,7 +47,7 @@ pub trait Trait: system::Trait + oracle::Trait {}
 decl_storage! {
     trait Store for Module<T: Trait> as ContractsStorage {
         pub Contracts: map H256 => ContractState;
-        pub Scheduler: BinaryHeap<ScheduledEvent> = BinaryHeap::new();
+        //pub Scheduler: CodecBinaryHeap = BinaryHeap::new();
     }
 }
 
@@ -57,9 +56,9 @@ decl_module! {
     // The module declaration.
     pub struct Module<T: Trait> for enum Call where origin: T::Origin {
 
-        pub fn dispatch_deploy_contract(origin, attributes: Attributes) -> Result {
+        pub fn dispatch_deploy(origin, attributes: Attributes) -> Result {
             // Call corresponding internal function.
-            Self::deploy_contract(attributes)?;
+            Self::deploy(attributes)?;
 
             // Return Ok if successful.
             Ok(())

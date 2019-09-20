@@ -1,7 +1,7 @@
 use super::*;
 
 impl<T: Trait> Module<T> {
-    pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
+    pub fn deploy_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
         // The ContractID, necessary to create any contract.
         let mut attributes = Attributes::new(input.contract_id);
 
@@ -660,13 +660,13 @@ mod tests {
     }
 
     #[test]
-    fn initialize_pam_works() {
+    fn deploy_pam_works() {
         with_externalities(&mut new_test_ext(), || {
             // Tries to start a contract with the wrong attributes.
             let t0 = Time::from_values(1969, 07, 20, 20, 17, 00);
             let id = H256::zero();
             let mut attributes = Attributes::new(id);
-            let result = Contracts::initialize_pam(t0, attributes.clone());
+            let result = Contracts::deploy_pam(t0, attributes.clone());
             assert!(result.is_err());
 
             // Starts a PAM contract with the wrong attributes.
@@ -682,12 +682,12 @@ mod tests {
             attributes.contract_role = Some(ContractRole::RPA);
             attributes.creator_id = Some(H256::zero());
             attributes.counterparty_id = Some(H256::zero());
-            let result = Contracts::initialize_pam(t0, attributes.clone());
+            let result = Contracts::deploy_pam(t0, attributes.clone());
             assert!(result.is_err());
 
             // Starts a PAM contract with the right attributes.
             attributes.scaling_effect = None;
-            let result = Contracts::initialize_pam(t0, attributes.clone());
+            let result = Contracts::deploy_pam(t0, attributes.clone());
             assert!(result.is_ok());
         });
     }

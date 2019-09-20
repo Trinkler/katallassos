@@ -15,12 +15,8 @@
 
 use super::*;
 
-mod initialize;
-mod initialize_pam;
-mod progress;
+mod deploy_pam;
 mod progress_pam;
 
-pub use initialize::*;
-pub use initialize_pam::*;
-pub use progress::*;
+pub use deploy_pam::*;
 pub use progress_pam::*;
