@@ -1,7 +1,6 @@
 use super::*;
 
-// This function executes all events for which the time
-// has come.
+// This function executes all events for which the time has come.
 impl<T: Trait> Module<T> {
     pub fn scheduler_run(now: Time) -> Result {
         // Get the current Scheduler Heap from storage.
@@ -9,8 +8,8 @@ impl<T: Trait> Module<T> {
 
         // This loop goes through every scheduled event that is smaller than the
         // current time.
-        while heap.peek().is_some && now >= heap.peek().unwrap() {
-            let scheduled_event = heap.pop().unwrap();
+        while heap.peek().is_some() && now >= heap.peek().unwrap().time {
+            let mut scheduled_event = heap.pop().unwrap();
 
             // Get the state of the ACTUS contract and the corresponding
             // contract event type to be executed.
@@ -18,7 +17,7 @@ impl<T: Trait> Module<T> {
             let event = state.schedule[scheduled_event.index as usize];
 
             // Make the ACTUS contract progress.
-            <Module<T>>::progress_contract(event, state.clone())?;
+            <Module<T>>::progress(event, state.clone())?;
 
             // This loop executes the remaining events of the current contract for which
             // the time has come. This is more efficient than just pushing the next event
@@ -30,7 +29,7 @@ impl<T: Trait> Module<T> {
                 // Compare the event's time with the current time.
                 if now >= event.time {
                     // Make the ACTUS contract progress.
-                    <Module<T>>::progress_contract(event, state.clone())?;
+                    <Module<T>>::progress(event, state.clone())?;
                     // Increment the index.
                     scheduled_event.index += 1;
                 } else {

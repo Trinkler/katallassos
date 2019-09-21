@@ -25,6 +25,7 @@ use support::{decl_module, decl_storage, dispatch::Result, StorageMap, StorageVa
 mod contract_state;
 mod contract_types;
 mod deploy;
+mod init;
 mod progress;
 mod scheduler;
 mod utilities;
@@ -32,6 +33,7 @@ mod utilities;
 use contract_state::*;
 use contract_types::*;
 use deploy::*;
+use init::*;
 use progress::*;
 use scheduler::*;
 use utilities::*;
