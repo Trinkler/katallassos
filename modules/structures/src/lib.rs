@@ -26,6 +26,7 @@
 
 // These are necessary to work with Substrate.
 use parity_codec::{Decode, Encode};
+use runtime_std::prelude::*;
 // These are necessary to do operator overloading.
 use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 

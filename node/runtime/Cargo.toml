@@ -1,6 +1,6 @@
 [package]
 name = "katal-runtime"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Trinkler Software <company@trinkler.software>"]
 edition = "2018"
 

@@ -14,12 +14,14 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 // The above line is needed to compile the Wasm binaries.
 
-// Importing crates declared in the cargo.toml file.
+// Importing crates necessary to work with Substrate.
 use parity_codec::{Decode, Encode};
 use primitives::H256;
 use runtime_std::prelude::*;
-use structures::*;
 use support::{decl_module, decl_storage, dispatch::Result, StorageMap, StorageValue};
+
+// Importing crates from Katal's runtime.
+use structures::*;
 
 // Importing the rest of the files in this crate.
 mod contract_state;
@@ -29,7 +31,6 @@ mod init;
 mod progress;
 mod scheduler;
 mod utilities;
-
 use contract_state::*;
 use contract_types::*;
 use deploy::*;
