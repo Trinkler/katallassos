@@ -25,10 +25,9 @@
 // Importing crates declared in the cargo.toml file.
 use parity_codec::{Decode, Encode};
 use primitives::H256;
-use reals::*;
+use structures::*;
 use support::{decl_module, decl_storage, dispatch::Result, StorageMap};
 use system::ensure_root;
-use time::*;
 
 // Importing the rest of the files in this crate.
 mod oracle_state;

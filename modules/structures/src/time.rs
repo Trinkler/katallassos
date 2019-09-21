@@ -13,15 +13,15 @@
 // GNU General Public License for more details.
 //
 
-//! # Time module
+//! # Time
 //!
 //! ## Overview
-//! The Time module implements a new data type to represent time in the ISO8601 format. This standard
+//! The Time library implements a new data type to represent time in the ISO8601 format. This standard
 //! represents a date and a time using the format Year-Month-Day Hour:Minute:Second. The standard has
 //! optional support for time zones, but we choose not to use it so all the times represented using
 //! this data type are used to be in the Coordinated Universal Time (UTC). The standard also has
 //! support for leap seconds by allowing the seconds field to range from 0 to 60. We however feel
-//! that this is not necessary for our uses and may in fact cause issues, so this module does not
+//! that this is not necessary for our uses and may in fact cause issues, so this library does not
 //! support leap seconds and the seconds only range from 0 to 59.
 //!
 //! ## Technical description
@@ -32,7 +32,7 @@
 //! than any time.
 //!
 //! ## Methods
-//! This module also implements several methods to deal with times. The four most important are
+//! This library also implements several methods to deal with times. The four most important are
 //! 'is_valid', 'from_values', 'from_unchecked' and 'from_unix'.
 //!
 //! ### is_valid
@@ -56,11 +56,7 @@
 //! instance. If the input unix time exceeds the range of allowed ISO8601 times, it will return 'None'.
 //! When converting between the two formats leap seconds are ignored.
 
-#![cfg_attr(not(feature = "std"), no_std)]
-// The above line is needed to compile the Wasm binaries.
-
-// These are necessary to work with Substrate.
-use parity_codec::{Decode, Encode};
+use super::*;
 
 /// This struct represents the ISO8601 time format.
 #[derive(Copy, Clone, Decode, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]

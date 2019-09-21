@@ -12,20 +12,16 @@
 // GNU General Public License for more details.
 
 //! # Binary Heap
-//
-//! This implements a binary min heap using only Rust's Vec. This is necessary because parity_codec doesn't support Rust's BinaryHeap, forcing us to create our own binary heap
+//!
+//! Implements a binary min heap using only Rust's Vec. This is necessary because parity_codec doesn't support Rust's BinaryHeap, forcing us to create our own binary heap
 //! implementation using parity_codec supported types.
-//
+//!
 //! The implementation tries to follow Rust's BinaryHeap (https://doc.rust-lang.org/std/collections/struct.BinaryHeap.html), with a few important differences:
 //! 1. Rust's BinaryHeap is a max heap, we instead implement a min heap.
 //! 2. We only implement a subset of Rust's BinaryHeap methods, namely _new_, _peek_, _push_ and _pop_.
 //! 3. Our implementation is compatible with parity_codec.
 
-#![cfg_attr(not(feature = "std"), no_std)]
-// The above line is needed to compile the Wasm binaries.
-
-// These are necessary to work with Substrate.
-use parity_codec::{Decode, Encode};
+use super::*;
 
 /// This struct implements the binary min heap. It is a tuple containing a single Vec.
 #[derive(Clone, Decode, Encode, Default, PartialEq)]

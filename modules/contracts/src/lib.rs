@@ -17,10 +17,9 @@
 // Importing crates declared in the cargo.toml file.
 use parity_codec::{Decode, Encode};
 use primitives::H256;
-use reals::*;
 use runtime_std::prelude::*;
+use structures::*;
 use support::{decl_module, decl_storage, dispatch::Result, StorageMap, StorageValue};
-use time::*;
 
 // Importing the rest of the files in this crate.
 mod contract_state;
@@ -29,6 +28,7 @@ mod deploy;
 mod progress;
 mod scheduler;
 mod utilities;
+
 use contract_state::*;
 use contract_types::*;
 use deploy::*;
@@ -47,7 +47,7 @@ pub trait Trait: system::Trait + oracle::Trait {}
 decl_storage! {
     trait Store for Module<T: Trait> as ContractsStorage {
         pub Contracts: map H256 => ContractState;
-        //pub Scheduler: CodecBinaryHeap = BinaryHeap::new();
+        pub Scheduler: MinHeap<ScheduledEvent> = MinHeap::new();
     }
 }
 

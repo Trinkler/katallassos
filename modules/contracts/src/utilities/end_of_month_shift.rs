@@ -43,7 +43,7 @@ mod tests {
 
     #[test]
     fn end_of_month_shift_works() {
-        let mut t = time::UncheckedTime {
+        let mut t = UncheckedTime {
             year: 2004,
             month: 2,
             day: 31,
@@ -51,7 +51,7 @@ mod tests {
             minute: 00,
             second: 00,
         };
-        let mut z = time::UncheckedTime {
+        let mut z = UncheckedTime {
             year: 2004,
             month: 2,
             day: 29,

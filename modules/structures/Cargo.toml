@@ -1,6 +1,6 @@
 [package]
-name = "modules-priority-queue"
-version = "0.1.0"
+name = "modules-structures"
+version = "1.0.0"
 authors = ["Trinkler Software <company@trinkler.software>"]
 edition = "2018"
 

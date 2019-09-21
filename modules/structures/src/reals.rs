@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-//! # Reals module
+//! # Reals
 //!
 //! ## Overview
 //! The Reals library implements a new data type for safe fixed-point arithmetic. It works by creating
@@ -36,13 +36,7 @@
 //! that happens. A quirk is that, when comparing two reals, 'None' is considered smaller than any
 //! number.
 
-#![cfg_attr(not(feature = "std"), no_std)]
-// The above line is needed to compile the Wasm binaries.
-
-// These are necessary to do operator overloading.
-use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
-// These are necessary to work with Substrate.
-use parity_codec::{Decode, Encode};
+use super::*;
 
 /// The scale factor (must be positive).
 const SF: i128 = 1000000000;
