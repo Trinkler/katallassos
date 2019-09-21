@@ -82,12 +82,12 @@ where
         // Performs a "bubble-down" operation.
         loop {
             // Checks if there is a left child, and if yes, checks if the child is smaller.
-            if i.saturating_mul(2).saturating_add(2) < self.0.len() && self.0[t] > self.0[2 * i + 1]
+            if i.saturating_mul(2).saturating_add(1) < self.0.len() && self.0[t] > self.0[2 * i + 1]
             {
                 t = 2 * i + 1;
             }
             // Checks if there is a right child, and if yes, checks if the child is smaller.
-            if i.saturating_mul(2).saturating_add(3) < self.0.len() && self.0[t] > self.0[2 * i + 2]
+            if i.saturating_mul(2).saturating_add(2) < self.0.len() && self.0[t] > self.0[2 * i + 2]
             {
                 t = 2 * i + 2;
             }
@@ -109,6 +109,7 @@ where
 #[cfg(test)]
 mod tests {
     use super::*;
+    use rand::prelude::*;
 
     #[test]
     fn new_works() {
@@ -146,5 +147,24 @@ mod tests {
         assert_eq!(heap.pop(), Some(4));
         assert_eq!(heap.pop(), Some(5));
         assert_eq!(heap.pop(), None);
+    }
+
+    #[test]
+    fn min_heap_fuzzer() {
+        let mut heap = MinHeap::new();
+        let mut vec = Vec::new();
+        let mut x: u32;
+
+        for i in 0..1000 {
+            x = random();
+            heap.push(x);
+            vec.push(x);
+            vec.sort_unstable();
+            assert_eq!(heap.peek().unwrap(), &vec[0]);
+        }
+
+        for i in 0..1000 {
+            assert_eq!(heap.pop().unwrap(), vec[i]);
+        }
     }
 }

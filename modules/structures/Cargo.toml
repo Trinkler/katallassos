@@ -20,3 +20,7 @@ optional = true
 version = "3.5"
 default-features = false
 features = ["derive"]
+
+# Debug crates
+[dev-dependencies.rand]
+version = "0.7"

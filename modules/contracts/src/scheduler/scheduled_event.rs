@@ -42,14 +42,16 @@ mod tests {
         heap.push(a);
         heap.push(c);
 
-        assert!(a < b);
-        assert!(b < c);
-        assert!(c < d);
-
+        println!("{:?}", heap);
         assert_eq!(heap.pop(), Some(a));
+        println!("{:?}", heap);
         assert_eq!(heap.pop(), Some(b));
+        println!("{:?}", heap);
         assert_eq!(heap.pop(), Some(c));
+        println!("{:?}", heap);
         assert_eq!(heap.pop(), Some(d));
+        println!("{:?}", heap);
         assert_eq!(heap.pop(), None);
+        println!("{:?}", heap);
     }
 }
