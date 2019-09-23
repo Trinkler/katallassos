@@ -15,11 +15,8 @@
 
 use super::*;
 
-impl<T: Trait> Module<T> {
-    pub fn initialize(t0: Time, input: Attributes) -> MyResult<ContractState> {
-        match input.contract_type {
-            Some(ContractType::PAM) => Self::initialize_pam(t0, input),
-            _ => Err("Contract type not supported"),
-        }
-    }
-}
+mod deploy_pam;
+mod progress_pam;
+
+pub use deploy_pam::*;
+pub use progress_pam::*;

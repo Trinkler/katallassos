@@ -42,7 +42,7 @@ mod tests {
 
     #[test]
     fn business_day_shift_works() {
-        let mut t = time::UncheckedTime {
+        let mut t = UncheckedTime {
             year: 2004,
             month: 2,
             day: 31,

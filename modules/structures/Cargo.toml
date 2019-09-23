@@ -1,5 +1,5 @@
 [package]
-name = "modules-reals"
+name = "modules-structures"
 version = "1.0.0"
 authors = ["Trinkler Software <company@trinkler.software>"]
 edition = "2018"
@@ -9,6 +9,7 @@ default = ["std"]
 std = [
 	"serde",
 	"parity-codec/std",
+	"runtime_std/std",
 ]
 
 # Rust crates
@@ -20,3 +21,14 @@ optional = true
 version = "3.5"
 default-features = false
 features = ["derive"]
+
+# Substrate Core crates
+[dependencies.runtime_std]
+package = "sr-std"
+git = "https://github.com/paritytech/substrate.git"
+branch = "v1.0"
+default-features = false
+
+# Debug crates
+[dev-dependencies.rand]
+version = "0.7"

@@ -15,11 +15,8 @@
 
 use super::*;
 
-impl<T: Trait> Module<T> {
-    pub fn progress(event: ContractEvent, mut state: ContractState) -> MyResult<ContractState> {
-        match state.attributes.contract_type {
-            Some(ContractType::PAM) => Self::progress_pam(event, state),
-            _ => Err("Contract type not supported"),
-        }
-    }
-}
+mod scheduled_event;
+mod scheduler_run;
+
+pub use scheduled_event::*;
+pub use scheduler_run::*;

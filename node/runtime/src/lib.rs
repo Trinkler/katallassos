@@ -190,7 +190,7 @@ impl sudo::Trait for Runtime {
     type Proposal = Call;
 }
 
-impl actus::Trait for Runtime {}
+impl contracts::Trait for Runtime {}
 
 impl oracle::Trait for Runtime {}
 
@@ -207,7 +207,7 @@ construct_runtime!(
 		Indices: indices,
 		Balances: balances,
 		Sudo: sudo,
-		Actus: actus::{Module, Call, Storage},
+		Contracts: contracts::{Module, Call, Storage},
 		Oracle: oracle::{Module, Call, Storage},
 	}
 );

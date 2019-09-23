@@ -1,6 +1,6 @@
 [package]
-name = "modules-actus"
-version = "0.0.2"
+name = "modules-contracts"
+version = "0.1.0"
 authors = ["Trinkler Software <company@trinkler.software>"]
 edition = "2018"
 
@@ -14,8 +14,7 @@ std = [
 	"support/std",
 	"system/std",
 	"oracle/std",
-	"reals/std",
-	"time/std",
+	"structures/std",
 ]
 
 # Rust crates
@@ -60,14 +59,9 @@ package = "modules-oracle"
 path = "../oracle"
 default-features = false
 
-[dependencies.reals]
-package = "modules-reals"
-path = "../reals"
-default-features = false
-
-[dependencies.time]
-package = "modules-time"
-path = "../time"
+[dependencies.structures]
+package = "modules-structures"
+path = "../structures"
 default-features = false
 
 # Debug crates

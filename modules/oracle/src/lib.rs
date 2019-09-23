@@ -22,13 +22,15 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 // The above line is needed to compile the Wasm binaries.
 
-// Importing crates declared in the cargo.toml file.
+// Importing crates necessary to work with Substrate.
 use parity_codec::{Decode, Encode};
 use primitives::H256;
-use reals::*;
+use runtime_std::prelude::*;
 use support::{decl_module, decl_storage, dispatch::Result, StorageMap};
 use system::ensure_root;
-use time::*;
+
+// Importing crates from Katal's runtime.
+use structures::*;
 
 // Importing the rest of the files in this crate.
 mod oracle_state;
@@ -109,7 +111,7 @@ mod tests {
     }
 
     #[test]
-    fn set_works() {
+    fn dispatch_set_works() {
         with_externalities(&mut new_test_ext(), || {
             let id = H256::zero();
             let time = Time::from_values(1969, 07, 20, 20, 17, 00);

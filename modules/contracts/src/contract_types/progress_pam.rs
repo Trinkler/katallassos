@@ -471,7 +471,6 @@ impl<T: Trait> Module<T> {
                     ) * state.attributes.fee_rate;
                 }
 
-                // TODO: Verify with Nils that it is indeed rate_multiplier.
                 let delta_r = Real::min(
                     Real::max(
                         <oracle::Oracles<T>>::get(
@@ -600,7 +599,6 @@ impl<T: Trait> Module<T> {
                     state.variables.notional_scaling_multiplier =
                         state.variables.notional_scaling_multiplier;
                 } else {
-                    // TODO: Verify with Nils that it is indeed "scaling_index_at_status_date".
                     state.variables.notional_scaling_multiplier = (<oracle::Oracles<T>>::get(
                         state.attributes.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
                     )
@@ -616,7 +614,6 @@ impl<T: Trait> Module<T> {
                     state.variables.interest_scaling_multiplier =
                         state.variables.interest_scaling_multiplier;
                 } else {
-                    // TODO: Verify with Nils that it is indeed "scaling_index_at_status_date".
                     state.variables.interest_scaling_multiplier = (<oracle::Oracles<T>>::get(
                         state.attributes.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
                     )
@@ -719,7 +716,7 @@ mod tests {
     }
     impl oracle::Trait for Test {}
     impl Trait for Test {}
-    type Actus = Module<Test>;
+    type Contracts = Module<Test>;
 
     fn new_test_ext() -> runtime_io::TestExternalities<Blake2Hasher> {
         system::GenesisConfig::<Test>::default()
@@ -733,11 +730,11 @@ mod tests {
     fn progress_pam_works() {
         with_externalities(&mut new_test_ext(), || {
             let t0 = Time::from_values(2015, 01, 01, 00, 00, 00);
-            let id = H256::zero();
+            let id = H256::random();
             let mut attributes = Attributes::new(id);
             attributes.contract_id = id;
             attributes.contract_type = Some(ContractType::PAM);
-            attributes.currency = Some(H256::zero());
+            attributes.currency = Some(H256::random());
             attributes.day_count_convention = Some(DayCountConvention::_30E360);
             attributes.initial_exchange_date = Time::from_values(2015, 01, 02, 00, 00, 00);
             attributes.maturity_date = Time::from_values(2015, 04, 02, 00, 00, 00);
@@ -745,13 +742,13 @@ mod tests {
             attributes.notional_principal = Real::from(1000);
             attributes.contract_deal_date = Time::from_values(2015, 01, 01, 00, 00, 00);
             attributes.contract_role = Some(ContractRole::RPA);
-            attributes.creator_id = Some(H256::zero());
-            attributes.counterparty_id = Some(H256::zero());
+            attributes.creator_id = Some(H256::random());
+            attributes.counterparty_id = Some(H256::random());
             attributes.scaling_effect = None;
             attributes.rate_spread = Real::from(0);
             attributes.premium_discount_at_ied = Real::from(-5);
 
-            let mut state = Actus::initialize_pam(t0, attributes).unwrap();
+            let mut state = Contracts::deploy_pam(t0, attributes).unwrap();
 
             assert_eq!(
                 state.schedule[0],
@@ -760,14 +757,14 @@ mod tests {
                     ContractEventType::IED
                 )
             );
-            state = Actus::progress_pam(state.schedule[0], state).unwrap();
+            state = Contracts::progress_pam(state.schedule[0], state).unwrap();
             assert_eq!(state.variables.nominal_value_1, Real::from(1000));
             assert_eq!(state.variables.nominal_rate, Real::from(0));
             assert_eq!(state.variables.nominal_accrued_1, Real::from(0));
 
             // Event 2 is being used, instead of the next in the sequence 1, because the
             // given test vectors don't mention event 1 (probably because it has no effect
-            // the state).
+            // on the state).
             assert_eq!(
                 state.schedule[2],
                 ContractEvent::new(
@@ -775,7 +772,7 @@ mod tests {
                     ContractEventType::PR
                 )
             );
-            state = Actus::progress_pam(state.schedule[2], state).unwrap();
+            state = Contracts::progress_pam(state.schedule[2], state).unwrap();
             assert_eq!(state.variables.nominal_value_1, Real::from(0));
             assert_eq!(state.variables.nominal_rate, Real::from(0));
             assert_eq!(state.variables.nominal_accrued_1, Real::from(0));

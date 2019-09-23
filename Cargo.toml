@@ -1,18 +1,13 @@
 [package]
 name = "katal-chain"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Trinkler Software <company@trinkler.software>"]
 build = "node/build.rs"
 edition = "2018"
 
-[[bin]]
-name = "katal"
-path = "node/src/main.rs"
-
 [dependencies]
 error-chain = "0.12"
 futures = "0.1"
-ctrlc = { version = "3.0", features = ["termination"] }
 log = "0.4"
 tokio = "0.1"
 exit-future = "0.1"
@@ -20,19 +15,72 @@ parking_lot = "0.7.1"
 hex-literal = "0.1"
 parity-codec = "3.2"
 trie-root = "0.12.0"
-sr-io = { git = "https://github.com/paritytech/substrate", branch = "v1.0" }
-substrate-cli = { git = "https://github.com/paritytech/substrate", branch = "v1.0" }
-primitives = { package = "substrate-primitives", git = "https://github.com/paritytech/substrate", branch = "v1.0" }
-substrate-executor = { git = "https://github.com/paritytech/substrate", branch = "v1.0" }
-substrate-service = { git = "https://github.com/paritytech/substrate", branch = "v1.0" }
-inherents = { package = "substrate-inherents", git = "https://github.com/paritytech/substrate", branch = "v1.0" }
-transaction-pool = { package = "substrate-transaction-pool", git = "https://github.com/paritytech/substrate", branch = "v1.0" }
-network = { package = "substrate-network", git = "https://github.com/paritytech/substrate", branch = "v1.0" }
-consensus = { package = "substrate-consensus-aura", git = "https://github.com/paritytech/substrate", branch = "v1.0" }
-substrate-client = {  git = "https://github.com/paritytech/substrate", branch = "v1.0" }
-basic-authorship = { package = "substrate-basic-authorship", git = "https://github.com/paritytech/substrate", branch = "v1.0" }
-substrate-telemetry = { package = "substrate-telemetry", git = "https://github.com/paritytech/substrate", branch = "v1.0" }
-katal-runtime = { path = "node/runtime" }
+
+  [dependencies.ctrlc]
+  version = "3.0"
+  features = ["termination"]
+
+  [dependencies.sr-io]
+  git = "https://github.com/paritytech/substrate"
+  branch = "v1.0"
+
+  [dependencies.substrate-cli]
+  git = "https://github.com/paritytech/substrate"
+  branch = "v1.0"
+
+  [dependencies.primitives]
+  package = "substrate-primitives"
+  git = "https://github.com/paritytech/substrate"
+  branch = "v1.0"
+
+  [dependencies.substrate-executor]
+  git = "https://github.com/paritytech/substrate"
+  branch = "v1.0"
+
+  [dependencies.substrate-service]
+  git = "https://github.com/paritytech/substrate"
+  branch = "v1.0"
+
+  [dependencies.inherents]
+  package = "substrate-inherents"
+  git = "https://github.com/paritytech/substrate"
+  branch = "v1.0"
+
+  [dependencies.transaction-pool]
+  package = "substrate-transaction-pool"
+  git = "https://github.com/paritytech/substrate"
+  branch = "v1.0"
+
+  [dependencies.network]
+  package = "substrate-network"
+  git = "https://github.com/paritytech/substrate"
+  branch = "v1.0"
+
+  [dependencies.consensus]
+  package = "substrate-consensus-aura"
+  git = "https://github.com/paritytech/substrate"
+  branch = "v1.0"
+
+  [dependencies.substrate-client]
+  git = "https://github.com/paritytech/substrate"
+  branch = "v1.0"
+
+  [dependencies.basic-authorship]
+  package = "substrate-basic-authorship"
+  git = "https://github.com/paritytech/substrate"
+  branch = "v1.0"
+
+  [dependencies.substrate-telemetry]
+  package = "substrate-telemetry"
+  git = "https://github.com/paritytech/substrate"
+  branch = "v1.0"
+
+  [dependencies.katal-runtime]
+  path = "node/runtime"
 
 [build-dependencies]
 vergen = "3"
+
+[[bin]]
+name = "katal"
+path = "node/src/main.rs"

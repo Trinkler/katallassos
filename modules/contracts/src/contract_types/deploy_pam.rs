@@ -1,7 +1,7 @@
 use super::*;
 
 impl<T: Trait> Module<T> {
-    pub fn initialize_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
+    pub fn deploy_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
         // The ContractID, necessary to create any contract.
         let mut attributes = Attributes::new(input.contract_id);
 
@@ -649,7 +649,7 @@ mod tests {
     }
     impl oracle::Trait for Test {}
     impl Trait for Test {}
-    type Actus = Module<Test>;
+    type Contracts = Module<Test>;
 
     fn new_test_ext() -> runtime_io::TestExternalities<Blake2Hasher> {
         system::GenesisConfig::<Test>::default()
@@ -660,19 +660,19 @@ mod tests {
     }
 
     #[test]
-    fn initialize_pam_works() {
+    fn deploy_pam_works() {
         with_externalities(&mut new_test_ext(), || {
             // Tries to start a contract with the wrong attributes.
             let t0 = Time::from_values(1969, 07, 20, 20, 17, 00);
-            let id = H256::zero();
+            let id = H256::random();
             let mut attributes = Attributes::new(id);
-            let result = Actus::initialize_pam(t0, attributes.clone());
+            let result = Contracts::deploy_pam(t0, attributes.clone());
             assert!(result.is_err());
 
             // Starts a PAM contract with the wrong attributes.
             attributes.contract_id = id;
             attributes.contract_type = Some(ContractType::PAM);
-            attributes.currency = Some(H256::zero());
+            attributes.currency = Some(H256::random());
             attributes.day_count_convention = Some(DayCountConvention::_A365);
             attributes.initial_exchange_date = Time::from_values(1969, 07, 21, 02, 56, 15);
             attributes.maturity_date = Time::from_values(1979, 07, 21, 02, 56, 15);
@@ -680,14 +680,14 @@ mod tests {
             attributes.notional_principal = Real(Some(50000000));
             attributes.contract_deal_date = Time::from_values(1968, 07, 21, 02, 56, 15);
             attributes.contract_role = Some(ContractRole::RPA);
-            attributes.creator_id = Some(H256::zero());
-            attributes.counterparty_id = Some(H256::zero());
-            let result = Actus::initialize_pam(t0, attributes.clone());
+            attributes.creator_id = Some(H256::random());
+            attributes.counterparty_id = Some(H256::random());
+            let result = Contracts::deploy_pam(t0, attributes.clone());
             assert!(result.is_err());
 
             // Starts a PAM contract with the right attributes.
             attributes.scaling_effect = None;
-            let result = Actus::initialize_pam(t0, attributes.clone());
+            let result = Contracts::deploy_pam(t0, attributes.clone());
             assert!(result.is_ok());
         });
     }

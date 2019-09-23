@@ -9,11 +9,11 @@ default = ["std"]
 std = [
   "serde",
   "parity-codec/std",
+  "runtime_std/std",
   "primitives/std",
   "support/std",
   "system/std",
-	"reals/std",
-	"time/std",
+	"structures/std",
 ]
 
 # Rust crates
@@ -27,6 +27,12 @@ default-features = false
 features = ["derive"]
 
 # Substrate Core crates
+[dependencies.runtime_std]
+package = "sr-std"
+git = "https://github.com/paritytech/substrate.git"
+branch = "v1.0"
+default-features = false
+
 [dependencies.primitives]
 package = "substrate-primitives"
 git = "https://github.com/paritytech/substrate.git"
@@ -47,14 +53,9 @@ branch = "v1.0"
 default-features = false
 
 # Katal crates
-[dependencies.reals]
-package = "modules-reals"
-path = "../reals"
-default-features = false
-
-[dependencies.time]
-package = "modules-time"
-path = "../time"
+[dependencies.structures]
+package = "modules-structures"
+path = "../structures"
 default-features = false
 
 # Debug crates

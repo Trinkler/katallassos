@@ -14,22 +14,29 @@
 #![cfg_attr(not(feature = "std"), no_std)]
 // The above line is needed to compile the Wasm binaries.
 
-// Importing crates declared in the cargo.toml file.
+// Importing crates necessary to work with Substrate.
 use parity_codec::{Decode, Encode};
 use primitives::H256;
-use reals::*;
 use runtime_std::prelude::*;
-use support::{decl_module, decl_storage, dispatch::Result, StorageMap};
-use time::*;
+use support::{decl_module, decl_storage, dispatch::Result, StorageMap, StorageValue};
+
+// Importing crates from Katal's runtime.
+use structures::*;
 
 // Importing the rest of the files in this crate.
 mod contract_state;
-mod contracts;
-mod deploy_contract;
+mod contract_types;
+mod deploy;
+mod init;
+mod progress;
+mod scheduler;
 mod utilities;
 use contract_state::*;
-use contracts::*;
-use deploy_contract::*;
+use contract_types::*;
+use deploy::*;
+use init::*;
+use progress::*;
+use scheduler::*;
 use utilities::*;
 
 // Defines an alias for the Result type. It has the name MyResult because Substrate
@@ -37,14 +44,13 @@ use utilities::*;
 type MyResult<T> = runtime_std::result::Result<T, &'static str>;
 
 // This module's configuration trait.
-// Importing oracle's trait is necessary to be able to call its functions
-// and read its storage.
 pub trait Trait: system::Trait + oracle::Trait {}
 
 // This module's storage items.
 decl_storage! {
-    trait Store for Module<T: Trait> as ContractStorage {
+    trait Store for Module<T: Trait> as ContractsStorage {
         pub Contracts: map H256 => ContractState;
+        pub Scheduler: MinHeap<ScheduledEvent> = MinHeap::new();
     }
 }
 
@@ -53,9 +59,9 @@ decl_module! {
     // The module declaration.
     pub struct Module<T: Trait> for enum Call where origin: T::Origin {
 
-        pub fn dispatch_deploy_contract(origin, attributes: Attributes) -> Result {
+        pub fn dispatch_deploy(origin, attributes: Attributes) -> Result {
             // Call corresponding internal function.
-            Self::deploy_contract(attributes)?;
+            Self::deploy(attributes)?;
 
             // Return Ok if successful.
             Ok(())
