@@ -28,6 +28,8 @@ use primitives::H256;
 use runtime_std::prelude::*;
 use support::{decl_module, decl_storage, dispatch::Result, StorageMap};
 use system::ensure_root;
+// This import is used to convert the timestamp to a Time.
+use runtime_primitives::traits::As;
 
 // Importing crates from Katal's runtime.
 use structures::*;
@@ -39,7 +41,7 @@ use oracle_state::*;
 use set::*;
 
 // This module's configuration trait.
-pub trait Trait: system::Trait {}
+pub trait Trait: system::Trait + timestamp::Trait {}
 
 // This module's storage items.
 decl_storage! {
@@ -54,12 +56,12 @@ decl_module! {
     pub struct Module<T: Trait> for enum Call where origin: T::Origin {
 
         // Set the value of an existing data feed or creating a new one.
-        pub fn dispatch_set(origin, id: H256, time: Time, value: Real) -> Result {
+        pub fn dispatch_set(origin, id: H256, value: Real) -> Result {
             // Only chain root should be able to set this value.
             ensure_root(origin)?;
 
             // Call corresponding internal function.
-            Self::set(id, time, value)?;
+            Self::set(id, value)?;
 
             // Return Ok if successful.
             Ok(())
@@ -99,6 +101,10 @@ mod tests {
         type Event = ();
         type Log = DigestItem;
     }
+    impl timestamp::Trait for Test {
+        type Moment = u64;
+        type OnTimestampSet = ();
+    }
     impl Trait for Test {}
     type Oracle = Module<Test>;
 
@@ -114,11 +120,11 @@ mod tests {
     fn dispatch_set_works() {
         with_externalities(&mut new_test_ext(), || {
             let id = H256::zero();
-            let time = Time::from_values(1969, 07, 20, 20, 17, 00);
+            let time = Time::from_values(1970, 01, 01, 00, 00, 00);
             let value = Real::from(1000);
 
             // Set oracle state to storage
-            assert_ok!(Oracle::dispatch_set(Origin::ROOT, id, time, value));
+            assert_ok!(Oracle::dispatch_set(Origin::ROOT, id, value));
 
             // Get oracle state from storage.
             assert_eq!(time, <Oracles<Test>>::get(id).time);
