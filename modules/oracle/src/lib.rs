@@ -28,6 +28,8 @@ use primitives::H256;
 use runtime_std::prelude::*;
 use support::{decl_module, decl_storage, dispatch::Result, StorageMap};
 use system::ensure_root;
+// This import is used to convert the timestamp to a Time.
+use runtime_primitives::traits::As;
 
 // Importing crates from Katal's runtime.
 use structures::*;
@@ -39,7 +41,7 @@ use oracle_state::*;
 use set::*;
 
 // This module's configuration trait.
-pub trait Trait: system::Trait {}
+pub trait Trait: system::Trait + timestamp::Trait {}
 
 // This module's storage items.
 decl_storage! {
@@ -54,75 +56,15 @@ decl_module! {
     pub struct Module<T: Trait> for enum Call where origin: T::Origin {
 
         // Set the value of an existing data feed or creating a new one.
-        pub fn dispatch_set(origin, id: H256, time: Time, value: Real) -> Result {
+        pub fn dispatch_set(origin, id: H256, value: Real) -> Result {
             // Only chain root should be able to set this value.
             ensure_root(origin)?;
 
             // Call corresponding internal function.
-            Self::set(id, time, value)?;
+            Self::set(id, value)?;
 
             // Return Ok if successful.
             Ok(())
         }
-    }
-}
-
-// Tests for this module.
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use primitives::{Blake2Hasher, H256};
-    use runtime_io::with_externalities;
-    use runtime_primitives::{
-        testing::{Digest, DigestItem, Header},
-        traits::{BlakeTwo256, IdentityLookup},
-        BuildStorage,
-    };
-    use support::{assert_ok, impl_outer_origin};
-
-    impl_outer_origin! {
-        pub enum Origin for Test {}
-    }
-
-    #[derive(Clone, Eq, PartialEq)]
-    pub struct Test;
-    impl system::Trait for Test {
-        type Origin = Origin;
-        type Index = u64;
-        type BlockNumber = u64;
-        type Hash = H256;
-        type Hashing = BlakeTwo256;
-        type Digest = Digest;
-        type AccountId = u64;
-        type Lookup = IdentityLookup<Self::AccountId>;
-        type Header = Header;
-        type Event = ();
-        type Log = DigestItem;
-    }
-    impl Trait for Test {}
-    type Oracle = Module<Test>;
-
-    fn new_test_ext() -> runtime_io::TestExternalities<Blake2Hasher> {
-        system::GenesisConfig::<Test>::default()
-            .build_storage()
-            .unwrap()
-            .0
-            .into()
-    }
-
-    #[test]
-    fn dispatch_set_works() {
-        with_externalities(&mut new_test_ext(), || {
-            let id = H256::zero();
-            let time = Time::from_values(1969, 07, 20, 20, 17, 00);
-            let value = Real::from(1000);
-
-            // Set oracle state to storage
-            assert_ok!(Oracle::dispatch_set(Origin::ROOT, id, time, value));
-
-            // Get oracle state from storage.
-            assert_eq!(time, <Oracles<Test>>::get(id).time);
-            assert_eq!(value, <Oracles<Test>>::get(id).value);
-        });
     }
 }
