@@ -4,7 +4,7 @@
 
 > [Katal](https://katalchain.com) is a domain-specific blockchain creating a deterministic financial paradigm.
 
-> Katal implements a [taxonomy](https://www.actusfrf.org/taxonomy) of financial contracts which are mutual agreements between counterparties to exchange cash flows. These financial contracts are homogeneous in terms of the cash flow patterns they describe. The taxonomy can be seen as a _standard framework_ with which nearly every [financial instrument](https://en.wikipedia.org/wiki/Financial_instrument) we see in _finance_ today can be broken down and its underlying cash flows analyzed.
+> Katal implements a [taxonomy](https://www.actusfrf.org/taxonomy) of financial contracts which are mutual agreements between counterparties to exchange cash flows. The taxonomy can be seen as a _standard framework_ with which nearly every [financial instrument](https://en.wikipedia.org/wiki/Financial_instrument) we see in _finance_ today can be broken down into financial contracts and its underlying cash flows analyzed.
 
 > Katal is based on [Substrate](https://github.com/paritytech/substrate) and aims to connect to the multichain framework [Polkadot](https://polkadot.network) to interact with assets
 > of [other connected blockchains](https://forum.web3.foundation/t/teams-building-on-polkadot/67) as well as to allow other connected blockchains to have access to
@@ -40,11 +40,11 @@ katal # Synchronize chain data
 - [Fixed-point arithmetic](https://github.com/Trinkler/katal-chain/tree/master/modules/reals)
 - [Time in ISO8601 format](https://github.com/Trinkler/katal-chain/tree/master/modules/time)
 - [Permissioned Oracle](https://github.com/Trinkler/katal-chain/tree/master/modules/oracle)
-- [Algorithmic Contract Types Unified Standard](https://github.com/Trinkler/katal-chain/tree/master/modules/actus)
+- [Financial Contracts](https://github.com/Trinkler/katal-chain/tree/master/modules/contracts)
 
 ### Additional Resources
 
-- [Read Research Papers](https://github.com/Trinkler/katal-research)
 - [Subscribe to Newsletter](https://software.us19.list-manage.com/subscribe?u=48964a7b4b5e9480604838bf2&id=982968577c)
 - [Follow on Twitter](https://twitter.com/katalchain)
+- [Follow on Medium](https://medium.com/@katalchain)
 - [Join on Telegram](https://t.me/katalchain)
