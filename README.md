@@ -4,7 +4,7 @@
 
 > [Katal](https://katalchain.com) is a domain-specific blockchain creating a deterministic financial paradigm.
 
-> Katal implements a [taxonomy](https://www.actusfrf.org/taxonomy) of financial contracts which are mutual agreements between counterparties to exchange cash flows. These financial contracts are homogeneous in terms of the cash flow patterns they describe. The taxonomy can be seen as a _standard framework_ with which nearly every [financial instrument](https://en.wikipedia.org/wiki/Financial_instrument) we see in _finance_ today can be broken down.
+> Katal implements a [taxonomy](https://www.actusfrf.org/taxonomy) of financial contracts which are mutual agreements between counterparties to exchange cash flows. These financial contracts are homogeneous in terms of the cash flow patterns they describe. The taxonomy can be seen as a _standard framework_ with which nearly every [financial instrument](https://en.wikipedia.org/wiki/Financial_instrument) we see in _finance_ today can be broken down and its underlying cash flows analyzed.
 
 > Katal is based on [Substrate](https://github.com/paritytech/substrate) and aims to connect to the multichain framework [Polkadot](https://polkadot.network) to interact with assets
 > of [other connected blockchains](https://forum.web3.foundation/t/teams-building-on-polkadot/67) as well as to allow other connected blockchains to have access to
