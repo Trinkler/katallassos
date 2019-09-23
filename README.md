@@ -4,7 +4,7 @@
 
 > [Katal](https://katalchain.com) is a domain-specific blockchain creating a deterministic financial paradigm.
 
-> Katal implements a [taxonomy](https://www.actusfrf.org/taxonomy) of financial contracts which are mutual agreements between counterparties to exchange cash flows. The taxonomy can be seen as a _standard framework_ with which nearly every [financial instrument](https://en.wikipedia.org/wiki/Financial_instrument) we see in _finance_ today can be broken down into financial contracts and its underlying cash flows analyzed.
+> Katal implements a [classification](https://www.actusfrf.org/taxonomy) of _contract types_ which are mutual agreements between counterparties to exchange cash flows. Nearly every [financial instrument](https://en.wikipedia.org/wiki/Financial_instrument) can be broken down into contract types.
 
 > Katal is based on [Substrate](https://github.com/paritytech/substrate) and aims to connect to the multichain framework [Polkadot](https://polkadot.network) to interact with assets
 > of [other connected blockchains](https://forum.web3.foundation/t/teams-building-on-polkadot/67) as well as to allow other connected blockchains to have access to
@@ -40,7 +40,7 @@ katal # Synchronize chain data
 - [Fixed-point arithmetic](https://github.com/Trinkler/katal-chain/tree/master/modules/reals)
 - [Time in ISO8601 format](https://github.com/Trinkler/katal-chain/tree/master/modules/time)
 - [Permissioned Oracle](https://github.com/Trinkler/katal-chain/tree/master/modules/oracle)
-- [Financial Contracts](https://github.com/Trinkler/katal-chain/tree/master/modules/contracts)
+- [Contract Types](https://github.com/Trinkler/katal-chain/tree/master/modules/contracts)
 
 ### Additional Resources
 
