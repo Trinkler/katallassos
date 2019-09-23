@@ -19,6 +19,8 @@ use parity_codec::{Decode, Encode};
 use primitives::H256;
 use runtime_std::prelude::*;
 use support::{decl_module, decl_storage, dispatch::Result, StorageMap, StorageValue};
+// This import is used to convert the timestamp to a Time.
+use runtime_primitives::traits::As;
 
 // Importing crates from Katal's runtime.
 use structures::*;
@@ -44,7 +46,7 @@ use utilities::*;
 type MyResult<T> = runtime_std::result::Result<T, &'static str>;
 
 // This module's configuration trait.
-pub trait Trait: system::Trait + oracle::Trait {}
+pub trait Trait: system::Trait + oracle::Trait + timestamp::Trait {}
 
 // This module's storage items.
 decl_storage! {

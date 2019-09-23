@@ -647,6 +647,10 @@ mod tests {
         type Event = ();
         type Log = DigestItem;
     }
+    impl timestamp::Trait for Test {
+        type Moment = u64;
+        type OnTimestampSet = ();
+    }
     impl oracle::Trait for Test {}
     impl Trait for Test {}
     type Contracts = Module<Test>;
