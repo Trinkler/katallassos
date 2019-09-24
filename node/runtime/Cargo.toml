@@ -138,6 +138,11 @@ edition = "2018"
   path = "../../modules/oracle"
   default-features = false
 
+  [dependencies.assets]
+  package = "modules-assets"
+  path = "../../modules/assets"
+  default-features = false
+
 [features]
 default = ["std"]
 std = [
@@ -161,5 +166,6 @@ std = [
   "consensus-aura/std",
   "offchain-primitives/std",
   "contracts/std",
-  "oracle/std"
+  "oracle/std",
+  "assets/std"
 ]

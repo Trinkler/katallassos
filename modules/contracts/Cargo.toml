@@ -16,6 +16,7 @@ std = [
 	"system/std",
 	"timestamp/std",
 	"oracle/std",
+	"assets/std",
 	"structures/std",
 ]
 
@@ -71,6 +72,11 @@ default-features = false
 [dependencies.oracle]
 package = "modules-oracle"
 path = "../oracle"
+default-features = false
+
+[dependencies.assets]
+package = "modules-assets"
+path = "../assets"
 default-features = false
 
 [dependencies.structures]

@@ -7,16 +7,35 @@ impl<T: Trait> Module<T> {
         let id = state.attributes.contract_id;
 
         // Calculating the resulting contract state.
+        let mut payoff = Real::from(0);
         match state.attributes.contract_type {
             Some(ContractType::PAM) => {
-                state = Self::progress_pam(event, state)?;
+                let result = Self::progress_pam(event, state)?;
+                state = result.0;
+                payoff = result.1;
             }
             _ => {
-                state = Err("Contract type not supported")?;
+                Err("Contract type not supported")?;
             }
         }
 
-        // Note: The payoff calls to the issuer module should happen here.
+        // Executing the payoff.
+        // Note: not sure if those unwrap() will not panic.
+        if payoff >= Real::from(0) {
+            <assets::Module<T>>::transfer(
+                state.attributes.counterparty_id.unwrap(),
+                state.attributes.creator_id.unwrap(),
+                state.attributes.currency.unwrap(),
+                payoff.abs(),
+            )?;
+        } else {
+            <assets::Module<T>>::transfer(
+                state.attributes.creator_id.unwrap(),
+                state.attributes.counterparty_id.unwrap(),
+                state.attributes.currency.unwrap(),
+                payoff.abs(),
+            )?;
+        }
 
         // Storing the contract state.
         <Contracts<T>>::insert(id, state);

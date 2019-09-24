@@ -46,7 +46,7 @@ use utilities::*;
 type MyResult<T> = runtime_std::result::Result<T, &'static str>;
 
 // This module's configuration trait.
-pub trait Trait: system::Trait + oracle::Trait + timestamp::Trait {}
+pub trait Trait: system::Trait + oracle::Trait + assets::Trait + timestamp::Trait {}
 
 // This module's storage items.
 decl_storage! {

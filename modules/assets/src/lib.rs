@@ -47,12 +47,25 @@ decl_module! {
     // The module declaration.
     pub struct Module<T: Trait> for enum Call where origin: T::Origin {
 
-        // Dispatchable function can call both internal functions and pure functions.
-        // But they can only be called by internal functions. However, you should avoid
-        // having these functions called internally, they are for external use.
         pub fn dispatch_transfer(origin,from_address: H256, to_address: H256, asset_id: u32, amount: Real) -> Result {
             // Call corresponding internal function.
             Self::transfer(from_address, to_address, asset_id, amount)?;
+
+            // Return Ok if successful.
+            Ok(())
+        }
+
+        pub fn dispatch_mint(origin, to_address: H256, asset_id: u32, amount: Real) -> Result {
+            // Call corresponding internal function.
+            Self::mint(to_address, asset_id, amount)?;
+
+            // Return Ok if successful.
+            Ok(())
+        }
+
+        pub fn dispatch_burn(origin,from_address: H256, asset_id: u32, amount: Real) -> Result {
+            // Call corresponding internal function.
+            Self::burn(from_address, asset_id, amount)?;
 
             // Return Ok if successful.
             Ok(())
