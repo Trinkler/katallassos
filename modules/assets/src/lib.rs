@@ -24,8 +24,10 @@ use structures::Real;
 use support::{decl_module, decl_storage, dispatch::Result, StorageMap};
 
 // Importing the rest of the files in this crate.
+mod burn;
 mod mint;
 mod transfer;
+use burn::*;
 use mint::*;
 use transfer::*;
 

@@ -2,15 +2,10 @@ use super::*;
 
 //
 impl<T: Trait> Module<T> {
-    pub fn transfer(from_address: H256, to_address: H256, asset_id: u32, amount: Real) -> Result {
+    pub fn burn(from_address: H256, asset_id: u32, amount: Real) -> Result {
         // Checking that amount is non-negative.
         if amount < Real::from(0) {
             return Err("Amount can't be negative.");
-        }
-
-        // Checking that from_address and to_address are different.
-        if from_address == to_address {
-            return Err("From_address and to_address can't be equal.");
         }
 
         // Checking that from_address and asset_id exists.
@@ -23,20 +18,16 @@ impl<T: Trait> Module<T> {
             return Err("From_address doesn't have enough balance.");
         }
 
+        // Decreasing supply.
+        let new_supply = <AssetsSupply<T>>::get(asset_id) - amount;
+        <AssetsSupply<T>>::insert(asset_id, new_supply);
+
         // Deducting amount from from_address.
         let new_balance = <AssetsBalances<T>>::get((asset_id, from_address)) - amount;
         if new_balance == Real::from(0) {
             <AssetsBalances<T>>::remove((asset_id, from_address));
         } else {
             <AssetsBalances<T>>::insert((asset_id, from_address), new_balance);
-        }
-
-        // Crediting amount to to_address.
-        if <AssetsBalances<T>>::exists((asset_id, to_address)) {
-            let new_balance = <AssetsBalances<T>>::get((asset_id, to_address)) + amount;
-            <AssetsBalances<T>>::insert((asset_id, to_address), new_balance);
-        } else {
-            <AssetsBalances<T>>::insert((asset_id, to_address), amount);
         }
 
         // Return Ok.
@@ -87,26 +78,23 @@ mod tests {
     }
 
     #[test]
-    fn transfer_works() {
+    fn burn_works() {
         with_externalities(&mut new_test_ext(), || {
+            let supply = Real::from(1000);
             let from_address = H256::random();
-            let from_balance = Real::from(1000);
-            let to_address = H256::random();
-            let to_balance = Real::from(200);
+            let from_balance = Real::from(450);
             let asset_id = 1;
-            let amount = Real::from(100);
+            let amount = Real::from(50);
+
+            <AssetsSupply<Test>>::insert(asset_id, supply);
             <AssetsBalances<Test>>::insert((asset_id, from_address), from_balance);
-            <AssetsBalances<Test>>::insert((asset_id, to_address), to_balance);
 
-            Assets::transfer(from_address, to_address, asset_id, amount);
+            Assets::burn(from_address, asset_id, amount);
 
+            assert_eq!(supply - amount, <AssetsSupply<Test>>::get(asset_id));
             assert_eq!(
                 from_balance - amount,
                 <AssetsBalances<Test>>::get((asset_id, from_address))
-            );
-            assert_eq!(
-                to_balance + amount,
-                <AssetsBalances<Test>>::get((asset_id, to_address))
             );
         });
     }
