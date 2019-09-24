@@ -35,14 +35,14 @@ cargo install --locked --path . # Build and install native binaries
 katal # Synchronize chain data
 ```
 
-### Interface
+### Usage
 
-To access an interface go to [polkadot.js.org](https://polkadot.js.org/apps/#/settings).
+To access the [Katal Testnet](https://telemetry.polkadot.io/#list/Katal) using the great [Polkadot JS Apps Interface](https://polkadot.js.org/apps/#/explorer) do the following:
 
-- In `Settings` tab under the `General` section select `wss://endpoint.katalchain.com` as remote endpoint to connect to.
-- In `Settings` tab under the `Developer` section copy paste the [custom types definitions](https://raw.githubusercontent.com/Trinkler/katal-chain/fix/README/interface/types.json) into the interface and click the "Save" button.
+1. In [Settings](https://polkadot.js.org/apps/#/settings) tab under the `General` section select `wss://endpoint.katalchain.com` as remote endpoint.
+2. In [Settings](https://polkadot.js.org/apps/#/settings) tab under the `Developer` section copy paste the [custom types definitions](https://raw.githubusercontent.com/Trinkler/katal-chain/fix/README/interface/types.json) into the interface and click the "Save" button.
 
-All done you are now able to interact with Katal for example you can deploy a contract under the `Extrinsics` tab using the `contracts` module.
+All done you are now able to for example deploy a contract under the [Extrinsics](https://polkadot.js.org/apps/#/extrinsics) tab using the `contracts` module.
 
 ### Custom Modules
 
