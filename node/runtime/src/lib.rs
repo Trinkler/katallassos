@@ -194,6 +194,8 @@ impl contracts::Trait for Runtime {}
 
 impl oracle::Trait for Runtime {}
 
+impl assets::Trait for Runtime {}
+
 construct_runtime!(
 	pub enum Runtime with Log(InternalLog: DigestItem<Hash, AuthorityId, AuthoritySignature>) where
 		Block = Block,
@@ -209,6 +211,7 @@ construct_runtime!(
 		Sudo: sudo,
 		Contracts: contracts::{Module, Call, Storage},
 		Oracle: oracle::{Module, Call, Storage},
+        Assets: assets::{Module, Call, Storage},
 	}
 );
 

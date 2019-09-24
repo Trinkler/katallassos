@@ -652,6 +652,7 @@ mod tests {
         type OnTimestampSet = ();
     }
     impl oracle::Trait for Test {}
+    impl assets::Trait for Test {}
     impl Trait for Test {}
     type Contracts = Module<Test>;
 
@@ -676,7 +677,7 @@ mod tests {
             // Starts a PAM contract with the wrong attributes.
             attributes.contract_id = id;
             attributes.contract_type = Some(ContractType::PAM);
-            attributes.currency = Some(H256::random());
+            attributes.currency = Some(1);
             attributes.day_count_convention = Some(DayCountConvention::_A365);
             attributes.initial_exchange_date = Time::from_values(1969, 07, 21, 02, 56, 15);
             attributes.maturity_date = Time::from_values(1979, 07, 21, 02, 56, 15);

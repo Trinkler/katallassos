@@ -11,48 +11,34 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
+//! # Assets module
+//!
+
 #![cfg_attr(not(feature = "std"), no_std)]
 // The above line is needed to compile the Wasm binaries.
 
-// Importing crates necessary to work with Substrate.
+// Importing crates declared in the cargo.toml file.
 use parity_codec::{Decode, Encode};
 use primitives::H256;
-use runtime_std::prelude::*;
-use support::{decl_module, decl_storage, dispatch::Result, StorageMap, StorageValue};
-// This import is used to convert the timestamp to a Time.
-use runtime_primitives::traits::As;
-
-// Importing crates from Katal's runtime.
-use structures::*;
+use structures::Real;
+use support::{decl_module, decl_storage, dispatch::Result, StorageMap};
 
 // Importing the rest of the files in this crate.
-mod contract_state;
-mod contract_types;
-mod deploy;
-mod init;
-mod progress;
-mod scheduler;
-mod utilities;
-use contract_state::*;
-use contract_types::*;
-use deploy::*;
-use init::*;
-use progress::*;
-use scheduler::*;
-use utilities::*;
-
-// Defines an alias for the Result type. It has the name MyResult because Substrate
-// already uses the name Result for their own type Result<(), &'static str>.
-type MyResult<T> = runtime_std::result::Result<T, &'static str>;
+mod burn;
+mod mint;
+mod transfer;
+use burn::*;
+use mint::*;
+use transfer::*;
 
 // This module's configuration trait.
-pub trait Trait: system::Trait + oracle::Trait + assets::Trait + timestamp::Trait {}
+pub trait Trait: system::Trait {}
 
 // This module's storage items.
 decl_storage! {
-    trait Store for Module<T: Trait> as ContractsStorage {
-        pub Contracts: map H256 => ContractState;
-        pub Scheduler: MinHeap<ScheduledEvent> = MinHeap::new();
+    trait Store for Module<T: Trait> as AssetsStorage {
+        pub AssetsBalances: map (u32, H256) => Real;
+        pub AssetsSupply: map u32 => Real;
     }
 }
 
@@ -61,9 +47,25 @@ decl_module! {
     // The module declaration.
     pub struct Module<T: Trait> for enum Call where origin: T::Origin {
 
-        pub fn dispatch_deploy(origin, attributes: Attributes) -> Result {
+        pub fn dispatch_transfer(origin,from_address: H256, to_address: H256, asset_id: u32, amount: Real) -> Result {
             // Call corresponding internal function.
-            Self::deploy(attributes)?;
+            Self::transfer(from_address, to_address, asset_id, amount)?;
+
+            // Return Ok if successful.
+            Ok(())
+        }
+
+        pub fn dispatch_mint(origin, to_address: H256, asset_id: u32, amount: Real) -> Result {
+            // Call corresponding internal function.
+            Self::mint(to_address, asset_id, amount)?;
+
+            // Return Ok if successful.
+            Ok(())
+        }
+
+        pub fn dispatch_burn(origin,from_address: H256, asset_id: u32, amount: Real) -> Result {
+            // Call corresponding internal function.
+            Self::burn(from_address, asset_id, amount)?;
 
             // Return Ok if successful.
             Ok(())

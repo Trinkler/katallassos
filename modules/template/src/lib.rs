@@ -23,7 +23,6 @@
 // Importing crates declared in the cargo.toml file.
 use parity_codec::{Decode, Encode};
 use support::{decl_module, decl_storage, dispatch::Result, StorageMap, StorageValue};
-use system::ensure_root;
 
 // Importing the rest of the files in this crate.
 mod internal_function;
@@ -60,9 +59,6 @@ decl_module! {
         // But they can only be called by internal functions. However, you should avoid
         // having these functions called internally, they are for external use.
         pub fn dispatch_function(origin) -> Result {
-            // Ensuring that origin is root.
-            ensure_root(origin)?;
-
             // Call corresponding internal function.
             Self::internal_function()?;
 

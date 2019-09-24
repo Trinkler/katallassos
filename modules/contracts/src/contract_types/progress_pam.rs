@@ -1,9 +1,12 @@
 use super::*;
 
 // TODO: Add support for user-initiated events.
-// TODO: Add the calls to transfer tokens (issuer module?).
+// TODO: Add the calls to transfer tokens (assets module?).
 impl<T: Trait> Module<T> {
-    pub fn progress_pam(event: ContractEvent, mut state: ContractState) -> MyResult<ContractState> {
+    pub fn progress_pam(
+        event: ContractEvent,
+        mut state: ContractState,
+    ) -> MyResult<(ContractState, Real)> {
         // Getting t0 from the status_date attribute since they are equal.
         // (And status_date is not supposed to change)
         let t0 = state.attributes.status_date;
@@ -46,8 +49,8 @@ impl<T: Trait> Module<T> {
 
                 state.variables.last_event_date = event.time;
 
-                // Return the contract state
-                Ok(state)
+                // Return the contract state and payoff
+                Ok((state, payoff))
             }
             ContractEventType::PR => {
                 // Payoff Function
@@ -62,8 +65,8 @@ impl<T: Trait> Module<T> {
 
                 state.variables.last_event_date = event.time;
 
-                // Return the contract state
-                Ok(state)
+                // Return the contract state and payoff
+                Ok((state, payoff))
             }
             ContractEventType::PP => {
                 // Payoff Function
@@ -115,18 +118,19 @@ impl<T: Trait> Module<T> {
 
                 state.variables.last_event_date = event.time;
 
-                // Return the contract state
-                Ok(state)
+                // Return the contract state and payoff
+                Ok((state, payoff))
             }
             ContractEventType::PY => {
                 // Payoff Function
+                let mut payoff = Real::from(0);
                 if state.attributes.penalty_type == Some(PenaltyType::A) {
-                    let payoff = utilities::contract_default(state.variables.performance)
+                    payoff = utilities::contract_default(state.variables.performance)
                         * utilities::contract_role_sign(state.attributes.contract_role)
                         * state.attributes.penalty_rate;
                 }
                 if state.attributes.penalty_type == Some(PenaltyType::N) {
-                    let payoff = utilities::contract_default(state.variables.performance)
+                    payoff = utilities::contract_default(state.variables.performance)
                         * utilities::contract_role_sign(state.attributes.contract_role)
                         * utilities::year_fraction(
                             state.variables.last_event_date,
@@ -137,7 +141,7 @@ impl<T: Trait> Module<T> {
                         * state.attributes.penalty_rate;
                 }
                 if state.attributes.penalty_type == Some(PenaltyType::I) {
-                    let payoff = utilities::contract_default(state.variables.performance)
+                    payoff = utilities::contract_default(state.variables.performance)
                         * utilities::contract_role_sign(state.attributes.contract_role)
                         * utilities::year_fraction(
                             state.variables.last_event_date,
@@ -197,18 +201,19 @@ impl<T: Trait> Module<T> {
 
                 state.variables.last_event_date = event.time;
 
-                // Return the contract state
-                Ok(state)
+                // Return the contract state and payoff
+                Ok((state, payoff))
             }
             ContractEventType::FP => {
                 // Payoff Function
+                let mut payoff = Real::from(0);
                 if state.attributes.fee_basis == Some(FeeBasis::A) {
-                    let payoff = utilities::contract_default(state.variables.performance)
+                    payoff = utilities::contract_default(state.variables.performance)
                         * utilities::contract_role_sign(state.attributes.contract_role)
                         * state.attributes.fee_rate;
                 }
                 if state.attributes.fee_basis == Some(FeeBasis::N) {
-                    let payoff = utilities::contract_default(state.variables.performance)
+                    payoff = utilities::contract_default(state.variables.performance)
                         * utilities::contract_role_sign(state.attributes.contract_role)
                         * state.attributes.fee_rate
                         * utilities::year_fraction(
@@ -233,8 +238,8 @@ impl<T: Trait> Module<T> {
 
                 state.variables.last_event_date = event.time;
 
-                // Return the contract state
-                Ok(state)
+                // Return the contract state and payoff
+                Ok((state, payoff))
             }
             ContractEventType::PRD => {
                 // Payoff Function
@@ -292,8 +297,8 @@ impl<T: Trait> Module<T> {
 
                 state.variables.last_event_date = event.time;
 
-                // Return the contract state
-                Ok(state)
+                // Return the contract state and payoff
+                Ok((state, payoff))
             }
             ContractEventType::TD => {
                 // Payoff Function
@@ -319,8 +324,8 @@ impl<T: Trait> Module<T> {
 
                 state.variables.last_event_date = event.time;
 
-                // Return the contract state
-                Ok(state)
+                // Return the contract state and payoff
+                Ok((state, payoff))
             }
             ContractEventType::IP => {
                 // Payoff Function
@@ -370,12 +375,12 @@ impl<T: Trait> Module<T> {
 
                 state.variables.last_event_date = event.time;
 
-                // Return the contract state
-                Ok(state)
+                // Return the contract state and payoff
+                Ok((state, payoff))
             }
             ContractEventType::IPCI => {
                 // Payoff Function
-                // 0.0 (no payoff)
+                let payoff = Real::from(0);
 
                 // State Transition Function
                 let nominal_value_1_minus = state.variables.nominal_value_1; // Temporary variable.
@@ -424,12 +429,12 @@ impl<T: Trait> Module<T> {
 
                 state.variables.last_event_date = event.time;
 
-                // Return the contract state
-                Ok(state)
+                // Return the contract state and payoff
+                Ok((state, payoff))
             }
             ContractEventType::RR => {
                 // Payoff Function
-                // 0.0 (no payoff)
+                let payoff = Real::from(0);
 
                 // State Transition Function
                 state.variables.nominal_accrued_1 = state.variables.nominal_accrued_1
@@ -494,12 +499,12 @@ impl<T: Trait> Module<T> {
 
                 state.variables.last_event_date = event.time;
 
-                // Return the contract state
-                Ok(state)
+                // Return the contract state and payoff
+                Ok((state, payoff))
             }
             ContractEventType::RRF => {
                 // Payoff Function
-                // 0.0 (no payoff)
+                let payoff = Real::from(0);
 
                 // State Transition Function
                 state.variables.nominal_accrued_1 = state.variables.nominal_accrued_1
@@ -545,12 +550,12 @@ impl<T: Trait> Module<T> {
 
                 state.variables.last_event_date = event.time;
 
-                // Return the contract state
-                Ok(state)
+                // Return the contract state and payoff
+                Ok((state, payoff))
             }
             ContractEventType::SC => {
                 // Payoff Function
-                // 0.0 (no payoff)
+                let payoff = Real::from(0);
 
                 // State Transition Function
                 state.variables.nominal_accrued_1 = state.variables.nominal_accrued_1
@@ -624,12 +629,12 @@ impl<T: Trait> Module<T> {
 
                 state.variables.last_event_date = event.time;
 
-                // Return the contract state
-                Ok(state)
+                // Return the contract state and payoff
+                Ok((state, payoff))
             }
             ContractEventType::CD => {
                 // Payoff Function
-                // 0.0 (no payoff)
+                let payoff = Real::from(0);
 
                 // State Transition Function
                 state.variables.nominal_accrued_1 = state.variables.nominal_accrued_1
@@ -675,8 +680,8 @@ impl<T: Trait> Module<T> {
 
                 state.variables.last_event_date = event.time;
 
-                // Return the contract state
-                Ok(state)
+                // Return the contract state and payoff
+                Ok((state, payoff))
             }
             _ => Err("Event not applicable"),
         }
@@ -719,6 +724,7 @@ mod tests {
         type OnTimestampSet = ();
     }
     impl oracle::Trait for Test {}
+    impl assets::Trait for Test {}
     impl Trait for Test {}
     type Contracts = Module<Test>;
 
@@ -738,7 +744,7 @@ mod tests {
             let mut attributes = Attributes::new(id);
             attributes.contract_id = id;
             attributes.contract_type = Some(ContractType::PAM);
-            attributes.currency = Some(H256::random());
+            attributes.currency = Some(1);
             attributes.day_count_convention = Some(DayCountConvention::_30E360);
             attributes.initial_exchange_date = Time::from_values(2015, 01, 02, 00, 00, 00);
             attributes.maturity_date = Time::from_values(2015, 04, 02, 00, 00, 00);
@@ -761,7 +767,7 @@ mod tests {
                     ContractEventType::IED
                 )
             );
-            state = Contracts::progress_pam(state.schedule[0], state).unwrap();
+            state = Contracts::progress_pam(state.schedule[0], state).unwrap().0;
             assert_eq!(state.variables.nominal_value_1, Real::from(1000));
             assert_eq!(state.variables.nominal_rate, Real::from(0));
             assert_eq!(state.variables.nominal_accrued_1, Real::from(0));
@@ -776,7 +782,7 @@ mod tests {
                     ContractEventType::PR
                 )
             );
-            state = Contracts::progress_pam(state.schedule[2], state).unwrap();
+            state = Contracts::progress_pam(state.schedule[2], state).unwrap().0;
             assert_eq!(state.variables.nominal_value_1, Real::from(0));
             assert_eq!(state.variables.nominal_rate, Real::from(0));
             assert_eq!(state.variables.nominal_accrued_1, Real::from(0));

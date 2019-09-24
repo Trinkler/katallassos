@@ -1,5 +1,5 @@
 [package]
-name = "modules-contracts"
+name = "modules-assets"
 version = "0.1.0"
 authors = ["Trinkler Software <company@trinkler.software>"]
 edition = "2018"
@@ -7,17 +7,12 @@ edition = "2018"
 [features]
 default = ["std"]
 std = [
-	"serde",
-	"parity-codec/std",
-	"runtime_std/std",
-	"primitives/std",
-	"runtime_primitives/std",
-	"support/std",
-	"system/std",
-	"timestamp/std",
-	"oracle/std",
-	"assets/std",
-	"structures/std",
+  "serde",
+  "parity-codec/std",
+  "primitives/std",
+  "support/std",
+  "system/std",
+  "structures/std",
 ]
 
 # Rust crates
@@ -31,20 +26,8 @@ default-features = false
 features = ["derive"]
 
 # Substrate Core crates
-[dependencies.runtime_std]
-package = "sr-std"
-git = "https://github.com/paritytech/substrate.git"
-branch = "v1.0"
-default-features = false
-
 [dependencies.primitives]
 package = "substrate-primitives"
-git = "https://github.com/paritytech/substrate.git"
-branch = "v1.0"
-default-features = false
-
-[dependencies.runtime_primitives]
-package = "sr-primitives"
 git = "https://github.com/paritytech/substrate.git"
 branch = "v1.0"
 default-features = false
@@ -62,23 +45,7 @@ git = "https://github.com/paritytech/substrate.git"
 branch = "v1.0"
 default-features = false
 
-[dependencies.timestamp]
-package = "srml-timestamp"
-git = "https://github.com/paritytech/substrate.git"
-branch = "v1.0"
-default-features = false
-
 # Katal crates
-[dependencies.oracle]
-package = "modules-oracle"
-path = "../oracle"
-default-features = false
-
-[dependencies.assets]
-package = "modules-assets"
-path = "../assets"
-default-features = false
-
 [dependencies.structures]
 package = "modules-structures"
 path = "../structures"
@@ -90,7 +57,12 @@ package = "sr-io"
 git = "https://github.com/paritytech/substrate.git"
 branch = "v1.0"
 
-#[dev-dependencies.runtime_primitives]
-#package = "sr-primitives"
-#git = "https://github.com/paritytech/substrate.git"
-#branch = "v1.0"
+[dev-dependencies.runtime_primitives]
+package = "sr-primitives"
+git = "https://github.com/paritytech/substrate.git"
+branch = "v1.0"
+
+[dev-dependencies.runtime_std]
+package = "sr-std"
+git = "https://github.com/paritytech/substrate.git"
+branch = "v1.0"

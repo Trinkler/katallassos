@@ -25,7 +25,6 @@
 // Importing crates necessary to work with Substrate.
 use parity_codec::{Decode, Encode};
 use primitives::H256;
-use runtime_std::prelude::*;
 use support::{decl_module, decl_storage, dispatch::Result, StorageMap};
 use system::ensure_root;
 // This import is used to convert the timestamp to a Time.
