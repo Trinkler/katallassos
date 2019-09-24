@@ -35,6 +35,15 @@ cargo install --locked --path . # Build and install native binaries
 katal # Synchronize chain data
 ```
 
+### Interface
+
+To access an interface go to [polkadot.js.org](https://polkadot.js.org/apps/#/settings).
+
+- In `Settings` tab under the `General` section select `wss://endpoint.katalchain.com` as remote endpoint to connect to.
+- In `Settings` tab under the `Developer` section copy paste the [custom types definitions](./interface/types.json) into the interface and click the "Save" button.
+
+All done you are now able to interact with Katal for example you can deploy a contract under the `Extrinsics` tab using the `contracts` module.
+
 ### Custom Modules
 
 - [Contract Types](https://github.com/Trinkler/katal-chain/tree/master/modules/contracts)
