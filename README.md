@@ -7,8 +7,7 @@
 > Katal implements a [classification](https://www.actusfrf.org/taxonomy) of _contract types_ which are mutual agreements between counterparties to exchange cash flows. Nearly every [financial instrument](https://en.wikipedia.org/wiki/Financial_instrument) can be broken down into contract types.
 
 > Katal is based on [Substrate](https://github.com/paritytech/substrate) and aims to connect to the multichain framework [Polkadot](https://polkadot.network) to interact with assets
-> of [other connected blockchains](https://forum.web3.foundation/t/teams-building-on-polkadot/67) as well as to allow other connected blockchains to have access to
-> financial contracts built using Katal. View on [Telemetry](https://telemetry.polkadot.io/#list/Katal).
+> of [other connected blockchains](https://forum.web3.foundation/t/teams-building-on-polkadot/67) as well as to allow other connected blockchains to have access to contract types built using Katal. View on [Telemetry](https://telemetry.polkadot.io/#list/Katal).
 
 ### Setup
 
@@ -46,14 +45,13 @@ All done you are now able to for example deploy a contract under the [Extrinsics
 
 ### Custom Modules
 
-- [Contract Types](https://github.com/Trinkler/katal-chain/tree/master/modules/contracts)
-- [Mintable Asset](https://github.com/Trinkler/katal-chain/tree/master/modules/assets)
-- [Composite Data Types](https://github.com/Trinkler/katal-chain/tree/master/modules/structures)
+- [Contracts](https://github.com/Trinkler/katal-chain/tree/master/modules/contracts)
+- [Assets](https://github.com/Trinkler/katal-chain/tree/master/modules/assets)
+- [Structures](https://github.com/Trinkler/katal-chain/tree/master/modules/structures)
   - [Safe fixed-point arithmetic](https://github.com/Trinkler/katal-chain/tree/master/modules/structures/src/reals.rs)
   - [Time in ISO8601 format](https://github.com/Trinkler/katal-chain/tree/master/modules/structures/src/time.rs)
   - [Priority queue using a binary heap](https://github.com/Trinkler/katal-chain/tree/master/modules/structures/src/min_heap.rs)
-- [Permissioned Oracle](https://github.com/Trinkler/katal-chain/tree/master/modules/oracle)
-
+- [Oracle](https://github.com/Trinkler/katal-chain/tree/master/modules/oracle)
 
 ### Additional Resources
 
