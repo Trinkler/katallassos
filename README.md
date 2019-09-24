@@ -37,13 +37,18 @@ katal # Synchronize chain data
 
 ### Custom Modules
 
-- [Fixed-point arithmetic](https://github.com/Trinkler/katal-chain/tree/master/modules/reals)
-- [Time in ISO8601 format](https://github.com/Trinkler/katal-chain/tree/master/modules/time)
-- [Permissioned Oracle](https://github.com/Trinkler/katal-chain/tree/master/modules/oracle)
 - [Contract Types](https://github.com/Trinkler/katal-chain/tree/master/modules/contracts)
+- [Mintable Asset](https://github.com/Trinkler/katal-chain/tree/master/modules/assets)
+- [Composite Data Types](https://github.com/Trinkler/katal-chain/tree/master/modules/structures)
+  - [Fixed-point arithmetic](https://github.com/Trinkler/katal-chain/tree/master/modules/structures/src/reals.rs)
+  - [Time in ISO8601 format](https://github.com/Trinkler/katal-chain/tree/master/modules/structures/src/time.rs)
+  - [Priority queue using a binary heap](https://github.com/Trinkler/katal-chain/tree/master/modules/structures/src/min_heap.rs)
+- [Permissioned Oracle](https://github.com/Trinkler/katal-chain/tree/master/modules/oracle)
+
 
 ### Additional Resources
 
+- [Read Research Papers](https://github.com/Trinkler/katal-research)
 - [Subscribe to Newsletter](https://software.us19.list-manage.com/subscribe?u=48964a7b4b5e9480604838bf2&id=982968577c)
 - [Follow on Twitter](https://twitter.com/katalchain)
 - [Follow on Medium](https://medium.com/@katalchain)
