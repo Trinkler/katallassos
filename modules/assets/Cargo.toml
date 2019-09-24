@@ -1,6 +1,6 @@
 [package]
-name = "modules-oracle"
-version = "0.0.2"
+name = "modules-assets"
+version = "0.1.0"
 authors = ["Trinkler Software <company@trinkler.software>"]
 edition = "2018"
 
@@ -10,11 +10,9 @@ std = [
   "serde",
   "parity-codec/std",
   "primitives/std",
-  "runtime_primitives/std",
   "support/std",
-  "timestamp/std",
   "system/std",
-	"structures/std",
+  "structures/std",
 ]
 
 # Rust crates
@@ -34,12 +32,6 @@ git = "https://github.com/paritytech/substrate.git"
 branch = "v1.0"
 default-features = false
 
-[dependencies.runtime_primitives]
-package = "sr-primitives"
-git = "https://github.com/paritytech/substrate.git"
-branch = "v1.0"
-default-features = false
-
 # SRML crates
 [dependencies.support]
 package = "srml-support"
@@ -49,12 +41,6 @@ default-features = false
 
 [dependencies.system]
 package = "srml-system"
-git = "https://github.com/paritytech/substrate.git"
-branch = "v1.0"
-default-features = false
-
-[dependencies.timestamp]
-package = "srml-timestamp"
 git = "https://github.com/paritytech/substrate.git"
 branch = "v1.0"
 default-features = false

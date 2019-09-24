@@ -11,41 +11,30 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-//! # Oracle module
+//! # Assets module
 //!
-//! ## Overview
-//! The Oracle module allows the root user to create and update oracles. An oracle in this
-//! context is simply a structure that holds a value (implemented using Real) and a timestamp
-//! (implemented using Time). Each oracle is uniquely identified by a 256-bit integer
-//! (implemented using H256).
 
 #![cfg_attr(not(feature = "std"), no_std)]
 // The above line is needed to compile the Wasm binaries.
 
-// Importing crates necessary to work with Substrate.
+// Importing crates declared in the cargo.toml file.
 use parity_codec::{Decode, Encode};
 use primitives::H256;
+use structures::Real;
 use support::{decl_module, decl_storage, dispatch::Result, StorageMap};
-use system::ensure_root;
-// This import is used to convert the timestamp to a Time.
-use runtime_primitives::traits::As;
-
-// Importing crates from Katal's runtime.
-use structures::*;
 
 // Importing the rest of the files in this crate.
-mod oracle_state;
-mod set;
-use oracle_state::*;
-use set::*;
+mod transfer;
+use transfer::*;
 
 // This module's configuration trait.
-pub trait Trait: system::Trait + timestamp::Trait {}
+pub trait Trait: system::Trait {}
 
 // This module's storage items.
 decl_storage! {
-    trait Store for Module<T: Trait> as OracleStorage {
-        pub Oracles: map H256 => OracleState;
+    trait Store for Module<T: Trait> as AssetsStorage {
+        pub AssetsBalances: map (u32, H256) => Real;
+        pub AssetsSupply: map u32 => Real;
     }
 }
 
@@ -54,13 +43,12 @@ decl_module! {
     // The module declaration.
     pub struct Module<T: Trait> for enum Call where origin: T::Origin {
 
-        // Set the value of an existing data feed or creating a new one.
-        pub fn dispatch_set(origin, id: H256, value: Real) -> Result {
-            // Only chain root should be able to set this value.
-            ensure_root(origin)?;
-
+        // Dispatchable function can call both internal functions and pure functions.
+        // But they can only be called by internal functions. However, you should avoid
+        // having these functions called internally, they are for external use.
+        pub fn dispatch_transfer(origin,from_address: H256, to_address: H256, asset_id: u32, amount: Real) -> Result {
             // Call corresponding internal function.
-            Self::set(id, value)?;
+            Self::transfer(from_address, to_address, asset_id, amount)?;
 
             // Return Ok if successful.
             Ok(())
