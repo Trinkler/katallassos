@@ -40,7 +40,7 @@ katal # Synchronize chain data
 - [Contract Types](https://github.com/Trinkler/katal-chain/tree/master/modules/contracts)
 - [Mintable Asset](https://github.com/Trinkler/katal-chain/tree/master/modules/assets)
 - [Composite Data Types](https://github.com/Trinkler/katal-chain/tree/master/modules/structures)
-  - [Fixed-point arithmetic](https://github.com/Trinkler/katal-chain/tree/master/modules/structures/src/reals.rs)
+  - [Safe fixed-point arithmetic](https://github.com/Trinkler/katal-chain/tree/master/modules/structures/src/reals.rs)
   - [Time in ISO8601 format](https://github.com/Trinkler/katal-chain/tree/master/modules/structures/src/time.rs)
   - [Priority queue using a binary heap](https://github.com/Trinkler/katal-chain/tree/master/modules/structures/src/min_heap.rs)
 - [Permissioned Oracle](https://github.com/Trinkler/katal-chain/tree/master/modules/oracle)
