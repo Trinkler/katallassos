@@ -40,7 +40,7 @@ katal # Synchronize chain data
 To access an interface go to [polkadot.js.org](https://polkadot.js.org/apps/#/settings).
 
 - In `Settings` tab under the `General` section select `wss://endpoint.katalchain.com` as remote endpoint to connect to.
-- In `Settings` tab under the `Developer` section copy paste the [custom types definitions](./interface/types.json) into the interface and click the "Save" button.
+- In `Settings` tab under the `Developer` section copy paste the [custom types definitions](https://raw.githubusercontent.com/Trinkler/katal-chain/fix/README/interface/types.json) into the interface and click the "Save" button.
 
 All done you are now able to interact with Katal for example you can deploy a contract under the `Extrinsics` tab using the `contracts` module.
 
