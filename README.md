@@ -39,7 +39,7 @@ katal # Synchronize chain data
 To access the [Katal Testnet](https://telemetry.polkadot.io/#list/Katal) using the great [Polkadot JS Apps Interface](https://polkadot.js.org/apps/#/explorer) do the following:
 
 1. In [Settings](https://polkadot.js.org/apps/#/settings) tab under the `General` section select `wss://endpoint.katalchain.com` as remote endpoint.
-2. In [Settings](https://polkadot.js.org/apps/#/settings) tab under the `Developer` section copy paste the [custom types definitions](https://raw.githubusercontent.com/Trinkler/katal-chain/fix/README/interface/types.json) into the interface and click the "Save" button.
+2. In [Settings](https://polkadot.js.org/apps/#/settings) tab under the `Developer` section copy paste the [custom types definitions](https://raw.githubusercontent.com/Trinkler/katal-chain/master/interface/types.json) into the interface and click the "Save" button.
 
 All done you are now able to for example deploy a contract under the [Extrinsics](https://polkadot.js.org/apps/#/extrinsics) tab using the `contracts` module.
 
