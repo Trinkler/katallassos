@@ -103,7 +103,7 @@ impl Alternative {
                     )
                 }, // Constructor
                 vec![
-					"/ip4/134.209.192.55/tcp/30333/p2p/QmVUFyyWFkiDgMV2aQH6qLX5TutaxYSkDTPjeaJhjYBEhK".to_string(),
+					"/ip4/134.209.111.205/tcp/30333/p2p/QmVUFyyWFkiDgMV2aQH6qLX5TutaxYSkDTPjeaJhjYBEhK".to_string(),
 				], // Boot Nodes
                 Some(TelemetryEndpoints::new(vec![(
                     STAGING_TELEMETRY_URL.to_string(),
