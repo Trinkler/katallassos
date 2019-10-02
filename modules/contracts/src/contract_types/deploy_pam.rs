@@ -675,18 +675,18 @@ mod tests {
             assert!(result.is_err());
 
             // Starts a PAM contract with the wrong attributes.
+            attributes.counterparty_id = Some(H256::random());
+            attributes.contract_deal_date = Time::from_values(1968, 07, 21, 02, 56, 15);
             attributes.contract_id = id;
+            attributes.contract_role = Some(ContractRole::RPA);
             attributes.contract_type = Some(ContractType::PAM);
+            attributes.creator_id = Some(H256::random());
             attributes.currency = Some(1);
             attributes.day_count_convention = Some(DayCountConvention::_A365);
             attributes.initial_exchange_date = Time::from_values(1969, 07, 21, 02, 56, 15);
             attributes.maturity_date = Time::from_values(1979, 07, 21, 02, 56, 15);
             attributes.nominal_interest_rate = Real::from(1000);
             attributes.notional_principal = Real(Some(50000000));
-            attributes.contract_deal_date = Time::from_values(1968, 07, 21, 02, 56, 15);
-            attributes.contract_role = Some(ContractRole::RPA);
-            attributes.creator_id = Some(H256::random());
-            attributes.counterparty_id = Some(H256::random());
             let result = Contracts::deploy_pam(t0, attributes.clone());
             assert!(result.is_err());
 

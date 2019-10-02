@@ -742,21 +742,21 @@ mod tests {
             let t0 = Time::from_values(2015, 01, 01, 00, 00, 00);
             let id = H256::random();
             let mut attributes = Attributes::new(id);
+            attributes.contract_deal_date = Time::from_values(2015, 01, 01, 00, 00, 00);
             attributes.contract_id = id;
+            attributes.contract_role = Some(ContractRole::RPA);
             attributes.contract_type = Some(ContractType::PAM);
+            attributes.counterparty_id = Some(H256::random());
+            attributes.creator_id = Some(H256::random());
             attributes.currency = Some(1);
             attributes.day_count_convention = Some(DayCountConvention::_30E360);
             attributes.initial_exchange_date = Time::from_values(2015, 01, 02, 00, 00, 00);
             attributes.maturity_date = Time::from_values(2015, 04, 02, 00, 00, 00);
             attributes.nominal_interest_rate = Real::from(0);
             attributes.notional_principal = Real::from(1000);
-            attributes.contract_deal_date = Time::from_values(2015, 01, 01, 00, 00, 00);
-            attributes.contract_role = Some(ContractRole::RPA);
-            attributes.creator_id = Some(H256::random());
-            attributes.counterparty_id = Some(H256::random());
-            attributes.scaling_effect = None;
-            attributes.rate_spread = Real::from(0);
             attributes.premium_discount_at_ied = Real::from(-5);
+            attributes.rate_spread = Real::from(0);
+            attributes.scaling_effect = None;
 
             let mut state = Contracts::deploy_pam(t0, attributes).unwrap();
 
