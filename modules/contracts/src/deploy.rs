@@ -106,7 +106,7 @@ mod tests {
             attributes.nominal_interest_rate = Real::from(1000);
             attributes.notional_principal = Real(Some(50000000));
             attributes.scaling_effect = None;
-            let result = Contracts::deploy_pam(t0, attributes.clone());
+            let result = Contracts::deploy(attributes.clone());
             assert!(result.is_ok());
 
             // Checks if contract state has been stored
