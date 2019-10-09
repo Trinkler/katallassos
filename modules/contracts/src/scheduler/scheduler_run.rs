@@ -13,7 +13,7 @@ impl<T: Trait> Module<T> {
 
             // Get the state of the ACTUS contract and the corresponding
             // contract event type to be executed.
-            let mut state = <Contracts<T>>::get(scheduled_event.contract_id);
+            let mut state = <ContractStates<T>>::get(scheduled_event.contract_id);
             let event = state.schedule[scheduled_event.index as usize];
 
             // Make the ACTUS contract progress.

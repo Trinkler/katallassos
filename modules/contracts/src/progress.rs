@@ -38,7 +38,7 @@ impl<T: Trait> Module<T> {
         }
 
         // Storing the contract state.
-        <Contracts<T>>::insert(id, state);
+        <ContractStates<T>>::insert(id, state);
 
         // Return Ok if successful.
         Ok(())
