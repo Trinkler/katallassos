@@ -51,7 +51,7 @@ pub trait Trait: system::Trait + oracle::Trait + assets::Trait + timestamp::Trai
 // This module's storage items.
 decl_storage! {
     trait Store for Module<T: Trait> as ContractsStorage {
-        pub Contracts: map H256 => ContractState;
+        pub ContractStates: map H256 => ContractState;
         pub Scheduler: MinHeap<ScheduledEvent> = MinHeap::new();
     }
 }
