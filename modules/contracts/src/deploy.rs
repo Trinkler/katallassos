@@ -73,7 +73,6 @@ mod tests {
     impl Trait for Test {}
     type Contracts = Module<Test>;
 
-    // You can leave the next block unchanged.
     fn new_test_ext() -> runtime_io::TestExternalities<Blake2Hasher> {
         system::GenesisConfig::<Test>::default()
             .build_storage()
@@ -82,10 +81,8 @@ mod tests {
             .into()
     }
 
-    // This is an example of a test function.
     #[test]
     fn deploy_works() {
-        // The next line/block is obligatory.
         with_externalities(&mut new_test_ext(), || {
             // Mock parameters and initialize attributes
             let t0 = Time::from_values(1969, 07, 20, 20, 17, 00);
