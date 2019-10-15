@@ -30,7 +30,7 @@ cargo build # Build native binaries in debug mode
 ### Install
 
 ```sh
-cargo install --locked --path . # Build and install native binaries
+cargo install --locked --path . --force # Build and install native binaries
 katal # Synchronize chain data
 ```
 
