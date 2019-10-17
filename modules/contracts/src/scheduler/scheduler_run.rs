@@ -36,6 +36,7 @@ impl<T: Trait> Module<T> {
                     // Update the time for the scheduled event and push it to the heap.
                     scheduled_event.time = event.time;
                     heap.push(scheduled_event);
+                    break;
                 }
             }
         }
@@ -117,6 +118,12 @@ mod tests {
             attributes.premium_discount_at_ied = Real::from(-5);
             attributes.rate_spread = Real::from(0);
             attributes.scaling_effect = None;
+
+            <assets::Module<Test>>::mint(
+                attributes.creator_id.unwrap(),
+                attributes.currency.unwrap(),
+                attributes.notional_principal,
+            );
 
             let mut state = Contracts::deploy_pam(t0, attributes).unwrap();
             <ContractStates<Test>>::insert(id, state.clone());
