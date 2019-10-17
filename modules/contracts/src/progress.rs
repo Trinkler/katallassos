@@ -2,9 +2,9 @@ use super::*;
 
 // This function creates a new ACTUS contract.
 impl<T: Trait> Module<T> {
-    pub fn progress(event: ContractEvent, mut state: ContractState) -> Result {
-        // Getting the contract ID.
-        let id = state.attributes.contract_id;
+    pub fn progress(event: ContractEvent, contract_id: H256) -> Result {
+        // Getting the state.
+        let mut state = <ContractStates<T>>::get(contract_id);
 
         // Calculating the resulting contract state.
         let mut payoff = Real::from(0);
@@ -38,7 +38,7 @@ impl<T: Trait> Module<T> {
         }
 
         // Storing the contract state.
-        <ContractStates<T>>::insert(id, state);
+        <ContractStates<T>>::insert(contract_id, state);
 
         // Return Ok if successful.
         Ok(())
