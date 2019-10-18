@@ -1,7 +1,6 @@
 use super::*;
 
 // TODO: Add support for user-initiated events.
-// TODO: Add the calls to transfer tokens (assets module?).
 impl<T: Trait> Module<T> {
     pub fn progress_pam(
         event: ContractEvent,
