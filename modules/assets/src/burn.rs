@@ -1,6 +1,6 @@
 use super::*;
 
-//
+// This function burns tokens of a given asset and from a specific address.
 impl<T: Trait> Module<T> {
     pub fn burn(from_address: H256, asset_id: u32, amount: Real) -> Result {
         // Checking that amount is non-negative.
@@ -80,17 +80,33 @@ mod tests {
     #[test]
     fn burn_works() {
         with_externalities(&mut new_test_ext(), || {
+            // Initialize some values.
             let supply = Real::from(1000);
             let from_address = H256::random();
             let from_balance = Real::from(450);
             let asset_id = 1;
-            let amount = Real::from(50);
 
+            // Manually store addresses with balances.
             <AssetsSupply<Test>>::insert(asset_id, supply);
             <AssetsBalances<Test>>::insert((asset_id, from_address), from_balance);
 
-            Assets::burn(from_address, asset_id, amount);
+            // Test case of negative transfer amount.
+            let mut amount = Real::from(-100);
+            assert!(Assets::burn(from_address, asset_id, amount).is_err());
 
+            // Test case of insuficient balance.
+            amount = Real::from(1000000);
+            assert!(Assets::burn(from_address, asset_id, amount).is_err());
+
+            // Test case of non-existent address.
+            amount = Real::from(50);
+            assert!(Assets::burn(H256::random(), asset_id, amount).is_err());
+
+            // Test case of non-existent asset_id.
+            assert!(Assets::burn(from_address, 999, amount).is_err());
+
+            // Test normal case.
+            assert!(Assets::burn(from_address, asset_id, amount).is_ok());
             assert_eq!(supply - amount, <AssetsSupply<Test>>::get(asset_id));
             assert_eq!(
                 from_balance - amount,

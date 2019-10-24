@@ -25,6 +25,16 @@ impl<T: Trait> Module<T> {
             }
         }
 
+        // Adding first event to the heap.
+        let mut heap = <Scheduler<T>>::get();
+        let event = ScheduledEvent {
+            time: state.schedule[0].time,
+            contract_id: id,
+            index: 0,
+        };
+        heap.push(event);
+        <Scheduler<T>>::put(heap);
+
         // Storing the contract state.
         <ContractStates<T>>::insert(id, state);
 
@@ -108,6 +118,13 @@ mod tests {
 
             // Checks if contract state has been stored
             assert_eq!(ContractStates::<Test>::exists(id), true);
+
+            // Checks if scheduler was correctly updated.
+            let event = <Scheduler<Test>>::get().pop().unwrap();
+            let state = ContractStates::<Test>::get(id);
+            assert_eq!(event.time, state.schedule[0].time);
+            assert_eq!(event.contract_id, state.attributes.contract_id);
+            assert_eq!(event.index, 0);
         });
     }
 }

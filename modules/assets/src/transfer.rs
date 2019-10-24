@@ -1,6 +1,6 @@
 use super::*;
 
-//
+// This function transfers tokens of a given asset from one address to another. If the recipient address doesn't exist, it is created.
 impl<T: Trait> Module<T> {
     pub fn transfer(from_address: H256, to_address: H256, asset_id: u32, amount: Real) -> Result {
         // Checking that amount is non-negative.
@@ -89,17 +89,37 @@ mod tests {
     #[test]
     fn transfer_works() {
         with_externalities(&mut new_test_ext(), || {
+            // Initialize some values.
             let from_address = H256::random();
             let from_balance = Real::from(1000);
             let to_address = H256::random();
             let to_balance = Real::from(200);
             let asset_id = 1;
-            let amount = Real::from(100);
+
+            // Manually store addresses with balances.
             <AssetsBalances<Test>>::insert((asset_id, from_address), from_balance);
             <AssetsBalances<Test>>::insert((asset_id, to_address), to_balance);
 
-            Assets::transfer(from_address, to_address, asset_id, amount);
+            // Test case of negative transfer amount.
+            let mut amount = Real::from(-100);
+            assert!(Assets::transfer(from_address, to_address, asset_id, amount).is_err());
 
+            // Test case of insuficient balance.
+            amount = Real::from(1000000);
+            assert!(Assets::transfer(from_address, to_address, asset_id, amount).is_err());
+
+            // Test case of equal addresses.
+            amount = Real::from(100);
+            assert!(Assets::transfer(from_address, from_address, asset_id, amount).is_err());
+
+            // Test case of non-existent address.
+            assert!(Assets::transfer(H256::random(), to_address, asset_id, amount).is_err());
+
+            // Test case of non-existent asset_id.
+            assert!(Assets::transfer(from_address, to_address, 999, amount).is_err());
+
+            // Test normal case.
+            assert!(Assets::transfer(from_address, to_address, asset_id, amount).is_ok());
             assert_eq!(
                 from_balance - amount,
                 <AssetsBalances<Test>>::get((asset_id, from_address))
