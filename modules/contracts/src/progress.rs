@@ -37,6 +37,8 @@ impl<T: Trait> Module<T> {
             )?;
         }
 
+        // TODO: Set contract performance variable to something other than `Performant`
+
         // Storing the contract state.
         <ContractStates<T>>::insert(contract_id, state);
 
