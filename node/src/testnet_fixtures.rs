@@ -15,7 +15,10 @@ use ed25519::Public as AuthorityId;
 use hex_literal::hex;
 use katalchain_runtime::AccountId;
 use primitives::{crypto::UncheckedInto, ed25519};
-use serde_json::Result;
+use serde_json as json;
+
+/// Arbitrary properties defined in chain spec as a JSON object
+pub type Properties = json::map::Map<String, json::Value>;
 
 pub fn get_testnet_bootnodes() -> Vec<String> {
     return vec![
@@ -34,6 +37,7 @@ pub fn get_testnet_initial_authorities() -> Vec<AuthorityId> {
         hex!["53b902907ed868912f67ea5c410f82da40591b5d83bdaed8ba46ca03dd7c4be3"].unchecked_into(),
     ];
 }
+
 pub fn get_testnet_endowed_accounts() -> Vec<AccountId> {
     return vec![
         hex!["be9128704d6642083e4f9f5fc55e5216dc7b22cba74578c2a553b32391297530"] // 5GNa5NWbUnhHqDRcsvKRehfb1cxdskaECcmBjxniEgu5mqu5
@@ -48,12 +52,12 @@ pub fn get_testnet_root_key() -> AccountId {
         .unchecked_into();
 }
 
-pub fn get_chain_properties() {
+pub fn get_chain_properties() -> Option<Properties> {
     let data = r#"
     {
         "ss58Format": 7,
         "tokenDecimals": 9,
         "tokenSymbol": "XTL"
     }"#;
-    let properties: String = serde_json::from_str(data).unwrap();
+    return serde_json::from_str(data).unwrap();
 }
