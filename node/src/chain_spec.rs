@@ -11,6 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
+use crate::testnet_fixtures::*;
 use hex_literal::hex;
 use katalchain_runtime::{
     AccountId, BalancesConfig, ConsensusConfig, GenesisConfig, IndicesConfig, SudoConfig,
@@ -103,22 +104,12 @@ impl Alternative {
                 "testnet",     // Id
                 || {
                     testnet_genesis(
-                        vec![hex![
-                            "a4d705ef67f4a1bc2e59ac97823e3793aaa559110f7d3a3e0f3594f6aebcb387"
-                        ] // 5FnqauongW5TPgo8KKxmn75b7rr8NSWy9SARu54vkxag7Ncc
-                        .unchecked_into()], // Initial Authorities
-                        vec![hex![
-                            "be9128704d6642083e4f9f5fc55e5216dc7b22cba74578c2a553b32391297530"
-                        ] // 5FnqauongW5TPgo8KKxmn75b7rr8NSWy9SARu54vkxag7Ncc
-                        .unchecked_into()], // Endowed Accounts
-                        hex!["be9128704d6642083e4f9f5fc55e5216dc7b22cba74578c2a553b32391297530"] // 5FnqauongW5TPgo8KKxmn75b7rr8NSWy9SARu54vkxag7Ncc
-                            .unchecked_into(), // Root Key
+                        get_testnet_initial_authorities(), // Initial Authorities
+                        get_testnet_endowed_accounts(),    // Endowed Accounts
+                        get_testnet_root_key(),
                     )
                 }, // Constructor
-                vec![
-					"/ip4/134.209.111.205/tcp/30333/p2p/QmUn4Mz3vA4DZD6XUG667yRxcUF35pGBLmg4PCNo8tNuKT".to_string(),
-					"/ip4/157.245.46.255/tcp/30333/p2p/QmYYfe4n7BKjfbpMPjr8HnzKxEefrDXU8pqpnYEUWUM2FR".to_string(),
-				], // Boot Nodes
+                get_testnet_bootnodes(), // Boot Nodes
                 Some(TelemetryEndpoints::new(vec![(
                     STAGING_TELEMETRY_URL.to_string(),
                     0,

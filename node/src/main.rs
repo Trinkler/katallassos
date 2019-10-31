@@ -19,6 +19,7 @@
 mod chain_spec;
 mod cli;
 mod service;
+mod testnet_fixtures;
 
 pub use substrate_cli::{error, IntoExit, VersionInfo};
 
