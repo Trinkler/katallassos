@@ -116,7 +116,7 @@ impl Alternative {
                 )])), // Telemetry Endpoints
                 None,          // Protocol Id
                 None,          // Consensus Engine
-                None,          // Properties
+                get_chain_properties(),
             ),
         })
     }
