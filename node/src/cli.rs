@@ -32,7 +32,7 @@ where
 	parse_and_execute::<service::Factory, NoCustom, NoCustom, _, _, _, _, _>(
 		load_spec,
 		&version,
-		"katalchain-node",
+		"katalchain",
 		args,
 		exit,
 		|exit, _custom_args, config| {
