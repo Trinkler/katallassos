@@ -62,7 +62,7 @@
   ref_type: "BRANCH"
   trigger_condition: "ALWAYS"
   actions:
-    - action: "[Validator] Execute: systemctl start katalchain-validator.service"
+    - action: "[Validator] Execute: systemctl restart katalchain-validator.service"
       type: "SSH_COMMAND"
       login: "root"
       host: "134.209.111.205"
@@ -77,11 +77,11 @@
         - "./scripts/init.sh"
         - "systemctl stop katalchain-validator.service"
         - "cargo install --locked --force --path ."
-        - "systemctl start katalchain-validator.service"
+        - "systemctl restart katalchain-validator.service"
       run_as_script: true
       shell: "BASH"
       trigger_condition: "ALWAYS"
-    - action: "[Service] Execute: systemctl start katalchain-validator.service"
+    - action: "[Service] Execute: systemctl restart katalchain-validator.service"
       type: "SSH_COMMAND"
       login: "root"
       host: "157.245.46.255"
@@ -96,7 +96,7 @@
         - "./scripts/init.sh"
         - "systemctl stop katalchain-validator.service"
         - "cargo install --locked --force --path ."
-        - "systemctl start katalchain-validator.service"
+        - "systemctl restart katalchain-validator.service"
       run_as_script: true
       shell: "BASH"
       trigger_condition: "ALWAYS"
@@ -106,7 +106,7 @@
   ref_type: "BRANCH"
   trigger_condition: "ALWAYS"
   actions:
-    - action: "[Endpoint] Execute: systemctl start katalchain-validator.service"
+    - action: "[Endpoint] Execute: systemctl restart katalchain-validator.service"
       type: "SSH_COMMAND"
       login: "root"
       host: "165.227.40.251"
@@ -121,7 +121,7 @@
         - "./scripts/init.sh"
         - "systemctl stop katalchain-validator.service"
         - "cargo install --locked --force --path ."
-        - "systemctl start katalchain-validator.service"
+        - "systemctl restart katalchain-validator.service"
       run_as_script: true
       shell: "BASH"
       trigger_condition: "ALWAYS"
