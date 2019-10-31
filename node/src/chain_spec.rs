@@ -116,7 +116,8 @@ impl Alternative {
                     )
                 }, // Constructor
                 vec![
-					"/ip4/134.209.111.205/tcp/30333/p2p/Qmd2tEYAE9916Ep2ipVu69vReHoVpS29Gk8GaJNAUZsLyz".to_string(),
+					"/ip4/134.209.111.205/tcp/30333/p2p/QmUn4Mz3vA4DZD6XUG667yRxcUF35pGBLmg4PCNo8tNuKT".to_string(),
+					"/ip4/157.245.46.255/tcp/30333/p2p/QmYYfe4n7BKjfbpMPjr8HnzKxEefrDXU8pqpnYEUWUM2FR".to_string(),
 				], // Boot Nodes
                 Some(TelemetryEndpoints::new(vec![(
                     STAGING_TELEMETRY_URL.to_string(),
@@ -151,7 +152,7 @@ fn testnet_genesis(
 		}),
 		system: None,
 		timestamp: Some(TimestampConfig {
-			minimum_period: 1, // 10 second block time.
+			minimum_period: 4, // 4 second block time.
 		}),
 		indices: Some(IndicesConfig {
 			ids: endowed_accounts.clone(),

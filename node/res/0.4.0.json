@@ -2,17 +2,22 @@
   "name": "Katal Chain",
   "id": "testnet",
   "bootNodes": [
-    "/ip4/134.209.111.205/tcp/30333/p2p/Qmd2tEYAE9916Ep2ipVu69vReHoVpS29Gk8GaJNAUZsLyz"
+    "/ip4/134.209.111.205/tcp/30333/p2p/QmUn4Mz3vA4DZD6XUG667yRxcUF35pGBLmg4PCNo8tNuKT",
+    "/ip4/157.245.46.255/tcp/30333/p2p/QmYYfe4n7BKjfbpMPjr8HnzKxEefrDXU8pqpnYEUWUM2FR"
   ],
   "telemetryEndpoints": [["wss://telemetry.polkadot.io/submit/", 0]],
-  "protocolId": null,
+  "protocolId": "xtl",
   "consensusEngine": null,
-  "properties": null,
+  "properties": {
+    "ss58Format": 7,
+    "tokenDecimals": 9,
+    "tokenSymbol": "XTL"
+  },
   "genesis": {
     "runtime": {
       "system": null,
       "timestamp": {
-        "minimumPeriod": 1
+        "minimumPeriod": 4
       },
       "consensus": {
         "authorities": ["5FnqauongW5TPgo8KKxmn75b7rr8NSWy9SARu54vkxag7Ncc"],
