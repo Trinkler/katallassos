@@ -1,3 +1,16 @@
+// Copyright 2019 by Trinkler Software AG (Switzerland).
+// This file is part of the Katal Chain.
+//
+// Katal Chain is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version <http://www.gnu.org/licenses/>.
+//
+// Katal Chain is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
 use super::*;
 
 impl<T: Trait> Module<T> {
@@ -106,7 +119,8 @@ impl<T: Trait> Module<T> {
             {
                 return Err("Error while initializing attributes. [5]");
             }
-            attributes.cycle_point_of_interest_payment = input.cycle_point_of_interest_payment; // -> x(2,1,_)1
+            attributes.cycle_point_of_interest_payment = input.cycle_point_of_interest_payment;
+            // -> x(2,1,_)1
         }
 
         // Group 5
@@ -118,7 +132,8 @@ impl<T: Trait> Module<T> {
             if input.price_at_purchase_date.0.is_none() {
                 return Err("Error while initializing attributes. [6]");
             } else {
-                attributes.price_at_purchase_date = input.price_at_purchase_date; // -> NN(5,1,1)
+                attributes.price_at_purchase_date = input.price_at_purchase_date;
+                // -> NN(5,1,1)
             }
         }
 
@@ -131,7 +146,8 @@ impl<T: Trait> Module<T> {
             if input.price_at_termination_date.0.is_none() {
                 return Err("Error while initializing attributes. [7]");
             } else {
-                attributes.price_at_termination_date = input.price_at_termination_date; // -> NN(6,1,1)
+                attributes.price_at_termination_date = input.price_at_termination_date;
+                // -> NN(6,1,1)
             }
         }
 
@@ -148,7 +164,8 @@ impl<T: Trait> Module<T> {
             }
             attributes.market_object_code_of_scaling_index =
                 input.market_object_code_of_scaling_index; // -> NN(7,1,_)
-            attributes.scaling_index_at_status_date = input.scaling_index_at_status_date; // -> NN(7,1,_)
+            attributes.scaling_index_at_status_date = input.scaling_index_at_status_date;
+            // -> NN(7,1,_)
         }
         // At least one of the CAs with c=2 has to be defined if at least one of the unconditional CAs
         // of the group is defined
@@ -198,7 +215,8 @@ impl<T: Trait> Module<T> {
             attributes.period_cap = input.period_cap; // -> x(9,1,_)
             attributes.period_floor = input.period_floor; // -> x(9,1,_)
             attributes.rate_multiplier = input.rate_multiplier; // -> x(9,1,_)
-            attributes.cycle_point_of_rate_reset = input.cycle_point_of_rate_reset; // -> x(9,1,_)1
+            attributes.cycle_point_of_rate_reset = input.cycle_point_of_rate_reset;
+            // -> x(9,1,_)1
         }
 
         // Checking if the attributes all have allowed values
