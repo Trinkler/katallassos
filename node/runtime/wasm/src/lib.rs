@@ -11,7 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-//! The Katal runtime reexported for WebAssembly compile.
+//! The Katal Chain runtime reexported for WebAssembly compile.
 
 #![cfg_attr(not(feature = "std"), no_std)]
 

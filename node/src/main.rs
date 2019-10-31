@@ -24,7 +24,7 @@ pub use substrate_cli::{error, IntoExit, VersionInfo};
 
 fn run() -> cli::error::Result<()> {
     let version = VersionInfo {
-        name: "Katal Chain",
+        name: "Katal Chain Blockchain",
         commit: env!("VERGEN_SHA_SHORT"),
         version: env!("CARGO_PKG_VERSION"),
         executable_name: "katalchain",
