@@ -2,4 +2,4 @@
 
 #![cfg_attr(not(feature = "std"), no_std)]
 
-pub use katal_runtime::*;
+pub use katalchain_runtime::*;

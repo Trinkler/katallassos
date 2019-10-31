@@ -1,4 +1,4 @@
-//! Katal CLI library.
+//! Katal Chain CLI library.
 
 #![warn(missing_docs)]
 #![warn(unused_extern_crates)]
@@ -11,13 +11,13 @@ pub use substrate_cli::{error, IntoExit, VersionInfo};
 
 fn run() -> cli::error::Result<()> {
     let version = VersionInfo {
-        name: "Substrate Node",
+        name: "Katal Chain",
         commit: env!("VERGEN_SHA_SHORT"),
         version: env!("CARGO_PKG_VERSION"),
-        executable_name: "katal",
+        executable_name: "katalchain",
         author: "brunoffranca, sophieraderm, retotrinkler",
-        description: "Standard Framework for Finance",
-        support_url: "https://github.com/Trinkler/katal-chain/issues/new",
+        description: "Cryptocurrency Movement, Standardized.",
+        support_url: "https://github.com/katalchain/blockchain/issues/new",
     };
     cli::run(::std::env::args(), cli::Exit, version)
 }

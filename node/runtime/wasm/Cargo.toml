@@ -1,5 +1,5 @@
 [package]
-name = "katal-runtime-wasm"
+name = "katalchain-runtime-wasm"
 version = "1.0.0"
 authors = ["Parity Technologies <admin@parity.io>"]
 edition = "2018"
@@ -8,12 +8,12 @@ edition = "2018"
 crate-type = ["cdylib"]
 
 [dependencies]
-katal-runtime = { path = "..", default-features = false }
+katalchain-runtime = { path = "..", default-features = false }
 
 [features]
 default = []
 std = [
-	"katal-runtime/std",
+	"katalchain-runtime/std",
 ]
 
 [profile.release]

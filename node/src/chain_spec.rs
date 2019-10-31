@@ -1,5 +1,5 @@
 use hex_literal::{hex, hex_impl};
-use katal_runtime::{
+use katalchain_runtime::{
     AccountId, BalancesConfig, ConsensusConfig, GenesisConfig, IndicesConfig, SudoConfig,
     TimestampConfig,
 };
@@ -133,7 +133,7 @@ fn testnet_genesis(
 ) -> GenesisConfig {
     GenesisConfig {
 		consensus: Some(ConsensusConfig {
-			code: include_bytes!("../runtime/wasm/target/wasm32-unknown-unknown/release/katal_runtime_wasm.compact.wasm").to_vec(),
+			code: include_bytes!("../runtime/wasm/target/wasm32-unknown-unknown/release/katalchain_runtime_wasm.compact.wasm").to_vec(),
 			authorities: initial_authorities.clone(),
 		}),
 		system: None,
