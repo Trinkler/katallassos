@@ -1,6 +1,6 @@
 [<img src = "https://raw.githubusercontent.com/katalchain/brand/master/assets/banner/banner.png" width = "100%">](https://katalchain.com)
 
-# blockchain [![buddy pipeline](https://app.buddy.works/katalchain/blockchain/pipelines/pipeline/220636/badge.svg?token=09f33f1c410caf2aa98947c7e846b94f0f86e6f3cbcdf1c74546eb9052ab8da3 "buddy pipeline")](https://app.buddy.works/katalchain/blockchain/pipelines/pipeline/220636)
+# blockchain
 
 > [Katal Chain](https://katalchain.com) is a domain-specific blockchain creating a deterministic financial paradigm.
 
