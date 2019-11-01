@@ -1,3 +1,16 @@
+// Copyright 2019 by Trinkler Software AG (Switzerland).
+// This file is part of the Katal Chain.
+//
+// Katal Chain is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version <http://www.gnu.org/licenses/>.
+//
+// Katal Chain is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
 use super::*;
 
 // This function creates a new ACTUS contract.
@@ -24,6 +37,16 @@ impl<T: Trait> Module<T> {
                 state = Err("Contract type not supported")?;
             }
         }
+
+        // Adding first event to the heap.
+        let mut heap = <Scheduler<T>>::get();
+        let event = ScheduledEvent {
+            time: state.schedule[0].time,
+            contract_id: id,
+            index: 0,
+        };
+        heap.push(event);
+        <Scheduler<T>>::put(heap);
 
         // Storing the contract state.
         <ContractStates<T>>::insert(id, state);
@@ -73,7 +96,6 @@ mod tests {
     impl Trait for Test {}
     type Contracts = Module<Test>;
 
-    // You can leave the next block unchanged.
     fn new_test_ext() -> runtime_io::TestExternalities<Blake2Hasher> {
         system::GenesisConfig::<Test>::default()
             .build_storage()
@@ -82,10 +104,8 @@ mod tests {
             .into()
     }
 
-    // This is an example of a test function.
     #[test]
     fn deploy_works() {
-        // The next line/block is obligatory.
         with_externalities(&mut new_test_ext(), || {
             // Mock parameters and initialize attributes
             let t0 = Time::from_values(1969, 07, 20, 20, 17, 00);
@@ -111,6 +131,13 @@ mod tests {
 
             // Checks if contract state has been stored
             assert_eq!(ContractStates::<Test>::exists(id), true);
+
+            // Checks if scheduler was correctly updated.
+            let event = <Scheduler<Test>>::get().pop().unwrap();
+            let state = ContractStates::<Test>::get(id);
+            assert_eq!(event.time, state.schedule[0].time);
+            assert_eq!(event.contract_id, state.attributes.contract_id);
+            assert_eq!(event.index, 0);
         });
     }
 }

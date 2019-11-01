@@ -1,6 +1,19 @@
+// Copyright 2019 by Trinkler Software AG (Switzerland).
+// This file is part of the Katal Chain.
+//
+// Katal Chain is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version <http://www.gnu.org/licenses/>.
+//
+// Katal Chain is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
 use super::*;
 
-//
+// This function creates tokens of a given asset and deposits them into an address. If the recipient address doesn't exist, it is created.
 impl<T: Trait> Module<T> {
     pub fn mint(to_address: H256, asset_id: u32, amount: Real) -> Result {
         // Checking that amount is non-negative.
@@ -74,17 +87,23 @@ mod tests {
     #[test]
     fn mint_works() {
         with_externalities(&mut new_test_ext(), || {
+            // Initialize some values.
             let supply = Real::from(999000);
             let to_address = H256::random();
             let to_balance = Real::from(200);
             let asset_id = 1;
-            let amount = Real::from(1000);
 
+            // Manually store addresses with balances.
             <AssetsSupply<Test>>::insert(asset_id, supply);
             <AssetsBalances<Test>>::insert((asset_id, to_address), to_balance);
 
-            Assets::mint(to_address, asset_id, amount);
+            // Test case of negative transfer amount.
+            let mut amount = Real::from(-100);
+            assert!(Assets::mint(to_address, asset_id, amount).is_err());
 
+            // Test normal case.
+            amount = Real::from(1000);
+            assert!(Assets::mint(to_address, asset_id, amount).is_ok());
             assert_eq!(supply + amount, <AssetsSupply<Test>>::get(asset_id));
             assert_eq!(
                 to_balance + amount,

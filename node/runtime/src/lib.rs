@@ -1,4 +1,17 @@
-//! The Katal runtime. This can be compiled with `#[no_std]`, ready for Wasm.
+// Copyright 2019 by Trinkler Software AG (Switzerland).
+// This file is part of the Katal Chain.
+//
+// Katal Chain is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version <http://www.gnu.org/licenses/>.
+//
+// Katal Chain is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
+//! The Katal Chain runtime. This can be compiled with `#[no_std]`, ready for Wasm.
 
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(not(feature = "std"), feature(alloc))]
@@ -95,9 +108,9 @@ pub mod opaque {
 
 /// This runtime version.
 pub const VERSION: RuntimeVersion = RuntimeVersion {
-    spec_name: create_runtime_str!("katal"),
-    impl_name: create_runtime_str!("katal"),
-    authoring_version: 3,
+    spec_name: create_runtime_str!("katalchain"),
+    impl_name: create_runtime_str!("katalchain"),
+    authoring_version: 4,
     spec_version: 4,
     impl_version: 4,
     apis: RUNTIME_API_VERSIONS,

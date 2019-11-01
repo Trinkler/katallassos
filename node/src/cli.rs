@@ -1,23 +1,41 @@
-use crate::service;
-use futures::{future, Future, sync::oneshot};
-use std::cell::RefCell;
-use tokio::runtime::Runtime;
-pub use substrate_cli::{VersionInfo, IntoExit, error};
-use substrate_cli::{informant, parse_and_execute, NoCustom};
-use substrate_service::{ServiceFactory, Roles as ServiceRoles};
+// Copyright 2019 by Trinkler Software AG (Switzerland).
+// This file is part of the Katal Chain.
+//
+// Katal Chain is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version <http://www.gnu.org/licenses/>.
+//
+// Katal Chain is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+
 use crate::chain_spec;
-use std::ops::Deref;
+use crate::service;
+use futures::{future, sync::oneshot, Future};
 use log::info;
+use std::cell::RefCell;
+use std::ops::Deref;
+pub use substrate_cli::{error, IntoExit, VersionInfo};
+use substrate_cli::{informant, parse_and_execute, NoCustom};
+use substrate_service::{Roles as ServiceRoles, ServiceFactory};
+use tokio::runtime::Runtime;
 
 /// Parse command line arguments into service configuration.
-pub fn run<I, T, E>(args: I, exit: E, version: VersionInfo) -> error::Result<()> where
+pub fn run<I, T, E>(args: I, exit: E, version: VersionInfo) -> error::Result<()>
+where
 	I: IntoIterator<Item = T>,
 	T: Into<std::ffi::OsString> + Clone,
 	E: IntoExit,
 {
 	parse_and_execute::<service::Factory, NoCustom, NoCustom, _, _, _, _, _>(
-		load_spec, &version, "katal-node", args, exit,
-	 	|exit, _custom_args, config| {
+		load_spec,
+		&version,
+		"katalchain",
+		args,
+		exit,
+		|exit, _custom_args, config| {
 			info!("{}", version.name);
 			info!("  version {}", config.full_version());
 			info!("  by {}, 2017, 2018", version.author);
@@ -29,17 +47,21 @@ pub fn run<I, T, E>(args: I, exit: E, version: VersionInfo) -> error::Result<()>
 			match config.roles {
 				ServiceRoles::LIGHT => run_until_exit(
 					runtime,
-				 	service::Factory::new_light(config, executor).map_err(|e| format!("{:?}", e))?,
-					exit
+					service::Factory::new_light(config, executor)
+						.map_err(|e| format!("{:?}", e))?,
+					exit,
 				),
 				_ => run_until_exit(
 					runtime,
 					service::Factory::new_full(config, executor).map_err(|e| format!("{:?}", e))?,
-					exit
+					exit,
 				),
-			}.map_err(|e| format!("{:?}", e))
-		}
-	).map_err(Into::into).map(|_| ())
+			}
+			.map_err(|e| format!("{:?}", e))
+		},
+	)
+	.map_err(Into::into)
+	.map(|_| ())
 }
 
 fn load_spec(id: &str) -> Result<Option<chain_spec::ChainSpec>, String> {
@@ -49,15 +71,11 @@ fn load_spec(id: &str) -> Result<Option<chain_spec::ChainSpec>, String> {
 	})
 }
 
-fn run_until_exit<T, C, E>(
-	mut runtime: Runtime,
-	service: T,
-	e: E,
-) -> error::Result<()>
-	where
-		T: Deref<Target=substrate_service::Service<C>>,
-		C: substrate_service::Components,
-		E: IntoExit,
+fn run_until_exit<T, C, E>(mut runtime: Runtime, service: T, e: E) -> error::Result<()>
+where
+	T: Deref<Target = substrate_service::Service<C>>,
+	C: substrate_service::Components,
+	E: IntoExit,
 {
 	let (exit_send, exit) = exit_future::signal();
 
@@ -84,10 +102,15 @@ impl IntoExit for Exit {
 
 		let exit_send_cell = RefCell::new(Some(exit_send));
 		ctrlc::set_handler(move || {
-			if let Some(exit_send) = exit_send_cell.try_borrow_mut().expect("signal handler not reentrant; qed").take() {
+			if let Some(exit_send) = exit_send_cell
+				.try_borrow_mut()
+				.expect("signal handler not reentrant; qed")
+				.take()
+			{
 				exit_send.send(()).expect("Error sending exit notification");
 			}
-		}).expect("Error setting Ctrl-C handler");
+		})
+		.expect("Error setting Ctrl-C handler");
 
 		exit.map_err(drop)
 	}

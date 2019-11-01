@@ -45,7 +45,7 @@ git = "https://github.com/paritytech/substrate.git"
 branch = "v1.0"
 default-features = false
 
-# Katal crates
+# Katal Chain crates
 [dependencies.structures]
 package = "modules-structures"
 path = "../structures"
