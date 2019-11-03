@@ -22,9 +22,9 @@ pub type Properties = json::map::Map<String, json::Value>;
 
 pub fn get_testnet_bootnodes() -> Vec<String> {
     return vec![
-        "/ip4/134.209.111.205/tcp/30333/p2p/QmUn4Mz3vA4DZD6XUG667yRxcUF35pGBLmg4PCNo8tNuKT"
+        "/dns4/bootnode-01.katalchain.com/tcp/30333/p2p/QmUn4Mz3vA4DZD6XUG667yRxcUF35pGBLmg4PCNo8tNuKT"
             .to_string(),
-        "/ip4/157.245.46.255/tcp/30333/p2p/QmYYfe4n7BKjfbpMPjr8HnzKxEefrDXU8pqpnYEUWUM2FR"
+        "/dns4/bootnode-02.katalchain.com/tcp/30333/p2p/QmYYfe4n7BKjfbpMPjr8HnzKxEefrDXU8pqpnYEUWUM2FR"
             .to_string(),
     ];
 }
