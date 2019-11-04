@@ -40,7 +40,9 @@ pub enum Alternative {
     Development,
     /// Whatever the current runtime is, with simple Alice/Bob auths.
     LocalTestnet,
-    /// Hosted testnet with non-standard Validators.
+    /// Hosted testnet with auto-generated genesis block
+    StagingTestnet,
+    /// Hosted testnet with unified genesis block and non-standard Validators.
     Testnet,
 }
 
@@ -99,6 +101,26 @@ impl Alternative {
                 None,
                 None,
             ),
+            Alternative::StagingTestnet => ChainSpec::from_genesis(
+                "Katal Chain Staging", // Name
+                "staging",             // Id
+                || {
+                    testnet_genesis(
+                        get_testnet_initial_authorities(), // Initial Authorities
+                        get_testnet_endowed_accounts(),    // Endowed Accounts
+                        get_testnet_root_key(),
+                    )
+                }, // Constructor
+                get_testnet_bootnodes(), // Boot Nodes
+                Some(TelemetryEndpoints::new(vec![(
+                    STAGING_TELEMETRY_URL.to_string(),
+                    0,
+                )])), // Telemetry Endpoints
+                None,                  // Protocol Id
+                None,                  // Consensus Engine
+                get_chain_properties(),
+            ),
+            // TODO import from file when https://github.com/katalchain/blockchain/issues/97 resolved
             Alternative::Testnet => ChainSpec::from_genesis(
                 "Katal Chain", // Name
                 "testnet",     // Id
@@ -125,7 +147,8 @@ impl Alternative {
         match s {
             "dev" => Some(Alternative::Development),
             "local" => Some(Alternative::LocalTestnet),
-            "" | "testnet" => Some(Alternative::Testnet),
+            "staging" => Some(Alternative::StagingTestnet),
+            "" => Some(Alternative::Testnet),
             _ => None,
         }
     }
