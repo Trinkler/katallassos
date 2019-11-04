@@ -31,7 +31,7 @@ cargo build # Build native binaries in debug mode
 
 ```sh
 cargo install --locked --path . --force # Build and install native binaries
-katalchain # Synchronize chain data
+katalchain --chain ./node/res/katalchain.json # Synchronize chain data
 ```
 
 ### Usage
