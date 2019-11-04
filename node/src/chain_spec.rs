@@ -143,7 +143,7 @@ fn testnet_genesis(
 		}),
 		system: None,
 		timestamp: Some(TimestampConfig {
-			minimum_period: 4, // 4 second block time.
+			minimum_period: 2, // 4 second block time.
 		}),
 		indices: Some(IndicesConfig {
 			ids: endowed_accounts.clone(),
