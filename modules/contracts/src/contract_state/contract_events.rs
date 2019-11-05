@@ -70,7 +70,7 @@ mod tests {
         let t1 = Time::from_values(2016, 11, 8, 19, 00, 00);
         let t2 = Time::from_values(2017, 1, 20, 12, 00, 00);
         let e1 = ContractEventType::PR;
-        let e2 = ContractEventType::CD;
+        let e2 = ContractEventType::CE;
 
         let x1 = ContractEvent::new(t1, e1);
         let x2 = ContractEvent::new(t1, e2);
