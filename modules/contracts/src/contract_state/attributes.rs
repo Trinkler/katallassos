@@ -37,11 +37,12 @@ pub struct Attributes {
     pub contract_id: H256, // Represents an contract object.
     pub contract_performance: Option<ContractPerformance>,
     pub contract_role: Option<ContractRole>,
-    pub contract_structure: Vec<Option<ContractReference>>,
+    pub contract_structure: Vec<Option<ContractStructure>>,
     pub contract_type: Option<ContractType>,
     pub counterparty_id: Option<H256>, // Represents an account object.
     pub coverage_of_credit_enhancement: Real,
     pub creator_id: Option<H256>, // Represents an account object.
+    pub credit_event_type_covered: Option<CreditEventTypeCovered>,
     pub credit_line_amount: Real,
     pub currency: Option<u32>,   // Represents an asset object.
     pub currency_2: Option<u32>, // Represents an asset object.
@@ -71,6 +72,8 @@ pub struct Attributes {
     pub delivery_settlement: Option<DeliverySettlement>,
     pub end_of_month_convention: Option<EndOfMonthConvention>,
     pub ex_dividend_date: Time,
+    pub exercise_amount: Real,
+    pub exercise_date: Time,
     pub fee_accrued: Real,
     pub fee_basis: Option<FeeBasis>,
     pub fee_rate: Real,
@@ -121,7 +124,8 @@ pub struct Attributes {
     pub scaling_effect: Option<ScalingEffect>,
     pub scaling_index_at_status_date: Real,
     pub seniority: Option<Seniority>,
-    pub settlement_date: Time,
+    pub settlement_currency: Option<u32>, // Represents an asset object.
+    pub settlement_days: Option<Period>,
     pub status_date: Time,
     pub termination_date: Time,
     pub unit: Option<Unit>,
@@ -175,7 +179,7 @@ pub enum ContractPerformance {
 // The underscore is necessary because 'type' is a reserved word.
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
-pub struct ContractReference {
+pub struct ContractStructure {
     pub _object: H256,
     pub _type: ContractReferenceType,
     pub _role: ContractReferenceRole,
@@ -237,7 +241,14 @@ pub enum ContractType {
     OPTNS,
     CEG,
     CEC,
-    MRGNG,
+}
+
+#[derive(Clone, Copy, Decode, Encode, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum CreditEventTypeCovered {
+    DL,
+    DQ,
+    DF,
 }
 
 // The boolean represents the stub, true = long stub, false = short stub.
@@ -269,13 +280,12 @@ pub enum CyclePointOfRateReset {
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub enum DayCountConvention {
-    _AAISDA,
-    _A360,
-    _A365,
+    AAISDA,
+    A360,
+    A365,
     // _30E360ISDA,
     _30E360,
-    _30360, // This one does not appear in the data dictionary?...
-            // _BUS252,
+    // _BUS252,
 }
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
@@ -368,10 +378,11 @@ pub enum PrepaymentEffect {
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
-pub struct ScalingEffect {
-    pub x: bool,
-    pub y: bool,
-    pub z: bool,
+pub enum ScalingEffect {
+    _000,
+    I00,
+    _0N0,
+    IN0,
 }
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
@@ -417,7 +428,7 @@ impl Attributes {
             capitalization_end_date: Time(None),
             clearing_house: None,
             contract_deal_date: Time(None),
-            contract_id: contract_id,
+            contract_id: contract_id, // ACTUS default for this attribute is None, but for pratical reasons we always need a contract_id.
             contract_performance: Some(ContractPerformance::PF),
             contract_role: None,
             contract_structure: Vec::new(),
@@ -425,6 +436,7 @@ impl Attributes {
             counterparty_id: None,
             coverage_of_credit_enhancement: Real::from(1),
             creator_id: None,
+            credit_event_type_covered: Some(CreditEventTypeCovered::DF),
             credit_line_amount: Real(None),
             currency: None,
             currency_2: None,
@@ -454,6 +466,8 @@ impl Attributes {
             delivery_settlement: Some(DeliverySettlement::D),
             end_of_month_convention: Some(EndOfMonthConvention::SD),
             ex_dividend_date: Time(None),
+            exercise_amount: Real(None),
+            exercise_date: Time(None),
             fee_accrued: Real(None),
             fee_basis: None,
             fee_rate: Real(None),
@@ -501,14 +515,11 @@ impl Attributes {
             quantity: Real::from(1),
             rate_multiplier: Real::from(1),
             rate_spread: Real::from(0),
-            scaling_effect: Some(ScalingEffect {
-                x: false,
-                y: false,
-                z: false,
-            }),
+            scaling_effect: Some(ScalingEffect::_000),
             scaling_index_at_status_date: Real(None),
             seniority: None,
-            settlement_date: Time(None),
+            settlement_currency: None,
+            settlement_days: Some(Period::Days(0)),
             status_date: Time(None),
             termination_date: Time(None),
             unit: None,
