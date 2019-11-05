@@ -52,7 +52,7 @@
          "DF"
       ]
    },
-   "ContractReference": {
+   "ContractStructure": {
       "_object": "H256",
       "_type": "ContractReferenceType",
       "_role": "ContractReferenceRole"
@@ -109,7 +109,13 @@
          "OPTNS",
          "CEG",
          "CEC",
-         "MRGNG"
+      ]
+   },
+   "CreditEventTypeCovered": {
+      "_enum": [
+         "DL",
+         "DQ",
+         "DF"
       ]
    },
    "CycleType": "(u16, bool)",
@@ -137,12 +143,11 @@
    },
    "DayCountConvention": {
       "_enum": [
-         "_AAISDA",
-         "_A360",
-         "_A365",
+         "AAISDA",
+         "A360",
+         "A365",
          "_30E360ISDA",
          "_30E360",
-         "_30360",
          "_BUS252"
       ]
    },
@@ -224,9 +229,12 @@
       ]
    },
    "ScalingEffect": {
-      "x": "bool",
-      "y": "bool",
-      "z": "bool"
+     "_enum": [
+        "_000",
+        "I00",
+        "_0N0",
+        "IN0"
+     ]
    },
    "Seniority": {
       "_enum": [
@@ -268,11 +276,12 @@
       "contract_id": "H256",
       "contract_performance": "Option<ContractPerformance>",
       "contract_role": "Option<ContractRole>",
-      "contract_structure": "Vec<Option<ContractReference>>",
+      "contract_structure": "Vec<Option<ContractStructure>>",
       "contract_type": "Option<ContractType>",
       "counterparty_id": "Option<H256>",
       "coverage_of_credit_enhancement": "Real",
       "creator_id": "Option<H256>",
+      "credit_event_type_covered": "Option<CreditEventTypeCovered>",
       "credit_line_amount": "Real",
       "currency": "Option<u32>",
       "currency_2": "Option<u32>",
@@ -302,6 +311,8 @@
       "delivery_settlement": "Option<DeliverySettlement>",
       "end_of_month_convention": "Option<EndOfMonthConvention>",
       "ex_dividend_date": "Time",
+      "exercise_amount": "Real",
+      "exercise_date": "Time",
       "fee_accrued": "Real",
       "fee_basis": "Option<FeeBasis>",
       "fee_rate": "Real",
@@ -353,6 +364,8 @@
       "scaling_index_at_status_date": "Real",
       "seniority": "Option<Seniority>",
       "settlement_date": "Time",
+      "settlement_currency": "Option<u32>",
+      "settlement_days": "Option<Period>",
       "status_date": "Time",
       "termination_date": "Time",
       "unit": "Option<Unit>",
@@ -360,45 +373,46 @@
       "x_day_notice": "Option<Period>"
    },
    "Variables": {
+      "accrued_interest": "Real",
+      "accrued_interest_2": "Real",
+      "contract_performance": "Option<ContractPerformance>",
+      "exercise_amount": "Real",
+      "exercise_date": "Time",
       "fee_accrued": "Real",
       "interest_calculation_base": "Real",
       "interest_scaling_multiplier": "Real",
-      "last_event_date": "Time",
       "next_principal_redemption_payment": "Real",
-      "nominal_accrued_1": "Real",
-      "nominal_accrued_2": "Real",
-      "nominal_rate": "Real",
-      "nominal_value_1": "Real",
-      "nominal_value_2": "Real",
+      "nominal_interest_rate": "Real",
+      "nominal_interest_rate_2": "Real",
+      "non_performing_date": "Time",
+      "notional_principal": "Real",
+      "notional_principal_2": "Real",
       "notional_scaling_multiplier": "Real",
-      "payoff_at_settlement": "Real",
-      "performance": "Option<ContractPerformance>",
-      "time_at_maturity_date": "Time"
+      "status_date": "Time"
    },
    "ContractEventType": {
       "_enum": [
          "IED",
-         "IPCI",
-         "IP",
          "FP",
          "PR",
-         "PI",
+         "PD",
          "PRF",
          "PY",
          "PP",
-         "CD",
+         "IP",
+         "IPCI",
+         "CE",
          "RRF",
          "RR",
          "DV",
          "PRD",
-         "IMP",
-         "MP",
+         "MR",
          "TD",
          "SC",
          "IPCB",
+         "MD",
          "XD",
          "STD",
-         "MD",
          "AD"
       ]
    },
