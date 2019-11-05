@@ -28,27 +28,26 @@ pub struct ContractEvent {
 #[cfg_attr(feature = "std", derive(Debug))]
 pub enum ContractEventType {
     IED,
-    IPCI,
-    IP,
     FP,
     PR,
-    PI,
+    PD,
     PRF,
     PY,
     PP,
-    CD,
+    IP,
+    IPCI,
+    CE,
     RRF,
     RR,
     DV,
     PRD,
-    IMP,
-    MP,
+    MR,
     TD,
     SC,
     IPCB,
+    MD,
     XD,
     STD,
-    MD,
     // AD, // This event is for analysis only, it has no effect on the state.
 }
 
