@@ -224,7 +224,7 @@ construct_runtime!(
 		Sudo: sudo,
 		Contracts: contracts::{Module, Call, Storage},
 		Oracle: oracle::{Module, Call, Storage},
-        Assets: assets::{Module, Call, Storage},
+		Assets: assets::{Module, Call, Storage},
 	}
 );
 
