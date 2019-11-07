@@ -216,6 +216,7 @@ pub enum ContractRole {
     SEL,
     RFL,
     PFL,
+    COL,
     GUA,
     OBL,
 }

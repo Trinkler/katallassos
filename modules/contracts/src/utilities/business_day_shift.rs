@@ -16,7 +16,7 @@ use super::*;
 /// Business Day Shift Convention: it defines if the schedule times are supposed to fall on only
 /// business days or not. It shifts an input time according to the desired rule. See section 4.4 of
 /// the ACTUS paper for details.
-/// Note: So far, it is not implemented, since it may not be needed in Katal.
+/// Note: So far, it is not implemented, since it may not be needed in a blockchain setting.
 pub fn business_day_shift(
     mut date: UncheckedTime,
     business_day_convention: BusinessDayConvention,

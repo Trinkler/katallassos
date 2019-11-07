@@ -15,8 +15,8 @@ use super::*;
 
 /// End of Month Shift Convention: it defines for schedules with monthly or yearly cycles if the
 /// schedule times are supposed to try to fall on the same day every time or to always fall on the
-/// end of the month. It shifts an input time according to the desired rule. See section 4.3 of the
-/// ACTUS paper for details.
+/// end of the month. It shifts an input time according to the desired rule. See section 4.3 of
+/// the ACTUS paper for details.
 pub fn end_of_month_shift(
     mut date: UncheckedTime,
     end_of_month_convention: EndOfMonthConvention,

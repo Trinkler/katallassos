@@ -13,8 +13,8 @@
 
 use super::*;
 
-/// Contract Role Sign Convention: it maps a given contract role to either a 1 or a -1, representing
-/// a direction for cashflows. See section 4.7 of the ACTUS paper for details.
+/// Contract Role Sign Convention: it maps a given contract role to either a 1 or a -1,
+/// representing a direction for cashflows. See section 4.7 of the ACTUS paper for details.
 pub fn contract_role_sign(contract_role: Option<ContractRole>) -> Real {
     match contract_role {
         Some(ContractRole::RPA) => Real::from(1),
@@ -25,8 +25,9 @@ pub fn contract_role_sign(contract_role: Option<ContractRole>) -> Real {
         Some(ContractRole::SEL) => Real::from(-1),
         Some(ContractRole::RFL) => Real::from(1),
         Some(ContractRole::PFL) => Real::from(-1),
-        Some(ContractRole::GUA) => Real::from(1),
-        Some(ContractRole::OBL) => Real::from(-1),
+        Some(ContractRole::COL) => Real::from(1),
+        Some(ContractRole::GUA) => Real::from(-1),
+        Some(ContractRole::OBL) => Real::from(1),
         None => Real(None),
     }
 }

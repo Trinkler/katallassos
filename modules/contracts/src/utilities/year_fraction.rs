@@ -21,7 +21,7 @@ pub fn year_fraction(s: Time, t: Time, day_count_convention: DayCountConvention)
         return Real(None);
     }
     match day_count_convention {
-        DayCountConvention::_AAISDA => {
+        DayCountConvention::AAISDA => {
             let mut year_1 = s.0.unwrap().year;
             let year_2 = t.0.unwrap().year;
 
@@ -64,11 +64,11 @@ pub fn year_fraction(s: Time, t: Time, day_count_convention: DayCountConvention)
             }
             Real::from(diff_normal) / Real::from(365) + Real::from(diff_leap) / Real::from(366)
         }
-        DayCountConvention::_A360 => {
+        DayCountConvention::A360 => {
             let diff = Time::diff_days(s, t).unwrap();
             Real::from(diff) / Real::from(360)
         }
-        DayCountConvention::_A365 => {
+        DayCountConvention::A365 => {
             let diff = Time::diff_days(s, t).unwrap();
             Real::from(diff) / Real::from(365)
         }
@@ -92,19 +92,6 @@ pub fn year_fraction(s: Time, t: Time, day_count_convention: DayCountConvention)
                 + (day_2 - day_1))
                 / Real::from(360)
         }
-        DayCountConvention::_30360 => {
-            let year_1 = Real::from(s.0.unwrap().year as i64);
-            let month_1 = Real::from(s.0.unwrap().month as i64);
-            let day_1 = Real::from(s.0.unwrap().day as i64);
-            let year_2 = Real::from(t.0.unwrap().year as i64);
-            let month_2 = Real::from(t.0.unwrap().month as i64);
-            let day_2 = Real::from(t.0.unwrap().day as i64);
-
-            (Real::from(360) * (year_2 - year_1)
-                + Real::from(30) * (month_2 - month_1)
-                + (day_2 - day_1))
-                / Real::from(360)
-        }
     }
 }
 
@@ -120,40 +107,35 @@ mod tests {
 
         // Testing error cases.
         assert_eq!(
-            year_fraction(Time(None), t, DayCountConvention::_AAISDA),
+            year_fraction(Time(None), t, DayCountConvention::AAISDA),
             Real(None)
         );
         assert_eq!(
-            year_fraction(r, Time(None), DayCountConvention::_AAISDA),
+            year_fraction(r, Time(None), DayCountConvention::AAISDA),
             Real(None)
         );
-        assert_eq!(year_fraction(t, r, DayCountConvention::_AAISDA), Real(None));
+        assert_eq!(year_fraction(t, r, DayCountConvention::AAISDA), Real(None));
 
         // Testing some normal cases.
         assert_eq!(
-            year_fraction(r, s, DayCountConvention::_AAISDA),
+            year_fraction(r, s, DayCountConvention::AAISDA),
             Real::from(118) / Real::from(365)
         );
         assert_eq!(
-            year_fraction(r, t, DayCountConvention::_AAISDA),
+            year_fraction(r, t, DayCountConvention::AAISDA),
             Real::from(119) / Real::from(365) + Real::from(151) / Real::from(366)
         );
         assert_eq!(
-            year_fraction(r, t, DayCountConvention::_A360),
+            year_fraction(r, t, DayCountConvention::A360),
             Real::from(270) / Real::from(360)
         );
         assert_eq!(
-            year_fraction(r, t, DayCountConvention::_A365),
+            year_fraction(r, t, DayCountConvention::A365),
             Real::from(270) / Real::from(365)
         );
         assert_eq!(
             year_fraction(s, t, DayCountConvention::_30E360),
             (Real::from(360) * Real::from(1) + Real::from(30) * Real::from(-6) + Real::from(-29))
-                / Real::from(360)
-        );
-        assert_eq!(
-            year_fraction(r, t, DayCountConvention::_30360),
-            (Real::from(360) * Real::from(1) + Real::from(30) * Real::from(-3) + Real::from(-4))
                 / Real::from(360)
         );
     }
