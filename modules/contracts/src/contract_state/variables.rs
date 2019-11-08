@@ -33,6 +33,7 @@ pub struct Variables {
     pub notional_principal_2: Real,
     pub notional_scaling_multiplier: Real,
     pub status_date: Time,
+    pub time_at_maturity_date: Time,
 }
 
 impl Variables {
@@ -55,6 +56,7 @@ impl Variables {
             notional_principal_2: Real(None),
             notional_scaling_multiplier: Real(None),
             status_date: Time(None),
+            time_at_maturity_date: Time(None),
         }
     }
 }

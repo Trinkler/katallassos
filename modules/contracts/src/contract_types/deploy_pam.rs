@@ -72,6 +72,7 @@ impl<T: Trait> Module<T> {
         attributes.market_object_code = input.market_object_code;
         attributes.market_value_observed = input.market_value_observed;
         attributes.premium_discount_at_ied = input.premium_discount_at_ied;
+        attributes.settlement_currency = input.settlement_currency;
 
         // Optional on stand-alone and parent contracts only and
         // not applicable on child contracts -> x(_,_,1)
@@ -236,7 +237,6 @@ impl<T: Trait> Module<T> {
         schedule.push(event);
 
         // Principal prepayment event
-        // TODO: Consider the user-initiated events based on the "OPMO".
         if attributes.prepayment_effect == Some(PrepaymentEffect::N) {
         } else {
             let mut s: Time = Time(None);
@@ -458,13 +458,7 @@ impl<T: Trait> Module<T> {
         }
 
         // Scaling index revision event
-        if attributes.scaling_effect
-            == Some(ScalingEffect {
-                x: false,
-                y: false,
-                z: false,
-            })
-        {
+        if attributes.scaling_effect == Some(ScalingEffect::_000) {
         } else {
             let mut s: Time = Time(None);
             if attributes.cycle_anchor_date_of_scaling_index == Time(None)
@@ -494,8 +488,7 @@ impl<T: Trait> Module<T> {
             }
         }
 
-        // Credit default event
-        // TODO: First figure out how to do user-initiated events.
+        // Credit event (TODO)
 
         // Remove any events with Time == None
         // Note: The unusual control flow is because we want to use the swap_remove method,
@@ -515,29 +508,29 @@ impl<T: Trait> Module<T> {
         // Initializing the variables
         let mut variables = Variables::new();
 
-        // Time at maturity date variable
+        // Time At Maturity Date variable
         variables.time_at_maturity_date = attributes.maturity_date;
 
-        // Nominal value 1 variable
+        // Notional Principal variable
         if attributes.initial_exchange_date > t0 {
-            variables.nominal_value_1 = Real::from(0);
+            variables.notional_principal = Real::from(0);
         } else {
-            variables.nominal_value_1 = utilities::contract_role_sign(attributes.contract_role)
+            variables.notional_principal = utilities::contract_role_sign(attributes.contract_role)
                 * attributes.notional_principal;
         }
 
-        // Nominal rate variable
+        // Nominal Interest Rate variable
         if attributes.initial_exchange_date > t0 {
-            variables.nominal_rate = Real::from(0);
+            variables.nominal_interest_rate = Real::from(0);
         } else {
-            variables.nominal_rate = attributes.nominal_interest_rate;
+            variables.nominal_interest_rate = attributes.nominal_interest_rate;
         }
 
-        // Nominal accrued 1 variable
+        // Accrued Interest variable
         if attributes.nominal_interest_rate == Real(None) {
-            variables.nominal_accrued_1 = Real::from(0);
+            variables.accrued_interest = Real::from(0);
         } else if attributes.accrued_interest != Real(None) {
-            variables.nominal_accrued_1 = attributes.accrued_interest;
+            variables.accrued_interest = attributes.accrued_interest;
         } else {
             let mut t_minus = Time(None);
             for e in schedule.clone() {
@@ -548,13 +541,13 @@ impl<T: Trait> Module<T> {
                     t_minus = e.time;
                 }
             }
-            variables.nominal_accrued_1 =
+            variables.accrued_interest =
                 utilities::year_fraction(t_minus, t0, attributes.day_count_convention.unwrap())
-                    * variables.nominal_value_1
-                    * variables.nominal_rate;
+                    * variables.notional_principal
+                    * variables.nominal_interest_rate;
         }
 
-        // Fee accrued variable
+        // Fee Accrued variable
         if attributes.fee_rate == Real(None) {
             variables.fee_accrued = Real::from(0);
         } else if attributes.fee_accrued != Real(None) {
@@ -571,7 +564,7 @@ impl<T: Trait> Module<T> {
             }
             variables.fee_accrued =
                 utilities::year_fraction(t_minus, t0, attributes.day_count_convention.unwrap())
-                    * variables.nominal_value_1
+                    * variables.notional_principal
                     * attributes.fee_rate;
         } else {
             let mut t_minus = Time(None);
@@ -595,35 +588,29 @@ impl<T: Trait> Module<T> {
                     * attributes.fee_rate;
         }
 
-        // Nominal scaling multiplier variable
-        let temp = attributes.scaling_effect.unwrap_or(ScalingEffect {
-            x: false,
-            y: false,
-            z: false,
-        });
-        if temp.y == true {
+        // Notional Scaling Multiplier variable
+        if attributes.scaling_effect == ScalingEffect::_0N0
+            || attributes.scaling_effect == ScalingEffect::IN0
+        {
             variables.notional_scaling_multiplier = attributes.scaling_index_at_status_date;
         } else {
             variables.notional_scaling_multiplier = Real::from(1);
         }
 
-        // Interest scaling multiplier variable
-        let temp = attributes.scaling_effect.unwrap_or(ScalingEffect {
-            x: false,
-            y: false,
-            z: false,
-        });
-        if temp.x == true {
+        // Interest Scaling Multiplier variable
+        if attributes.scaling_effect == ScalingEffect::I00
+            || attributes.scaling_effect == ScalingEffect::IN0
+        {
             variables.interest_scaling_multiplier = attributes.scaling_index_at_status_date;
         } else {
             variables.interest_scaling_multiplier = Real::from(1);
         }
 
-        // Performance variable
-        variables.performance = attributes.contract_performance;
+        // Contract Performance variable
+        variables.contract_performance = attributes.contract_performance;
 
-        // Last event date variable
-        variables.last_event_date = t0;
+        // Status Date variable
+        variables.status_date = t0;
 
         // Returning the initialized Contract State
         Ok(ContractState {
