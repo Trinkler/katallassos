@@ -38,14 +38,14 @@ impl<T: Trait> Module<T> {
             <assets::Module<T>>::transfer(
                 state.attributes.counterparty_id.unwrap(),
                 state.attributes.creator_id.unwrap(),
-                state.attributes.currency.unwrap(),
+                state.attributes.settlement_currency.unwrap(),
                 payoff.abs(),
             )?;
         } else {
             <assets::Module<T>>::transfer(
                 state.attributes.creator_id.unwrap(),
                 state.attributes.counterparty_id.unwrap(),
-                state.attributes.currency.unwrap(),
+                state.attributes.settlement_currency.unwrap(),
                 payoff.abs(),
             )?;
         }

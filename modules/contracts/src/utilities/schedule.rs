@@ -25,13 +25,17 @@ pub fn schedule(
     if s != Time(None) && t != Time(None) && s >= t {
         return Err("Couldn't create schedule");
     }
-    if s == Time(None) && t == Time(None) {
+    if s == Time(None) && t != Time(None) {
         return Err("Couldn't create schedule");
     }
 
-    // Checking two specific cases of the schedule function.
+    // Checking three specific cases of the schedule function.
     let mut vec: Vec<Time> = Vec::new();
-    if t == Time(None) {
+
+    if s == Time(None) && t == Time(None) {
+        return Ok(vec);
+    }
+    if s != Time(None) && t == Time(None) {
         vec.push(s);
         return Ok(vec);
     }

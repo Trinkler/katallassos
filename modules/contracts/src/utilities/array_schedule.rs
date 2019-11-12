@@ -25,17 +25,13 @@ pub fn array_schedule(
     if arr_s.len() != arr_cycle.len() {
         return Err("Couldn't create array schedule");
     }
-
-    // Waiting for this feature to be added in Rust. Purpose of this block is to check if the
-    // array is sorted. (https://github.com/rust-lang/rust/issues/53485)
-    // if !arr_s.is_sorted() {
-    //     return Err("Couldn't create array schedule");
-    // }
+    if arr_s.len() < 2 {
+        return Err("Couldn't create array schedule");
+    }
 
     let m = arr_s.len();
     let mut vec: Vec<Time> = Vec::new();
     let mut vec_2: Vec<Time> = Vec::new();
-
     for i in 0..(m - 1) {
         vec_2 = schedule(
             arr_s[i],

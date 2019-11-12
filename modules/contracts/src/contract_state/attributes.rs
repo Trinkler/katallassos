@@ -37,11 +37,12 @@ pub struct Attributes {
     pub contract_id: H256, // Represents an contract object.
     pub contract_performance: Option<ContractPerformance>,
     pub contract_role: Option<ContractRole>,
-    pub contract_structure: Vec<Option<ContractReference>>,
+    pub contract_structure: Vec<Option<ContractStructure>>,
     pub contract_type: Option<ContractType>,
     pub counterparty_id: Option<H256>, // Represents an account object.
     pub coverage_of_credit_enhancement: Real,
     pub creator_id: Option<H256>, // Represents an account object.
+    pub credit_event_type_covered: Option<CreditEventTypeCovered>,
     pub credit_line_amount: Real,
     pub currency: Option<u32>,   // Represents an asset object.
     pub currency_2: Option<u32>, // Represents an asset object.
@@ -71,6 +72,8 @@ pub struct Attributes {
     pub delivery_settlement: Option<DeliverySettlement>,
     pub end_of_month_convention: Option<EndOfMonthConvention>,
     pub ex_dividend_date: Time,
+    pub exercise_amount: Real,
+    pub exercise_date: Time,
     pub fee_accrued: Real,
     pub fee_basis: Option<FeeBasis>,
     pub fee_rate: Real,
@@ -121,7 +124,8 @@ pub struct Attributes {
     pub scaling_effect: Option<ScalingEffect>,
     pub scaling_index_at_status_date: Real,
     pub seniority: Option<Seniority>,
-    pub settlement_date: Time,
+    pub settlement_currency: Option<u32>, // Represents an asset object.
+    pub settlement_days: Option<Period>,
     pub status_date: Time,
     pub termination_date: Time,
     pub unit: Option<Unit>,
@@ -175,7 +179,7 @@ pub enum ContractPerformance {
 // The underscore is necessary because 'type' is a reserved word.
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
-pub struct ContractReference {
+pub struct ContractStructure {
     pub _object: H256,
     pub _type: ContractReferenceType,
     pub _role: ContractReferenceRole,
@@ -212,6 +216,7 @@ pub enum ContractRole {
     SEL,
     RFL,
     PFL,
+    COL,
     GUA,
     OBL,
 }
@@ -237,7 +242,14 @@ pub enum ContractType {
     OPTNS,
     CEG,
     CEC,
-    MRGNG,
+}
+
+#[derive(Clone, Copy, Decode, Encode, PartialEq)]
+#[cfg_attr(feature = "std", derive(Debug))]
+pub enum CreditEventTypeCovered {
+    DL,
+    DQ,
+    DF,
 }
 
 // The boolean represents the stub, true = long stub, false = short stub.
@@ -269,13 +281,12 @@ pub enum CyclePointOfRateReset {
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub enum DayCountConvention {
-    _AAISDA,
-    _A360,
-    _A365,
+    AAISDA,
+    A360,
+    A365,
     // _30E360ISDA,
     _30E360,
-    _30360, // This one does not appear in the data dictionary?...
-            // _BUS252,
+    // _BUS252,
 }
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
@@ -368,10 +379,11 @@ pub enum PrepaymentEffect {
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
 #[cfg_attr(feature = "std", derive(Debug))]
-pub struct ScalingEffect {
-    pub x: bool,
-    pub y: bool,
-    pub z: bool,
+pub enum ScalingEffect {
+    _000,
+    I00,
+    _0N0,
+    IN0,
 }
 
 #[derive(Clone, Copy, Decode, Encode, PartialEq)]
@@ -417,7 +429,7 @@ impl Attributes {
             capitalization_end_date: Time(None),
             clearing_house: None,
             contract_deal_date: Time(None),
-            contract_id: contract_id,
+            contract_id: contract_id, // ACTUS default for this attribute is None, but for pratical reasons we always need a contract_id.
             contract_performance: Some(ContractPerformance::PF),
             contract_role: None,
             contract_structure: Vec::new(),
@@ -425,6 +437,7 @@ impl Attributes {
             counterparty_id: None,
             coverage_of_credit_enhancement: Real::from(1),
             creator_id: None,
+            credit_event_type_covered: Some(CreditEventTypeCovered::DF),
             credit_line_amount: Real(None),
             currency: None,
             currency_2: None,
@@ -454,6 +467,8 @@ impl Attributes {
             delivery_settlement: Some(DeliverySettlement::D),
             end_of_month_convention: Some(EndOfMonthConvention::SD),
             ex_dividend_date: Time(None),
+            exercise_amount: Real(None),
+            exercise_date: Time(None),
             fee_accrued: Real(None),
             fee_basis: None,
             fee_rate: Real(None),
@@ -501,14 +516,11 @@ impl Attributes {
             quantity: Real::from(1),
             rate_multiplier: Real::from(1),
             rate_spread: Real::from(0),
-            scaling_effect: Some(ScalingEffect {
-                x: false,
-                y: false,
-                z: false,
-            }),
+            scaling_effect: Some(ScalingEffect::_000),
             scaling_index_at_status_date: Real(None),
             seniority: None,
-            settlement_date: Time(None),
+            settlement_currency: None,
+            settlement_days: Some(Period::Days(0)),
             status_date: Time(None),
             termination_date: Time(None),
             unit: None,
@@ -554,259 +566,259 @@ impl Attributes {
         {
             return false;
         }
-        // Verifying the Time Consistency Business Rules defined in ACTUS
-        // Rule 1
-        if !(leq(self.contract_deal_date, self.initial_exchange_date)
-            && leq(self.contract_deal_date, self.capitalization_end_date)
-            && leq(self.contract_deal_date, self.purchase_date)
-            && leq(self.contract_deal_date, self.termination_date)
-            && leq(self.contract_deal_date, self.cycle_anchor_date_of_dividend)
-            && leq(self.contract_deal_date, self.cycle_anchor_date_of_fee)
-            && leq(
-                self.contract_deal_date,
-                self.cycle_anchor_date_of_interest_calculation_base,
-            )
-            && leq(self.contract_deal_date, self.cycle_anchor_date_of_margining)
-            && leq(
-                self.contract_deal_date,
-                self.cycle_anchor_date_of_optionality,
-            )
-            && leq(
-                self.contract_deal_date,
-                self.cycle_anchor_date_of_principal_redemption,
-            )
-            && leq(
-                self.contract_deal_date,
-                self.cycle_anchor_date_of_rate_reset,
-            )
-            && leq(
-                self.contract_deal_date,
-                self.cycle_anchor_date_of_scaling_index,
-            )
-            && leq(self.contract_deal_date, self.option_exercise_end_date)
-            && leq(self.contract_deal_date, self.maturity_date)
-            && leq(self.contract_deal_date, self.amortization_date)
-            && leq(self.contract_deal_date, self.settlement_date))
-        {
-            return false;
-        }
-
-        if !(leq(self.initial_exchange_date, self.capitalization_end_date)
-            && leq(self.initial_exchange_date, self.purchase_date)
-            && leq(self.initial_exchange_date, self.termination_date)
-            && leq(
-                self.initial_exchange_date,
-                self.cycle_anchor_date_of_dividend,
-            )
-            && leq(self.initial_exchange_date, self.cycle_anchor_date_of_fee)
-            && leq(
-                self.initial_exchange_date,
-                self.cycle_anchor_date_of_interest_calculation_base,
-            )
-            && leq(
-                self.initial_exchange_date,
-                self.cycle_anchor_date_of_margining,
-            )
-            && leq(
-                self.initial_exchange_date,
-                self.cycle_anchor_date_of_optionality,
-            )
-            && leq(
-                self.initial_exchange_date,
-                self.cycle_anchor_date_of_principal_redemption,
-            )
-            && leq(
-                self.initial_exchange_date,
-                self.cycle_anchor_date_of_rate_reset,
-            )
-            && leq(
-                self.initial_exchange_date,
-                self.cycle_anchor_date_of_scaling_index,
-            )
-            && leq(self.initial_exchange_date, self.option_exercise_end_date)
-            && leq(self.initial_exchange_date, self.maturity_date)
-            && leq(self.initial_exchange_date, self.amortization_date)
-            && leq(self.initial_exchange_date, self.settlement_date))
-        {
-            return false;
-        }
-
-        if !(leq(self.capitalization_end_date, self.option_exercise_end_date)
-            && leq(self.capitalization_end_date, self.maturity_date)
-            && leq(self.capitalization_end_date, self.amortization_date)
-            && leq(self.capitalization_end_date, self.settlement_date))
-        {
-            return false;
-        }
-
-        if !(leq(self.purchase_date, self.option_exercise_end_date)
-            && leq(self.purchase_date, self.maturity_date)
-            && leq(self.purchase_date, self.amortization_date)
-            && leq(self.purchase_date, self.settlement_date))
-        {
-            return false;
-        }
-
-        if !(leq(self.termination_date, self.option_exercise_end_date)
-            && leq(self.termination_date, self.maturity_date)
-            && leq(self.termination_date, self.amortization_date)
-            && leq(self.termination_date, self.settlement_date))
-        {
-            return false;
-        }
-
-        if !(leq(
-            self.cycle_anchor_date_of_dividend,
-            self.option_exercise_end_date,
-        ) && leq(self.cycle_anchor_date_of_dividend, self.maturity_date)
-            && leq(self.cycle_anchor_date_of_dividend, self.amortization_date)
-            && leq(self.cycle_anchor_date_of_dividend, self.settlement_date))
-        {
-            return false;
-        }
-
-        if !(leq(self.cycle_anchor_date_of_fee, self.option_exercise_end_date)
-            && leq(self.cycle_anchor_date_of_fee, self.maturity_date)
-            && leq(self.cycle_anchor_date_of_fee, self.amortization_date)
-            && leq(self.cycle_anchor_date_of_fee, self.settlement_date))
-        {
-            return false;
-        }
-
-        if !(leq(
-            self.cycle_anchor_date_of_interest_calculation_base,
-            self.option_exercise_end_date,
-        ) && leq(
-            self.cycle_anchor_date_of_interest_calculation_base,
-            self.maturity_date,
-        ) && leq(
-            self.cycle_anchor_date_of_interest_calculation_base,
-            self.amortization_date,
-        ) && leq(
-            self.cycle_anchor_date_of_interest_calculation_base,
-            self.settlement_date,
-        )) {
-            return false;
-        }
-
-        if !(leq(
-            self.cycle_anchor_date_of_margining,
-            self.option_exercise_end_date,
-        ) && leq(self.cycle_anchor_date_of_margining, self.maturity_date)
-            && leq(self.cycle_anchor_date_of_margining, self.amortization_date)
-            && leq(self.cycle_anchor_date_of_margining, self.settlement_date))
-        {
-            return false;
-        }
-
-        if !(leq(
-            self.cycle_anchor_date_of_optionality,
-            self.option_exercise_end_date,
-        ) && leq(self.cycle_anchor_date_of_optionality, self.maturity_date)
-            && leq(
-                self.cycle_anchor_date_of_optionality,
-                self.amortization_date,
-            )
-            && leq(self.cycle_anchor_date_of_optionality, self.settlement_date))
-        {
-            return false;
-        }
-
-        if !(leq(
-            self.cycle_anchor_date_of_principal_redemption,
-            self.option_exercise_end_date,
-        ) && leq(
-            self.cycle_anchor_date_of_principal_redemption,
-            self.maturity_date,
-        ) && leq(
-            self.cycle_anchor_date_of_principal_redemption,
-            self.amortization_date,
-        ) && leq(
-            self.cycle_anchor_date_of_principal_redemption,
-            self.settlement_date,
-        )) {
-            return false;
-        }
-        if !(leq(
-            self.cycle_anchor_date_of_rate_reset,
-            self.option_exercise_end_date,
-        ) && leq(self.cycle_anchor_date_of_rate_reset, self.maturity_date)
-            && leq(self.cycle_anchor_date_of_rate_reset, self.amortization_date)
-            && leq(self.cycle_anchor_date_of_rate_reset, self.settlement_date))
-        {
-            return false;
-        }
-        if !(leq(
-            self.cycle_anchor_date_of_scaling_index,
-            self.option_exercise_end_date,
-        ) && leq(self.cycle_anchor_date_of_scaling_index, self.maturity_date)
-            && leq(
-                self.cycle_anchor_date_of_scaling_index,
-                self.amortization_date,
-            )
-            && leq(
-                self.cycle_anchor_date_of_scaling_index,
-                self.settlement_date,
-            ))
-        {
-            return false;
-        }
-
-        if !(leq(self.option_exercise_end_date, self.maturity_date)
-            && leq(self.option_exercise_end_date, self.amortization_date)
-            && leq(self.option_exercise_end_date, self.settlement_date))
-        {
-            return false;
-        }
-
-        if !(leq(self.maturity_date, self.amortization_date)
-            && leq(self.maturity_date, self.settlement_date))
-        {
-            return false;
-        }
-
-        if !(leq(self.amortization_date, self.settlement_date)) {
-            return false;
-        }
-
-        // Rule 2
-        if !(less(
-            self.cycle_anchor_date_of_interest_payment,
-            self.maturity_date,
-        ) && leq(
-            self.cycle_anchor_date_of_interest_payment,
-            self.amortization_date,
-        )) {
-            return false;
-        }
-
-        if !(leq(self.maturity_date, self.amortization_date)) {
-            return false;
-        }
-        // Rule 3
-        if !(leq(self.contract_deal_date, self.status_date)
-            && leq(self.contract_deal_date, self.maturity_date)
-            && leq(self.contract_deal_date, self.settlement_date)
-            && leq(self.contract_deal_date, self.option_exercise_end_date)
-            && leq(self.contract_deal_date, self.termination_date))
-        {
-            return false;
-        }
-
-        if !(leq(self.status_date, self.maturity_date)
-            && leq(self.status_date, self.settlement_date)
-            && leq(self.status_date, self.option_exercise_end_date)
-            && leq(self.status_date, self.termination_date))
-        {
-            return false;
-        }
-
-        // Rule 4
-        if self.next_dividend_payment_amount.0.is_some() && self.cycle_of_dividend.is_none() {
-            if !(less(self.status_date, self.cycle_anchor_date_of_dividend)) {
-                return false;
-            }
-        }
+        //     // Verifying the Time Consistency Business Rules defined in ACTUS
+        //     // Rule 1
+        //     if !(leq(self.contract_deal_date, self.initial_exchange_date)
+        //         && leq(self.contract_deal_date, self.capitalization_end_date)
+        //         && leq(self.contract_deal_date, self.purchase_date)
+        //         && leq(self.contract_deal_date, self.termination_date)
+        //         && leq(self.contract_deal_date, self.cycle_anchor_date_of_dividend)
+        //         && leq(self.contract_deal_date, self.cycle_anchor_date_of_fee)
+        //         && leq(
+        //             self.contract_deal_date,
+        //             self.cycle_anchor_date_of_interest_calculation_base,
+        //         )
+        //         && leq(self.contract_deal_date, self.cycle_anchor_date_of_margining)
+        //         && leq(
+        //             self.contract_deal_date,
+        //             self.cycle_anchor_date_of_optionality,
+        //         )
+        //         && leq(
+        //             self.contract_deal_date,
+        //             self.cycle_anchor_date_of_principal_redemption,
+        //         )
+        //         && leq(
+        //             self.contract_deal_date,
+        //             self.cycle_anchor_date_of_rate_reset,
+        //         )
+        //         && leq(
+        //             self.contract_deal_date,
+        //             self.cycle_anchor_date_of_scaling_index,
+        //         )
+        //         && leq(self.contract_deal_date, self.option_exercise_end_date)
+        //         && leq(self.contract_deal_date, self.maturity_date)
+        //         && leq(self.contract_deal_date, self.amortization_date)
+        //         && leq(self.contract_deal_date, self.settlement_date))
+        //     {
+        //         return false;
+        //     }
+        //
+        //     if !(leq(self.initial_exchange_date, self.capitalization_end_date)
+        //         && leq(self.initial_exchange_date, self.purchase_date)
+        //         && leq(self.initial_exchange_date, self.termination_date)
+        //         && leq(
+        //             self.initial_exchange_date,
+        //             self.cycle_anchor_date_of_dividend,
+        //         )
+        //         && leq(self.initial_exchange_date, self.cycle_anchor_date_of_fee)
+        //         && leq(
+        //             self.initial_exchange_date,
+        //             self.cycle_anchor_date_of_interest_calculation_base,
+        //         )
+        //         && leq(
+        //             self.initial_exchange_date,
+        //             self.cycle_anchor_date_of_margining,
+        //         )
+        //         && leq(
+        //             self.initial_exchange_date,
+        //             self.cycle_anchor_date_of_optionality,
+        //         )
+        //         && leq(
+        //             self.initial_exchange_date,
+        //             self.cycle_anchor_date_of_principal_redemption,
+        //         )
+        //         && leq(
+        //             self.initial_exchange_date,
+        //             self.cycle_anchor_date_of_rate_reset,
+        //         )
+        //         && leq(
+        //             self.initial_exchange_date,
+        //             self.cycle_anchor_date_of_scaling_index,
+        //         )
+        //         && leq(self.initial_exchange_date, self.option_exercise_end_date)
+        //         && leq(self.initial_exchange_date, self.maturity_date)
+        //         && leq(self.initial_exchange_date, self.amortization_date)
+        //         && leq(self.initial_exchange_date, self.settlement_date))
+        //     {
+        //         return false;
+        //     }
+        //
+        //     if !(leq(self.capitalization_end_date, self.option_exercise_end_date)
+        //         && leq(self.capitalization_end_date, self.maturity_date)
+        //         && leq(self.capitalization_end_date, self.amortization_date)
+        //         && leq(self.capitalization_end_date, self.settlement_date))
+        //     {
+        //         return false;
+        //     }
+        //
+        //     if !(leq(self.purchase_date, self.option_exercise_end_date)
+        //         && leq(self.purchase_date, self.maturity_date)
+        //         && leq(self.purchase_date, self.amortization_date)
+        //         && leq(self.purchase_date, self.settlement_date))
+        //     {
+        //         return false;
+        //     }
+        //
+        //     if !(leq(self.termination_date, self.option_exercise_end_date)
+        //         && leq(self.termination_date, self.maturity_date)
+        //         && leq(self.termination_date, self.amortization_date)
+        //         && leq(self.termination_date, self.settlement_date))
+        //     {
+        //         return false;
+        //     }
+        //
+        //     if !(leq(
+        //         self.cycle_anchor_date_of_dividend,
+        //         self.option_exercise_end_date,
+        //     ) && leq(self.cycle_anchor_date_of_dividend, self.maturity_date)
+        //         && leq(self.cycle_anchor_date_of_dividend, self.amortization_date)
+        //         && leq(self.cycle_anchor_date_of_dividend, self.settlement_date))
+        //     {
+        //         return false;
+        //     }
+        //
+        //     if !(leq(self.cycle_anchor_date_of_fee, self.option_exercise_end_date)
+        //         && leq(self.cycle_anchor_date_of_fee, self.maturity_date)
+        //         && leq(self.cycle_anchor_date_of_fee, self.amortization_date)
+        //         && leq(self.cycle_anchor_date_of_fee, self.settlement_date))
+        //     {
+        //         return false;
+        //     }
+        //
+        //     if !(leq(
+        //         self.cycle_anchor_date_of_interest_calculation_base,
+        //         self.option_exercise_end_date,
+        //     ) && leq(
+        //         self.cycle_anchor_date_of_interest_calculation_base,
+        //         self.maturity_date,
+        //     ) && leq(
+        //         self.cycle_anchor_date_of_interest_calculation_base,
+        //         self.amortization_date,
+        //     ) && leq(
+        //         self.cycle_anchor_date_of_interest_calculation_base,
+        //         self.settlement_date,
+        //     )) {
+        //         return false;
+        //     }
+        //
+        //     if !(leq(
+        //         self.cycle_anchor_date_of_margining,
+        //         self.option_exercise_end_date,
+        //     ) && leq(self.cycle_anchor_date_of_margining, self.maturity_date)
+        //         && leq(self.cycle_anchor_date_of_margining, self.amortization_date)
+        //         && leq(self.cycle_anchor_date_of_margining, self.settlement_date))
+        //     {
+        //         return false;
+        //     }
+        //
+        //     if !(leq(
+        //         self.cycle_anchor_date_of_optionality,
+        //         self.option_exercise_end_date,
+        //     ) && leq(self.cycle_anchor_date_of_optionality, self.maturity_date)
+        //         && leq(
+        //             self.cycle_anchor_date_of_optionality,
+        //             self.amortization_date,
+        //         )
+        //         && leq(self.cycle_anchor_date_of_optionality, self.settlement_date))
+        //     {
+        //         return false;
+        //     }
+        //
+        //     if !(leq(
+        //         self.cycle_anchor_date_of_principal_redemption,
+        //         self.option_exercise_end_date,
+        //     ) && leq(
+        //         self.cycle_anchor_date_of_principal_redemption,
+        //         self.maturity_date,
+        //     ) && leq(
+        //         self.cycle_anchor_date_of_principal_redemption,
+        //         self.amortization_date,
+        //     ) && leq(
+        //         self.cycle_anchor_date_of_principal_redemption,
+        //         self.settlement_date,
+        //     )) {
+        //         return false;
+        //     }
+        //     if !(leq(
+        //         self.cycle_anchor_date_of_rate_reset,
+        //         self.option_exercise_end_date,
+        //     ) && leq(self.cycle_anchor_date_of_rate_reset, self.maturity_date)
+        //         && leq(self.cycle_anchor_date_of_rate_reset, self.amortization_date)
+        //         && leq(self.cycle_anchor_date_of_rate_reset, self.settlement_date))
+        //     {
+        //         return false;
+        //     }
+        //     if !(leq(
+        //         self.cycle_anchor_date_of_scaling_index,
+        //         self.option_exercise_end_date,
+        //     ) && leq(self.cycle_anchor_date_of_scaling_index, self.maturity_date)
+        //         && leq(
+        //             self.cycle_anchor_date_of_scaling_index,
+        //             self.amortization_date,
+        //         )
+        //         && leq(
+        //             self.cycle_anchor_date_of_scaling_index,
+        //             self.settlement_date,
+        //         ))
+        //     {
+        //         return false;
+        //     }
+        //
+        //     if !(leq(self.option_exercise_end_date, self.maturity_date)
+        //         && leq(self.option_exercise_end_date, self.amortization_date)
+        //         && leq(self.option_exercise_end_date, self.settlement_date))
+        //     {
+        //         return false;
+        //     }
+        //
+        //     if !(leq(self.maturity_date, self.amortization_date)
+        //         && leq(self.maturity_date, self.settlement_date))
+        //     {
+        //         return false;
+        //     }
+        //
+        //     if !(leq(self.amortization_date, self.settlement_date)) {
+        //         return false;
+        //     }
+        //
+        //     // Rule 2
+        //     if !(less(
+        //         self.cycle_anchor_date_of_interest_payment,
+        //         self.maturity_date,
+        //     ) && leq(
+        //         self.cycle_anchor_date_of_interest_payment,
+        //         self.amortization_date,
+        //     )) {
+        //         return false;
+        //     }
+        //
+        //     if !(leq(self.maturity_date, self.amortization_date)) {
+        //         return false;
+        //     }
+        //     // Rule 3
+        //     if !(leq(self.contract_deal_date, self.status_date)
+        //         && leq(self.contract_deal_date, self.maturity_date)
+        //         && leq(self.contract_deal_date, self.settlement_date)
+        //         && leq(self.contract_deal_date, self.option_exercise_end_date)
+        //         && leq(self.contract_deal_date, self.termination_date))
+        //     {
+        //         return false;
+        //     }
+        //
+        //     if !(leq(self.status_date, self.maturity_date)
+        //         && leq(self.status_date, self.settlement_date)
+        //         && leq(self.status_date, self.option_exercise_end_date)
+        //         && leq(self.status_date, self.termination_date))
+        //     {
+        //         return false;
+        //     }
+        //
+        //     // Rule 4
+        //     if self.next_dividend_payment_amount.0.is_some() && self.cycle_of_dividend.is_none() {
+        //         if !(less(self.status_date, self.cycle_anchor_date_of_dividend)) {
+        //             return false;
+        //         }
+        //     }
         true
     }
 }
