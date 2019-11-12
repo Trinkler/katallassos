@@ -622,8 +622,8 @@ impl<T: Trait> Module<T> {
 
                 // Unwrap will never panic because of the lazy evaluation.
                 if state.attributes.scaling_effect.is_some()
-                    && (state.attributes.scaling_effect.unwrap() == _000
-                        || state.attributes.scaling_effect.unwrap() == I00)
+                    && (state.attributes.scaling_effect.unwrap() == ScalingEffect::_000
+                        || state.attributes.scaling_effect.unwrap() == ScalingEffect::I00)
                 {
                     state.variables.notional_scaling_multiplier =
                         state.variables.notional_scaling_multiplier;
@@ -638,8 +638,8 @@ impl<T: Trait> Module<T> {
 
                 // Unwrap will never panic because of the lazy evaluation.
                 if state.attributes.scaling_effect.is_some()
-                    && (state.attributes.scaling_effect.unwrap() == _000
-                        || state.attributes.scaling_effect.unwrap() == _0N0)
+                    && (state.attributes.scaling_effect.unwrap() == ScalingEffect::_000
+                        || state.attributes.scaling_effect.unwrap() == ScalingEffect::_0N0)
                 {
                     state.variables.interest_scaling_multiplier =
                         state.variables.interest_scaling_multiplier;

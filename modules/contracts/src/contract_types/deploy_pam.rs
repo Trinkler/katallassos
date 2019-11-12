@@ -589,18 +589,16 @@ impl<T: Trait> Module<T> {
         }
 
         // Notional Scaling Multiplier variable
-        if attributes.scaling_effect == ScalingEffect::_0N0
-            || attributes.scaling_effect == ScalingEffect::IN0
-        {
+        let temp = attributes.scaling_effect.unwrap_or(ScalingEffect::_000);
+        if temp == ScalingEffect::_0N0 || temp == ScalingEffect::IN0 {
             variables.notional_scaling_multiplier = attributes.scaling_index_at_status_date;
         } else {
             variables.notional_scaling_multiplier = Real::from(1);
         }
 
         // Interest Scaling Multiplier variable
-        if attributes.scaling_effect == ScalingEffect::I00
-            || attributes.scaling_effect == ScalingEffect::IN0
-        {
+        let temp = attributes.scaling_effect.unwrap_or(ScalingEffect::_000);
+        if temp == ScalingEffect::I00 || temp == ScalingEffect::IN0 {
             variables.interest_scaling_multiplier = attributes.scaling_index_at_status_date;
         } else {
             variables.interest_scaling_multiplier = Real::from(1);

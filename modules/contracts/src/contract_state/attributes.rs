@@ -819,7 +819,7 @@ impl Attributes {
         //             return false;
         //         }
         //     }
-        //     true
+        true
     }
 }
 

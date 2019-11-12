@@ -29,6 +29,7 @@ pub fn array_schedule(
         return Err("Couldn't create array schedule");
     }
 
+    let m = arr_s.len();
     let mut vec: Vec<Time> = Vec::new();
     let mut vec_2: Vec<Time> = Vec::new();
     for i in 0..(m - 1) {

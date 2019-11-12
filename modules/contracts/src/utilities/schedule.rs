@@ -33,7 +33,7 @@ pub fn schedule(
     let mut vec: Vec<Time> = Vec::new();
 
     if s == Time(None) && t == Time(None) {
-        return vec;
+        return Ok(vec);
     }
     if s != Time(None) && t == Time(None) {
         vec.push(s);
