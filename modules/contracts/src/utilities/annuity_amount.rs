@@ -50,17 +50,17 @@ mod tests {
         let nominal_rate = Real::from(2);
 
         let numerator = (Real::from(1)
-            + nominal_rate * year_fraction(p, q, DayCountConvention::_A365))
-            * (Real::from(1) + nominal_rate * year_fraction(q, r, DayCountConvention::_A365))
-            * (Real::from(1) + nominal_rate * year_fraction(r, s, DayCountConvention::_A365));
+            + nominal_rate * year_fraction(p, q, DayCountConvention::A365))
+            * (Real::from(1) + nominal_rate * year_fraction(q, r, DayCountConvention::A365))
+            * (Real::from(1) + nominal_rate * year_fraction(r, s, DayCountConvention::A365));
 
         let denominator = Real::from(1)
-            + (Real::from(1) + nominal_rate * year_fraction(p, q, DayCountConvention::_A365))
-                * (Real::from(1) + nominal_rate * year_fraction(q, r, DayCountConvention::_A365))
-                * (Real::from(1) + nominal_rate * year_fraction(r, s, DayCountConvention::_A365))
-            + (Real::from(1) + nominal_rate * year_fraction(q, r, DayCountConvention::_A365))
-                * (Real::from(1) + nominal_rate * year_fraction(r, s, DayCountConvention::_A365))
-            + (Real::from(1) + nominal_rate * year_fraction(r, s, DayCountConvention::_A365));
+            + (Real::from(1) + nominal_rate * year_fraction(p, q, DayCountConvention::A365))
+                * (Real::from(1) + nominal_rate * year_fraction(q, r, DayCountConvention::A365))
+                * (Real::from(1) + nominal_rate * year_fraction(r, s, DayCountConvention::A365))
+            + (Real::from(1) + nominal_rate * year_fraction(q, r, DayCountConvention::A365))
+                * (Real::from(1) + nominal_rate * year_fraction(r, s, DayCountConvention::A365))
+            + (Real::from(1) + nominal_rate * year_fraction(r, s, DayCountConvention::A365));
 
         let result = (nominal_value + nominal_accrued) * numerator / denominator;
 
@@ -68,7 +68,7 @@ mod tests {
             result,
             annuity_amount(
                 vec![p, q, r, s],
-                DayCountConvention::_A365,
+                DayCountConvention::A365,
                 nominal_value,
                 nominal_accrued,
                 nominal_rate

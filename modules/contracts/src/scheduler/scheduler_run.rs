@@ -151,9 +151,9 @@ mod tests {
 
             let result = Contracts::scheduler_run(Time::from_values(2015, 01, 02, 00, 00, 05));
             let new_state = <ContractStates<Test>>::get(id);
-            assert_eq!(new_state.variables.nominal_value_1, Real::from(1000));
-            assert_eq!(new_state.variables.nominal_rate, Real::from(0));
-            assert_eq!(new_state.variables.nominal_accrued_1, Real::from(0));
+            assert_eq!(new_state.variables.notional_principal, Real::from(1000));
+            assert_eq!(new_state.variables.nominal_interest_rate, Real::from(0));
+            assert_eq!(new_state.variables.accrued_interest, Real::from(0));
             let event = <Scheduler<Test>>::get().pop().unwrap();
             assert_eq!(event.time, Time::from_values(2015, 04, 02, 00, 00, 00));
             assert_eq!(event.index, 1);

@@ -149,9 +149,9 @@ mod tests {
             );
             Contracts::progress(state.schedule[0], id);
             state = <ContractStates<Test>>::get(id);
-            assert_eq!(state.variables.nominal_value_1, Real::from(1000));
-            assert_eq!(state.variables.nominal_rate, Real::from(0));
-            assert_eq!(state.variables.nominal_accrued_1, Real::from(0));
+            assert_eq!(state.variables.notional_principal, Real::from(1000));
+            assert_eq!(state.variables.nominal_interest_rate, Real::from(0));
+            assert_eq!(state.variables.accrued_interest, Real::from(0));
             assert_eq!(
                 <assets::AssetsBalances<Test>>::get((currency, creator_id)),
                 Real::from(5)
@@ -173,9 +173,9 @@ mod tests {
             );
             Contracts::progress(state.schedule[2], id);
             state = <ContractStates<Test>>::get(id);
-            assert_eq!(state.variables.nominal_value_1, Real::from(0));
-            assert_eq!(state.variables.nominal_rate, Real::from(0));
-            assert_eq!(state.variables.nominal_accrued_1, Real::from(0));
+            assert_eq!(state.variables.notional_principal, Real::from(0));
+            assert_eq!(state.variables.nominal_interest_rate, Real::from(0));
+            assert_eq!(state.variables.accrued_interest, Real::from(0));
             assert_eq!(
                 <assets::AssetsBalances<Test>>::get((currency, creator_id)),
                 Real::from(1005)
