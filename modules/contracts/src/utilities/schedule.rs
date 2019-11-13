@@ -110,16 +110,22 @@ mod tests {
 
     #[test]
     fn schedule_works() {
-        // Testing s==None && t==None.
-        assert!(schedule(Time(None), Time(None), None, None).is_err());
-
         // Testing t>s.
         let s = Time::from_values(2019, 06, 01, 12, 00, 00);
         let t = Time::from_values(2019, 06, 15, 12, 00, 00);
         assert!(schedule(t, s, None, None).is_err());
 
-        // Testing t==None.
+        // Testing s==None && t!=None.
+        assert!(schedule(Time(None), t, None, None).is_err());
+
+        // Testing s==None && t==None.
         let mut vec: Vec<Time> = Vec::new();
+        assert_eq!(
+            schedule(Time(None), Time(None), None, None),
+            Ok(vec.clone())
+        );
+
+        // Testing t==None.
         vec.push(s);
         assert_eq!(schedule(s, Time(None), None, None), Ok(vec.clone()));
 
