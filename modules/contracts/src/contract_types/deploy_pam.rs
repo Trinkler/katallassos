@@ -696,7 +696,6 @@ mod tests {
             // Starts a PAM contract with the right attributes.
             attributes.scaling_effect = None;
             let result = Contracts::deploy_pam(t0, attributes.clone());
-            println!("{:?}", result);
             assert!(result.is_ok());
         });
     }

@@ -23,10 +23,7 @@ pub fn schedule(
 ) -> MyResult<Vec<Time>> {
     // Checking some assumptions about the inputs.
     if s != Time(None) && t != Time(None) && s >= t {
-        return Err("Couldn't create schedule");
-    }
-    if s == Time(None) && t != Time(None) {
-        return Err("Couldn't create schedule");
+        return Err("Couldn't create schedule. [1]");
     }
 
     // Checking three specific cases of the schedule function.
@@ -40,6 +37,8 @@ pub fn schedule(
         return Ok(vec);
     }
     if cycle == None {
+        // This category (cycle == None) also includes the case when s == None and t!= None.
+        // This is permitted according to ACTUS, there are situations where this happens.
         vec.push(s);
         vec.push(t);
         return Ok(vec);
@@ -54,7 +53,7 @@ pub fn schedule(
     match cycle {
         Cycle::Days(int, stub) => {
             if int == 0 {
-                return Err("Couldn't create schedule");
+                return Err("Couldn't create schedule. [3]");
             }
             vec.push(s);
             let mut x = s;
@@ -68,7 +67,7 @@ pub fn schedule(
         }
         Cycle::Months(int, stub) => {
             if int == 0 {
-                return Err("Couldn't create schedule");
+                return Err("Couldn't create schedule. [4]");
             }
             vec.push(s);
             while unchecked_s < unchecked_t {
@@ -85,7 +84,7 @@ pub fn schedule(
         }
         Cycle::Years(int, stub) => {
             if int == 0 {
-                return Err("Couldn't create schedule");
+                return Err("Couldn't create schedule. [5]");
             }
             vec.push(s);
             while unchecked_s < unchecked_t {
@@ -114,9 +113,6 @@ mod tests {
         let s = Time::from_values(2019, 06, 01, 12, 00, 00);
         let t = Time::from_values(2019, 06, 15, 12, 00, 00);
         assert!(schedule(t, s, None, None).is_err());
-
-        // Testing s==None && t!=None.
-        assert!(schedule(Time(None), t, None, None).is_err());
 
         // Testing s==None && t==None.
         let mut vec: Vec<Time> = Vec::new();
