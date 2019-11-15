@@ -71,6 +71,7 @@
       authentication_mode: "ENV_KEY"
       commands:
         - "apt upgrade -y"
+        - "export PATH="$HOME/.cargo/bin:$PATH"
         - "cd blockchain"
         - "git checkout master"
         - "git pull origin master"
@@ -90,6 +91,7 @@
       authentication_mode: "ENV_KEY"
       commands:
         - "apt upgrade -y"
+        - "export PATH="$HOME/.cargo/bin:$PATH"
         - "cd blockchain"
         - "git checkout master"
         - "git pull origin master"
@@ -115,6 +117,7 @@
       authentication_mode: "ENV_KEY"
       commands:
         - "apt upgrade -y"
+        - "export PATH="$HOME/.cargo/bin:$PATH"
         - "cd blockchain"
         - "git checkout master"
         - "git pull origin master"
