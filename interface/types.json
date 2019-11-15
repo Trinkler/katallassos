@@ -388,7 +388,8 @@
       "notional_principal": "Real",
       "notional_principal_2": "Real",
       "notional_scaling_multiplier": "Real",
-      "status_date": "Time"
+      "status_date": "Time",
+      "time_at_maturity_date": "Time"
    },
    "ContractEventType": {
       "_enum": [
