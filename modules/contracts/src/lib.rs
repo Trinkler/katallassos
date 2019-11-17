@@ -76,7 +76,7 @@ decl_module! {
         }
 
         pub fn dispatch_progress(origin, event: ContractEvent, contract_id: H256) -> Result {
-            // TODO assert rules for user initiated events
+            // TODO: Assert rules for user initiated events
 
             // Call corresponding internal function.
             Self::progress(event, contract_id)?;
