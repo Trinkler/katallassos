@@ -61,6 +61,12 @@ decl_module! {
     // The module declaration.
     pub struct Module<T: Trait> for enum Call where origin: T::Origin {
 
+        fn on_initialize(_now: T::BlockNumber) {
+            // At the beginning of each block execution, system triggers all
+            // `on_initialize` functions, which allows us to run the schedule.
+            Self::init();
+        }
+
         pub fn dispatch_deploy(origin, attributes: Attributes) -> Result {
             // Call corresponding internal function.
             Self::deploy(attributes)?;
