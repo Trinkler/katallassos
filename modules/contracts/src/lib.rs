@@ -74,5 +74,15 @@ decl_module! {
             // Return Ok if successful.
             Ok(())
         }
+
+        pub fn dispatch_progress(origin, event: ContractEvent, contract_id: H256) -> Result {
+            // TODO assert rules for user initiated events
+
+            // Call corresponding internal function.
+            Self::progress(event, contract_id)?;
+
+            // Return Ok if successful.
+            Ok(())
+        }
     }
 }
