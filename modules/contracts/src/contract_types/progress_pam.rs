@@ -86,7 +86,7 @@ impl<T: Trait> Module<T> {
             }
             ContractEventType::PP => {
                 // Payoff Function
-                // TODO: Add the user-initiated events based on the "OPMO".
+                // TODO: Add the user-initiated events based on the "PPMO".
                 let payoff = Real::from(0);
 
                 // State Transition Function
@@ -131,7 +131,7 @@ impl<T: Trait> Module<T> {
                     ) * state.attributes.fee_rate;
                 }
 
-                // TODO: Add the user-initiated events based on the "OPMO".
+                // TODO: Add the user-initiated events based on the "PPMO".
                 state.variables.notional_principal = state.variables.notional_principal;
 
                 state.variables.status_date = event.time;
