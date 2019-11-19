@@ -123,6 +123,7 @@ mod tests {
             attributes.counterparty_id = Some(H256::random());
             attributes.creator_id = Some(H256::random());
             attributes.currency = Some(1);
+            attributes.settlement_currency = Some(1);
             attributes.day_count_convention = Some(DayCountConvention::_30E360);
             attributes.initial_exchange_date = Time::from_values(2015, 01, 02, 00, 00, 00);
             attributes.maturity_date = Time::from_values(2015, 04, 02, 00, 00, 00);
