@@ -232,8 +232,8 @@ impl<T: Trait> Module<T> {
         let event = ContractEvent::new(attributes.initial_exchange_date, ContractEventType::IED);
         schedule.push(event);
 
-        // Principal redemption event
-        let event = ContractEvent::new(attributes.maturity_date, ContractEventType::PR);
+        // Maturity date event
+        let event = ContractEvent::new(attributes.maturity_date, ContractEventType::MD);
         schedule.push(event);
 
         // Principal prepayment event
