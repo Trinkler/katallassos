@@ -124,6 +124,7 @@ mod tests {
             attributes.contract_type = Some(ContractType::PAM);
             attributes.counterparty_id = Some(counterparty_id);
             attributes.creator_id = Some(creator_id);
+            attributes.settlement_currency = Some(currency);
             attributes.currency = Some(currency);
             attributes.day_count_convention = Some(DayCountConvention::_30E360);
             attributes.initial_exchange_date = Time::from_values(2015, 01, 02, 00, 00, 00);
@@ -149,9 +150,9 @@ mod tests {
             );
             Contracts::progress(state.schedule[0], id);
             state = <ContractStates<Test>>::get(id);
-            assert_eq!(state.variables.nominal_value_1, Real::from(1000));
-            assert_eq!(state.variables.nominal_rate, Real::from(0));
-            assert_eq!(state.variables.nominal_accrued_1, Real::from(0));
+            assert_eq!(state.variables.notional_principal, Real::from(1000));
+            assert_eq!(state.variables.nominal_interest_rate, Real::from(0));
+            assert_eq!(state.variables.accrued_interest, Real::from(0));
             assert_eq!(
                 <assets::AssetsBalances<Test>>::get((currency, creator_id)),
                 Real::from(5)
@@ -161,21 +162,21 @@ mod tests {
                 Real::from(1995)
             );
 
-            // Event 2 is being used, instead of the next in the sequence 1, because the
+            // Event 3 is being used, instead of the next in the sequence 1, because the
             // given test vectors don't mention event 1 (probably because it has no effect
             // on the state).
             assert_eq!(
-                state.schedule[2],
+                state.schedule[3],
                 ContractEvent::new(
                     Time::from_values(2015, 04, 02, 00, 00, 00),
-                    ContractEventType::PR
+                    ContractEventType::MD
                 )
             );
-            Contracts::progress(state.schedule[2], id);
+            Contracts::progress(state.schedule[3], id);
             state = <ContractStates<Test>>::get(id);
-            assert_eq!(state.variables.nominal_value_1, Real::from(0));
-            assert_eq!(state.variables.nominal_rate, Real::from(0));
-            assert_eq!(state.variables.nominal_accrued_1, Real::from(0));
+            assert_eq!(state.variables.notional_principal, Real::from(0));
+            assert_eq!(state.variables.nominal_interest_rate, Real::from(0));
+            assert_eq!(state.variables.accrued_interest, Real::from(0));
             assert_eq!(
                 <assets::AssetsBalances<Test>>::get((currency, creator_id)),
                 Real::from(1005)
