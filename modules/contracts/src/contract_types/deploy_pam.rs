@@ -232,8 +232,8 @@ impl<T: Trait> Module<T> {
         let event = ContractEvent::new(attributes.initial_exchange_date, ContractEventType::IED);
         schedule.push(event);
 
-        // Principal redemption event
-        let event = ContractEvent::new(attributes.maturity_date, ContractEventType::PR);
+        // Maturity date event
+        let event = ContractEvent::new(attributes.maturity_date, ContractEventType::MD);
         schedule.push(event);
 
         // Principal prepayment event
@@ -685,7 +685,7 @@ mod tests {
             attributes.contract_type = Some(ContractType::PAM);
             attributes.creator_id = Some(H256::random());
             attributes.currency = Some(1);
-            attributes.day_count_convention = Some(DayCountConvention::_A365);
+            attributes.day_count_convention = Some(DayCountConvention::A365);
             attributes.initial_exchange_date = Time::from_values(1969, 07, 21, 02, 56, 15);
             attributes.maturity_date = Time::from_values(1979, 07, 21, 02, 56, 15);
             attributes.nominal_interest_rate = Real::from(1000);

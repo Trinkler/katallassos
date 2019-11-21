@@ -96,7 +96,6 @@
         - "git checkout master"
         - "git pull origin master"
         - "./scripts/init.sh"
-        - "systemctl stop katalchain-validator.service"
         - "cargo install --locked --force --path ."
         - "systemctl restart katalchain-validator.service"
       run_as_script: true
@@ -122,7 +121,6 @@
         - "git checkout development"
         - "git pull origin development"
         - "./scripts/init.sh"
-        - "systemctl stop katalchain-validator.service"
         - "cargo install --locked --force --path ."
         - "systemctl restart katalchain-validator.service"
       run_as_script: true

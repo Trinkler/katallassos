@@ -86,7 +86,7 @@ impl<T: Trait> Module<T> {
             }
             ContractEventType::PP => {
                 // Payoff Function
-                // TODO: Add the user-initiated events based on the "OPMO".
+                // TODO: Add the user-initiated events based on the "PPMO".
                 let payoff = Real::from(0);
 
                 // State Transition Function
@@ -131,7 +131,7 @@ impl<T: Trait> Module<T> {
                     ) * state.attributes.fee_rate;
                 }
 
-                // TODO: Add the user-initiated events based on the "OPMO".
+                // TODO: Add the user-initiated events based on the "PPMO".
                 state.variables.notional_principal = state.variables.notional_principal;
 
                 state.variables.status_date = event.time;
@@ -764,17 +764,17 @@ mod tests {
             assert_eq!(state.variables.nominal_interest_rate, Real::from(0));
             assert_eq!(state.variables.accrued_interest, Real::from(0));
 
-            // Event 2 is being used, instead of the next in the sequence 1, because the
+            // Event 3 is being used, instead of the next in the sequence 1, because the
             // given test vectors don't mention event 1 (probably because it has no effect
             // on the state).
             assert_eq!(
-                state.schedule[2],
+                state.schedule[3],
                 ContractEvent::new(
                     Time::from_values(2015, 04, 02, 00, 00, 00),
-                    ContractEventType::PR
+                    ContractEventType::MD
                 )
             );
-            state = Contracts::progress_pam(state.schedule[2], state).unwrap().0;
+            state = Contracts::progress_pam(state.schedule[3], state).unwrap().0;
             assert_eq!(state.variables.notional_principal, Real::from(0));
             assert_eq!(state.variables.nominal_interest_rate, Real::from(0));
             assert_eq!(state.variables.accrued_interest, Real::from(0));
