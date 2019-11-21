@@ -37,6 +37,7 @@
 //! number.
 
 use super::*;
+use substrate_debug_derive::RuntimeDebug;
 
 /// The scale factor (must be positive).
 const SF: i128 = 1000000000;
@@ -48,7 +49,7 @@ const MIN: i128 = i64::min_value() as i128;
 
 /// This struct implements the real data type. It is a tuple containing a single Option of
 /// an i64.
-#[derive(Copy, Clone, Decode, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Decode, Encode, Default, PartialEq, Eq, PartialOrd, Ord, RuntimeDebug)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct Real(pub Option<i64>);
 
