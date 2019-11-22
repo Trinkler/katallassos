@@ -134,10 +134,8 @@ mod tests {
     }
 
     #[test]
-    fn set_works() {
+    fn set_should_work() {
         new_test_ext().execute_with(|| {
-            // The body of the function begins here.
-            let value = 101;
             // This is how you call a function. Note the use of 'Template'
             // instead of 'Self'.
             Template::internal_function();
@@ -146,6 +144,14 @@ mod tests {
             let value = <Template as Store>::SomeValue::get();
             // Then, of course, you should use some asserts in your test!
             assert_eq!(value, 23);
+        });
+    }
+
+    #[test]
+    fn dispatch_set_should_work() {
+        new_test_ext().execute_with(|| {
+            assert_ok!(Template::dispatch_function(Origin::signed(1)));
+            assert_eq!(<Template as Store>::SomeValue::get(), 23);
         });
     }
 }
