@@ -622,54 +622,76 @@ impl<T: Trait> Module<T> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use primitives::{Blake2Hasher, H256};
-    use runtime_io::with_externalities;
-    use runtime_primitives::{
-        testing::{Digest, DigestItem, Header},
+    use primitives::H256;
+    // The testing primitives are very useful for avoiding having to work with signatures
+    // or public keys. `u64` is used as the `AccountId` and no `Signature`s are required.
+    use sr_primitives::{
+        testing::Header,
         traits::{BlakeTwo256, IdentityLookup},
-        BuildStorage,
+        Perbill,
     };
-    use support::{assert_ok, impl_outer_origin};
+    use support::{assert_ok, impl_outer_origin, parameter_types};
 
     impl_outer_origin! {
         pub enum Origin for Test {}
     }
 
+    // For testing the module, we construct most of a mock runtime. This means
+    // first constructing a configuration type (`Test`) which `impl`s each of the
+    // configuration traits of modules we want to use.
     #[derive(Clone, Eq, PartialEq)]
     pub struct Test;
+    parameter_types! {
+        pub const BlockHashCount: u64 = 250;
+        pub const MaximumBlockWeight: u32 = 1024;
+        pub const MaximumBlockLength: u32 = 2 * 1024;
+        pub const AvailableBlockRatio: Perbill = Perbill::one();
+    }
     impl system::Trait for Test {
         type Origin = Origin;
         type Index = u64;
+        type Call = ();
         type BlockNumber = u64;
         type Hash = H256;
         type Hashing = BlakeTwo256;
-        type Digest = Digest;
         type AccountId = u64;
         type Lookup = IdentityLookup<Self::AccountId>;
         type Header = Header;
         type Event = ();
-        type Log = DigestItem;
+        type BlockHashCount = BlockHashCount;
+        type MaximumBlockWeight = MaximumBlockWeight;
+        type AvailableBlockRatio = AvailableBlockRatio;
+        type MaximumBlockLength = MaximumBlockLength;
+        type Version = ();
+    }
+
+    pub const MILLISECS_PER_BLOCK: u64 = 6000;
+    pub const SLOT_DURATION: u64 = MILLISECS_PER_BLOCK;
+    parameter_types! {
+        pub const MinimumPeriod: u64 = SLOT_DURATION / 2;
     }
     impl timestamp::Trait for Test {
         type Moment = u64;
         type OnTimestampSet = ();
+        type MinimumPeriod = MinimumPeriod;
     }
     impl oracle::Trait for Test {}
     impl assets::Trait for Test {}
     impl Trait for Test {}
     type Contracts = Module<Test>;
 
-    fn new_test_ext() -> runtime_io::TestExternalities<Blake2Hasher> {
-        system::GenesisConfig::<Test>::default()
-            .build_storage()
+    // This function basically just builds a genesis storage key/value store according to
+    // our desired mockup.
+    fn new_test_ext() -> runtime_io::TestExternalities {
+        system::GenesisConfig::default()
+            .build_storage::<Test>()
             .unwrap()
-            .0
             .into()
     }
 
     #[test]
     fn deploy_pam_works() {
-        with_externalities(&mut new_test_ext(), || {
+        new_test_ext().execute_with(|| {
             // Tries to start a contract with the wrong attributes.
             let t0 = Time::from_values(1969, 07, 20, 20, 17, 00);
             let id = H256::random();

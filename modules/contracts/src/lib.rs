@@ -15,12 +15,11 @@
 // The above line is needed to compile the Wasm binaries.
 
 // Importing crates necessary to work with Substrate.
-use parity_codec::{Decode, Encode};
+use codec::{Decode, Encode};
 use primitives::H256;
-use runtime_std::prelude::*;
 use support::{decl_module, decl_storage, dispatch::Result, StorageMap, StorageValue};
 // This import is used to convert the timestamp to a Time.
-use runtime_primitives::traits::As;
+use sr_primitives::traits::SaturatedConversion;
 
 // Importing crates from Katal's runtime.
 use structures::*;
