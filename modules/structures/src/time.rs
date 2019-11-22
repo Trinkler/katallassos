@@ -57,7 +57,7 @@
 use super::*;
 
 /// This struct represents the ISO8601 time format.
-#[derive(Copy, Clone, Default, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Decode, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct UncheckedTime {
     pub year: u16,
@@ -71,7 +71,7 @@ pub struct UncheckedTime {
 
 /// This struct implements the Time data type. It is a tuple containing a single Option of
 /// the type UncheckedTime.
-#[derive(Copy, Clone, Default, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Copy, Clone, Decode, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]
 #[cfg_attr(feature = "std", derive(Debug))]
 pub struct Time(pub Option<UncheckedTime>);
 
