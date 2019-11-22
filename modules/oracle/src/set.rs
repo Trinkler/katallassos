@@ -16,7 +16,7 @@ use super::*;
 // This function sets an (or creates a new) oracle.
 impl<T: Trait> Module<T> {
     pub fn set(id: T::Hash, value: Real) -> Result {
-        let unix_time: u64 = <timestamp::Module<T>>::get().saturated_into::<u64>();
+        let unix_time = <timestamp::Module<T>>::get().saturated_into::<u64>();
         let time = Time::from_unix(unix_time);
 
         // Create the oracle state struct.
@@ -85,20 +85,11 @@ mod tests {
         pub const MinimumPeriod: u64 = SLOT_DURATION / 2;
     }
     impl timestamp::Trait for Test {
-        // If Events are ever added to this module, then the next line
-        // needs to be commented out.
-        // type Event = ();
         type Moment = u64;
         type OnTimestampSet = ();
         type MinimumPeriod = MinimumPeriod;
     }
-    impl Trait for Test {
-        // If Events are ever added to this module, then the next line
-        // needs to be commented out.
-        // type Event = ();
-    }
-    // This next line should have the name of the module, in this
-    // case it is Oracle.
+    impl Trait for Test {}
     type Oracle = Module<Test>;
 
     // This function basically just builds a genesis storage key/value store according to
