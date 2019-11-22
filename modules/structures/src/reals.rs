@@ -49,8 +49,7 @@ const MIN: i128 = i64::min_value() as i128;
 
 /// This struct implements the real data type. It is a tuple containing a single Option of
 /// an i64.
-#[derive(Copy, Clone, Decode, Encode, Default, PartialEq, Eq, PartialOrd, Ord, RuntimeDebug)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Copy, Clone, Default, PartialEq, Eq, PartialOrd, Ord, RuntimeDebug)]
 pub struct Real(pub Option<i64>);
 
 impl Real {
