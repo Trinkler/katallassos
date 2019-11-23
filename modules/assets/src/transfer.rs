@@ -15,12 +15,7 @@ use super::*;
 
 // This function transfers tokens of a given asset from one address to another. If the recipient address doesn't exist, it is created.
 impl<T: Trait> Module<T> {
-    pub fn transfer(
-        from_address: T::Hash,
-        to_address: T::Hash,
-        asset_id: u32,
-        amount: Real,
-    ) -> Result {
+    pub fn transfer(from_address: H256, to_address: H256, asset_id: u32, amount: Real) -> Result {
         // Checking that amount is non-negative.
         if amount < Real::from(0) {
             return Err("Amount can't be negative.");

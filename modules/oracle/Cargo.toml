@@ -10,9 +10,9 @@ codec = { package = "parity-scale-codec", version = "1.0.0", default-features = 
 # Needed for various traits. In our case, `OnFinalize`.
 sr-primitives = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-master" }
 # Needed for type-safe access to storage DB.
-support = { package = "palette-support", git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-master" }
+support = { package = "frame-support", git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-master" }
 # `system` module provides us with all sorts of useful stuff and macros depend on it being around.
-system = { package = "palette-system", git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-master" }
+system = { package = "frame-system", git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-master" }
 # Palette specific to this module
 timestamp = { package = "pallet-timestamp", git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-master" }
 structures = { package = "modules-structures", path = "../structures", default-features = false }

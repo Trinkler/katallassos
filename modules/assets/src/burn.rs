@@ -15,7 +15,7 @@ use super::*;
 
 // This function burns tokens of a given asset and from a specific address.
 impl<T: Trait> Module<T> {
-    pub fn burn(from_address: T::Hash, asset_id: u32, amount: Real) -> Result {
+    pub fn burn(from_address: H256, asset_id: u32, amount: Real) -> Result {
         // Checking that amount is non-negative.
         if amount < Real::from(0) {
             return Err("Amount can't be negative.");

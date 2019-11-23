@@ -19,6 +19,7 @@
 
 // Importing crates declared in the cargo.toml file.
 use codec::{Decode, Encode};
+use primitives::H256;
 use structures::Real;
 use support::{decl_module, decl_storage, dispatch::Result, StorageMap};
 
@@ -36,7 +37,7 @@ pub trait Trait: system::Trait {}
 // This module's storage items.
 decl_storage! {
     trait Store for Module<T: Trait> as AssetsStorage {
-        pub AssetsBalances: map (u32, T::Hash) => Real;
+        pub AssetsBalances: map (u32, H256) => Real;
         pub AssetsSupply: map u32 => Real;
     }
 }
@@ -46,7 +47,7 @@ decl_module! {
     // The module declaration.
     pub struct Module<T: Trait> for enum Call where origin: T::Origin {
 
-        pub fn dispatch_transfer(origin,from_address: T::Hash, to_address: T::Hash, asset_id: u32, amount: Real) -> Result {
+        pub fn dispatch_transfer(origin,from_address: H256, to_address: H256, asset_id: u32, amount: Real) -> Result {
             // Call corresponding internal function.
             Self::transfer(from_address, to_address, asset_id, amount)?;
 
@@ -54,7 +55,7 @@ decl_module! {
             Ok(())
         }
 
-        pub fn dispatch_mint(origin, to_address: T::Hash, asset_id: u32, amount: Real) -> Result {
+        pub fn dispatch_mint(origin, to_address: H256, asset_id: u32, amount: Real) -> Result {
             // Call corresponding internal function.
             Self::mint(to_address, asset_id, amount)?;
 
@@ -62,7 +63,7 @@ decl_module! {
             Ok(())
         }
 
-        pub fn dispatch_burn(origin,from_address: T::Hash, asset_id: u32, amount: Real) -> Result {
+        pub fn dispatch_burn(origin,from_address: H256, asset_id: u32, amount: Real) -> Result {
             // Call corresponding internal function.
             Self::burn(from_address, asset_id, amount)?;
 
