@@ -37,8 +37,8 @@ pub trait Trait: system::Trait {}
 // This module's storage items.
 decl_storage! {
     trait Store for Module<T: Trait> as AssetsStorage {
-        pub AssetsBalances: map (u32, H256) => Real;
-        pub AssetsSupply: map u32 => Real;
+        pub Balances get(fn balances): map (u32, H256) => Real;
+        pub TotalSupply get(fn total_supply): map u32 => Real;
     }
 }
 

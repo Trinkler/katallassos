@@ -22,19 +22,19 @@ impl<T: Trait> Module<T> {
         }
 
         // Increasing supply.
-        if <Self as Store>::AssetsSupply::exists(asset_id) {
-            let new_supply = <Self as Store>::AssetsSupply::get(asset_id) + amount;
-            <Self as Store>::AssetsSupply::insert(asset_id, new_supply);
+        if <Self as Store>::TotalSupply::exists(asset_id) {
+            let new_supply = <Self as Store>::TotalSupply::get(asset_id) + amount;
+            <Self as Store>::TotalSupply::insert(asset_id, new_supply);
         } else {
-            <Self as Store>::AssetsSupply::insert(asset_id, amount);
+            <Self as Store>::TotalSupply::insert(asset_id, amount);
         }
 
         // Crediting amount to to_address.
-        if <Self as Store>::AssetsBalances::exists((asset_id, to_address)) {
-            let new_balance = <Self as Store>::AssetsBalances::get((asset_id, to_address)) + amount;
-            <Self as Store>::AssetsBalances::insert((asset_id, to_address), new_balance);
+        if <Self as Store>::Balances::exists((asset_id, to_address)) {
+            let new_balance = <Self as Store>::Balances::get((asset_id, to_address)) + amount;
+            <Self as Store>::Balances::insert((asset_id, to_address), new_balance);
         } else {
-            <Self as Store>::AssetsBalances::insert((asset_id, to_address), amount);
+            <Self as Store>::Balances::insert((asset_id, to_address), amount);
         }
 
         // Return Ok.
@@ -115,8 +115,8 @@ mod tests {
             let asset_id = 1;
 
             // Manually store addresses with balances.
-            <Assets as Store>::AssetsSupply::insert(asset_id, supply);
-            <Assets as Store>::AssetsBalances::insert((asset_id, to_address), to_balance);
+            <Assets as Store>::TotalSupply::insert(asset_id, supply);
+            <Assets as Store>::Balances::insert((asset_id, to_address), to_balance);
 
             // Test case of negative transfer amount.
             let mut amount = Real::from(-100);
@@ -127,11 +127,11 @@ mod tests {
             assert!(Assets::mint(to_address, asset_id, amount).is_ok());
             assert_eq!(
                 supply + amount,
-                <Assets as Store>::AssetsSupply::get(asset_id)
+                <Assets as Store>::TotalSupply::get(asset_id)
             );
             assert_eq!(
                 to_balance + amount,
-                <Assets as Store>::AssetsBalances::get((asset_id, to_address))
+                <Assets as Store>::Balances::get((asset_id, to_address))
             );
         });
     }

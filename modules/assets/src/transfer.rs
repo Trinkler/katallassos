@@ -27,29 +27,29 @@ impl<T: Trait> Module<T> {
         }
 
         // Checking that from_address and asset_id exists.
-        if !<Self as Store>::AssetsBalances::exists((asset_id, from_address)) {
+        if !<Self as Store>::Balances::exists((asset_id, from_address)) {
             return Err("From_address doesn't exist at given Asset_ID.");
         }
 
         // Checking that from_address has enough balance.
-        if amount > <Self as Store>::AssetsBalances::get((asset_id, from_address)) {
+        if amount > <Self as Store>::Balances::get((asset_id, from_address)) {
             return Err("From_address doesn't have enough balance.");
         }
 
         // Deducting amount from from_address.
-        let new_balance = <Self as Store>::AssetsBalances::get((asset_id, from_address)) - amount;
+        let new_balance = <Self as Store>::Balances::get((asset_id, from_address)) - amount;
         if new_balance == Real::from(0) {
-            <Self as Store>::AssetsBalances::remove((asset_id, from_address));
+            <Self as Store>::Balances::remove((asset_id, from_address));
         } else {
-            <Self as Store>::AssetsBalances::insert((asset_id, from_address), new_balance);
+            <Self as Store>::Balances::insert((asset_id, from_address), new_balance);
         }
 
         // Crediting amount to to_address.
-        if <Self as Store>::AssetsBalances::exists((asset_id, to_address)) {
-            let new_balance = <Self as Store>::AssetsBalances::get((asset_id, to_address)) + amount;
-            <Self as Store>::AssetsBalances::insert((asset_id, to_address), new_balance);
+        if <Self as Store>::Balances::exists((asset_id, to_address)) {
+            let new_balance = <Self as Store>::Balances::get((asset_id, to_address)) + amount;
+            <Self as Store>::Balances::insert((asset_id, to_address), new_balance);
         } else {
-            <Self as Store>::AssetsBalances::insert((asset_id, to_address), amount);
+            <Self as Store>::Balances::insert((asset_id, to_address), amount);
         }
 
         // Return Ok.
@@ -131,8 +131,8 @@ mod tests {
             let asset_id = 1;
 
             // Manually store addresses with balances.
-            <Assets as Store>::AssetsBalances::insert((asset_id, from_address), from_balance);
-            <Assets as Store>::AssetsBalances::insert((asset_id, to_address), to_balance);
+            <Assets as Store>::Balances::insert((asset_id, from_address), from_balance);
+            <Assets as Store>::Balances::insert((asset_id, to_address), to_balance);
 
             // Test case of negative transfer amount.
             let mut amount = Real::from(-100);
@@ -156,11 +156,11 @@ mod tests {
             assert!(Assets::transfer(from_address, to_address, asset_id, amount).is_ok());
             assert_eq!(
                 from_balance - amount,
-                <Assets as Store>::AssetsBalances::get((asset_id, from_address))
+                <Assets as Store>::Balances::get((asset_id, from_address))
             );
             assert_eq!(
                 to_balance + amount,
-                <Assets as Store>::AssetsBalances::get((asset_id, to_address))
+                <Assets as Store>::Balances::get((asset_id, to_address))
             );
         });
     }
