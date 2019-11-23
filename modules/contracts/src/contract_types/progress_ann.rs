@@ -15,7 +15,7 @@ use super::*;
 
 // TODO: Add support for user-initiated events.
 impl<T: Trait> Module<T> {
-    pub fn progress_pam(
+    pub fn progress_ann(
         event: ContractEvent,
         mut state: ContractState,
     ) -> MyResult<(ContractState, Real)> {

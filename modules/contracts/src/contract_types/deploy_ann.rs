@@ -14,7 +14,7 @@
 use super::*;
 
 impl<T: Trait> Module<T> {
-    pub fn deploy_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
+    pub fn deploy_ann(t0: Time, input: Attributes) -> MyResult<ContractState> {
         // The ContractID, necessary to create any contract.
         let mut attributes = Attributes::new(input.contract_id);
 
@@ -64,6 +64,7 @@ impl<T: Trait> Module<T> {
 
         // Optional in all cases -> x
         attributes.accrued_interest = input.accrued_interest;
+        attributes.amortization_date = input.amortization_date;
         attributes.business_day_convention = input.business_day_convention;
         attributes.calendar = input.calendar;
         attributes.capitalization_end_date = input.capitalization_end_date;
@@ -71,6 +72,8 @@ impl<T: Trait> Module<T> {
         attributes.end_of_month_convention = input.end_of_month_convention;
         attributes.market_object_code = input.market_object_code;
         attributes.market_value_observed = input.market_value_observed;
+        attributes.maturity_date = input.maturity_date;
+        attributes.next_principal_redemption_payment = input.next_principal_redemption_payment;
         attributes.premium_discount_at_ied = input.premium_discount_at_ied;
         attributes.settlement_currency = input.settlement_currency;
 
