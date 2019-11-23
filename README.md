@@ -6,7 +6,7 @@
 >
 > Katal Chain implements a [classification](https://www.actusfrf.org/taxonomy) of _contract types_ which are mutual agreements between counterparties to exchange cash flows. Nearly every [financial instrument](https://en.wikipedia.org/wiki/Financial_instrument) can be broken down into contract types.
 >
-> Katal Chain is based on [Substrate](https://github.com/paritytech/substrate) and aims to connect to the multichain framework [Polkadot](https://polkadot.network) to interact with assets
+> Katal Chain is based on [Substrate](https://github.com/katalchain/substrate) and aims to connect to the multichain framework [Polkadot](https://polkadot.network) to interact with assets
 > of [other connected blockchains](https://forum.web3.foundation/t/teams-building-on-polkadot/67) as well as to allow other connected blockchains to have access to contract types built using Katal Chain. View on [Telemetry](https://telemetry.polkadot.io/#list/Katal%20Chain).
 
 ### Setup
@@ -15,7 +15,7 @@
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh # Install Rustup
 git clone git@github.com:katalchain/blockchain.git
 cd blockchain/
-./node/scripts/init.sh # Initialize WASM build environment
+./scripts/init.sh # Initialize WASM build environment
 ```
 
 ### Develop
