@@ -10,8 +10,10 @@ codec = { package = "parity-scale-codec", version = "1.0.0", default-features = 
 rstd = { package = "sr-std", git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-master" }
 substrate-debug-derive = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "polkadot-master" }
 
-[dev-dependencies.rand]
-version = "0.7"
+[dev-dependencies]
+primitives = { package = "substrate-primitives", git = "https://github.com/paritytech/substrate", branch = "polkadot-master" }
+runtime-io = { package = "sr-io", git = "https://github.com/paritytech/substrate", branch = "polkadot-master" }
+rand = "0.7"
 
 [features]
 default = ["std"]
