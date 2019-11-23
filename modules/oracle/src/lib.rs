@@ -17,13 +17,14 @@
 //! The Oracle module allows the root user to create and update oracles. An oracle in this
 //! context is simply a structure that holds a value (implemented using Real) and a timestamp
 //! (implemented using Time). Each oracle is uniquely identified by a 256-bit integer
-//! (implemented using T::Hash).
+//! (implemented using H256).
 
 #![cfg_attr(not(feature = "std"), no_std)]
 // The above line is needed to compile the Wasm binaries.
 
 // Importing crates necessary to work with Substrate.
 use codec::{Decode, Encode};
+use primitives::H256;
 use support::{decl_module, decl_storage, dispatch::Result};
 use system::ensure_root;
 // // This import is used to convert the timestamp to a Time.
@@ -43,7 +44,7 @@ pub trait Trait: system::Trait + timestamp::Trait {}
 // This module's storage items.
 decl_storage! {
     trait Store for Module<T: Trait> as OracleStorage {
-        pub Oracles: map T::Hash => OracleState;
+        pub Oracles get(fn oracles): map H256 => OracleState;
     }
 }
 
@@ -53,7 +54,7 @@ decl_module! {
     pub struct Module<T: Trait> for enum Call where origin: T::Origin {
 
         // Set the value of an existing data feed or creating a new one.
-        pub fn dispatch_set(origin, id: T::Hash, value: Real) -> Result {
+        pub fn dispatch_set(origin, id: H256, value: Real) -> Result {
             // Only chain root should be able to set this value.
             ensure_root(origin)?;
 

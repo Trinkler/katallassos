@@ -139,7 +139,6 @@ mod tests {
             let creator_id = H256::random();
             let counterparty_id = H256::random();
             let currency = 1;
-
             let mut attributes = Attributes::new(id);
             attributes.contract_deal_date = Time::from_values(2015, 01, 01, 00, 00, 00);
             attributes.contract_id = id;
@@ -157,13 +156,10 @@ mod tests {
             attributes.premium_discount_at_ied = Real::from(-5);
             attributes.rate_spread = Real::from(0);
             attributes.scaling_effect = None;
-
             Assets::mint(creator_id, currency, Real::from(1000));
             Assets::mint(counterparty_id, currency, Real::from(1000));
-
             let mut state = Contracts::deploy_pam(t0, attributes).unwrap();
             <Contracts as Store>::ContractStates::insert(id, state.clone());
-
             assert_eq!(
                 state.schedule[0],
                 ContractEvent::new(
@@ -176,15 +172,11 @@ mod tests {
             assert_eq!(state.variables.notional_principal, Real::from(1000));
             assert_eq!(state.variables.nominal_interest_rate, Real::from(0));
             assert_eq!(state.variables.accrued_interest, Real::from(0));
+            assert_eq!(Assets::balances((currency, creator_id)), Real::from(5));
             assert_eq!(
-                <assets::AssetsBalances<Test>>::get((currency, creator_id)),
-                Real::from(5)
-            );
-            assert_eq!(
-                <assets::AssetsBalances<Test>>::get((currency, counterparty_id)),
+                Assets::balances((currency, counterparty_id)),
                 Real::from(1995)
             );
-
             // Event 3 is being used, instead of the next in the sequence 1, because the
             // given test vectors don't mention event 1 (probably because it has no effect
             // on the state).
@@ -200,12 +192,9 @@ mod tests {
             assert_eq!(state.variables.notional_principal, Real::from(0));
             assert_eq!(state.variables.nominal_interest_rate, Real::from(0));
             assert_eq!(state.variables.accrued_interest, Real::from(0));
+            assert_eq!(Assets::balances((currency, creator_id)), Real::from(1005));
             assert_eq!(
-                <assets::AssetsBalances<Test>>::get((currency, creator_id)),
-                Real::from(1005)
-            );
-            assert_eq!(
-                <assets::AssetsBalances<Test>>::get((currency, counterparty_id)),
+                Assets::balances((currency, counterparty_id)),
                 Real::from(995)
             );
         });

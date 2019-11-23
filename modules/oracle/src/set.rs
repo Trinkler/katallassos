@@ -15,7 +15,7 @@ use super::*;
 
 // This function sets an (or creates a new) oracle.
 impl<T: Trait> Module<T> {
-    pub fn set(id: T::Hash, value: Real) -> Result {
+    pub fn set(id: H256, value: Real) -> Result {
         let unix_time = <timestamp::Module<T>>::get().saturated_into::<u64>();
         let time = Time::from_unix(unix_time);
 

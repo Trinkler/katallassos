@@ -17,6 +17,7 @@
 // Importing crates necessary to work with Substrate.
 use codec::{Decode, Encode};
 use primitives::H256;
+use rstd::prelude::*;
 use support::{decl_module, decl_storage, dispatch::Result, StorageMap, StorageValue};
 // This import is used to convert the timestamp to a Time.
 use sr_primitives::traits::SaturatedConversion;
@@ -42,7 +43,7 @@ use utilities::*;
 
 // Defines an alias for the Result type. It has the name MyResult because Substrate
 // already uses the name Result for their own type Result<(), &'static str>.
-type MyResult<T> = runtime_std::result::Result<T, &'static str>;
+type MyResult<T> = rstd::result::Result<T, &'static str>;
 
 // This module's configuration trait.
 pub trait Trait: system::Trait + oracle::Trait + assets::Trait + timestamp::Trait {}
