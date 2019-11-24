@@ -10,6 +10,11 @@ name = "katalchain"
 path = "node/src/main.rs"
 
 [dependencies]
+# Used for testnet_fixtures
+hex-literal = "0.2.1"
+serde_json = "1.0"
+substrate-telemetry = { git = "https://github.com/katalchain/substrate", branch = "polkadot-master" }
+# Used for node
 derive_more = "0.15.0"
 futures = "0.3.1"
 futures01 = { package = "futures", version = "0.1.29" }
