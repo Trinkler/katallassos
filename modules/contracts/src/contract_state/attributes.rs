@@ -14,8 +14,7 @@
 use super::*;
 
 /// All ACTUS contract attributes as specified in the data dictionary in the Github.
-#[derive(Clone, Decode, Encode, Default, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Decode, Debug, Encode, Default, PartialEq)]
 pub struct Attributes {
     pub accrued_interest: Real,
     pub amortization_date: Time,
@@ -133,15 +132,13 @@ pub struct Attributes {
     pub x_day_notice: Option<Period>,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum ArrayFixedVariable {
     F,
     V,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum BusinessDayConvention {
     SCF,
     SCMF,
@@ -153,22 +150,19 @@ pub enum BusinessDayConvention {
     CSMP,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum Calendar {
     NC,
     MTF,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum ClearingHouse {
     Y,
     N,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum ContractPerformance {
     PF,
     DL,
@@ -177,16 +171,14 @@ pub enum ContractPerformance {
 }
 
 // The underscore is necessary because 'type' is a reserved word.
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub struct ContractStructure {
     pub _object: H256,
     pub _type: ContractReferenceType,
     pub _role: ContractReferenceRole,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum ContractReferenceRole {
     Underlying,
     FirstLeg,
@@ -195,8 +187,7 @@ pub enum ContractReferenceRole {
     CoveringContract,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum ContractReferenceType {
     Contract,
     ContractIdentifier,
@@ -205,8 +196,7 @@ pub enum ContractReferenceType {
     ContractStructure,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum ContractRole {
     RPA,
     RPL,
@@ -221,8 +211,7 @@ pub enum ContractRole {
     OBL,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum ContractType {
     PAM,
     ANN,
@@ -244,8 +233,7 @@ pub enum ContractType {
     CEC,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum CreditEventTypeCovered {
     DL,
     DQ,
@@ -253,8 +241,7 @@ pub enum CreditEventTypeCovered {
 }
 
 // The boolean represents the stub, true = long stub, false = short stub.
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum Cycle {
     Days(u16, bool),
     // Weeks(u16, bool),
@@ -264,22 +251,19 @@ pub enum Cycle {
     Years(u16, bool),
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum CyclePointOfInterestPayment {
     B,
     E,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum CyclePointOfRateReset {
     B,
     E,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum DayCountConvention {
     AAISDA,
     A360,
@@ -289,68 +273,59 @@ pub enum DayCountConvention {
     // _BUS252,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum DeliverySettlement {
     S,
     D,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum EndOfMonthConvention {
     EOM,
     SD,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum FeeBasis {
     A,
     N,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum GuaranteedExposure {
     NO,
     NI,
     MV,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum IncreaseDecrease {
     INC,
     DEC,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum InterestCalculationBase {
     NT,
     NTIED,
     NTL,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum OptionExecutionType {
     E,
     B,
     A,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum OptionType {
     C,
     P,
     CP,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum PenaltyType {
     O,
     A,
@@ -358,8 +333,7 @@ pub enum PenaltyType {
     I,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum Period {
     Days(u16),
     // Weeks(u16),
@@ -369,16 +343,14 @@ pub enum Period {
     Years(u16),
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum PrepaymentEffect {
     N,
     A,
     M,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum ScalingEffect {
     _000,
     I00,
@@ -386,15 +358,13 @@ pub enum ScalingEffect {
     IN0,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum Seniority {
     S,
     J,
 }
 
-#[derive(Clone, Copy, Decode, Encode, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum Unit {
     BRL,
     BSH,

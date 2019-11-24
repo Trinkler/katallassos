@@ -15,8 +15,7 @@ use super::*;
 
 /// The contract event struct, it is composed of a time and an event type. It can be ordered, first
 /// by time (from earliest to latest) and secondly by priority of event type (from highest to lowest).
-#[derive(Clone, Copy, Decode, Encode, PartialEq, Eq, PartialOrd, Ord)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq, Eq, PartialOrd, Ord)]
 pub struct ContractEvent {
     pub time: Time,
     pub event_type: ContractEventType,
@@ -24,8 +23,7 @@ pub struct ContractEvent {
 
 /// All ACTUS contract event types as specifed in the ACTUS paper. They are ordered from highest to
 /// lowest priority.
-#[derive(Clone, Copy, Decode, Encode, PartialEq, Eq, PartialOrd, Ord)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq, Eq, PartialOrd, Ord)]
 pub enum ContractEventType {
     IED,
     FP,
