@@ -18,7 +18,6 @@
         - "cargo install --git https://github.com/alexcrichton/wasm-gc"
         - "rustup component add rustfmt --toolchain stable-x86_64-unknown-linux-gnu"
         - "./scripts/init.sh"
-        - "./scripts/build.sh"
         - "cargo build --release"
         - "cargo install --locked --path ."
       setup_commands:
