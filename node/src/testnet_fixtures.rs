@@ -13,8 +13,8 @@
 
 use ed25519::Public as AuthorityId;
 use hex_literal::hex;
-use katalchain_runtime::AccountId;
 use primitives::{crypto::UncheckedInto, ed25519};
+use runtime::AccountId;
 use serde_json as json;
 
 /// Arbitrary properties defined in chain spec as a JSON object

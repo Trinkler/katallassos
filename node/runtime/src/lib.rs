@@ -11,64 +11,68 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-//! The Katal Chain runtime. This can be compiled with `#[no_std]`, ready for Wasm.
+//! The Katal Chain Blockchain runtime. This can be compiled with `#[no_std]`, ready for Wasm.
 
 #![cfg_attr(not(feature = "std"), no_std)]
-#![cfg_attr(not(feature = "std"), feature(alloc))]
 // `construct_runtime!` does a lot of recursion and requires us to increase the limit to 256.
 #![recursion_limit = "256"]
 
-use client::{
-    block_builder::api::{self as block_builder_api, CheckInherentsResult, InherentData},
-    impl_runtime_apis, runtime_api,
-};
-use parity_codec::{Decode, Encode};
+// Make the WASM binary available.
 #[cfg(feature = "std")]
-use primitives::bytes;
-use primitives::{ed25519, sr25519, OpaqueMetadata};
+include!(concat!(env!("OUT_DIR"), "/wasm_binary.rs"));
+
+use aura_primitives::sr25519::AuthorityId as AuraId;
+use grandpa::fg_primitives;
+use grandpa::AuthorityList as GrandpaAuthorityList;
+use primitives::OpaqueMetadata;
 use rstd::prelude::*;
-use runtime_primitives::{
-    create_runtime_str, generic,
-    traits::{self, BlakeTwo256, Block as BlockT, NumberFor, StaticLookup, Verify},
-    transaction_validity::TransactionValidity,
-    ApplyResult,
+use sr_api::impl_runtime_apis;
+use sr_primitives::traits::{
+    BlakeTwo256, Block as BlockT, ConvertInto, IdentifyAccount, NumberFor, StaticLookup, Verify,
 };
-#[cfg(feature = "std")]
-use serde::{Deserialize, Serialize};
+use sr_primitives::{
+    create_runtime_str, generic, impl_opaque_keys, transaction_validity::TransactionValidity,
+    ApplyExtrinsicResult, MultiSignature,
+};
 #[cfg(feature = "std")]
 use version::NativeVersion;
 use version::RuntimeVersion;
 
 // A few exports that help ease life for downstream crates.
 pub use balances::Call as BalancesCall;
-pub use consensus::Call as ConsensusCall;
 #[cfg(any(feature = "std", test))]
-pub use runtime_primitives::BuildStorage;
-pub use runtime_primitives::{Perbill, Permill};
-pub use support::{construct_runtime, StorageValue};
-pub use timestamp::BlockPeriod;
+pub use sr_primitives::BuildStorage;
+pub use sr_primitives::{Perbill, Permill};
+pub use support::{
+    construct_runtime, parameter_types, traits::Randomness, weights::Weight, StorageValue,
+};
 pub use timestamp::Call as TimestampCall;
 
-/// The type that is used for identifying authorities.
-pub type AuthorityId = <AuthoritySignature as Verify>::Signer;
+/// An index to a block.
+pub type BlockNumber = u32;
 
-/// The type used by authorities to prove their ID.
-pub type AuthoritySignature = ed25519::Signature;
+/// Alias to 512-bit hash when used in the context of a transaction signature on the chain.
+pub type Signature = MultiSignature;
 
-/// Alias to pubkey that identifies an account on the chain.
-pub type AccountId = <AccountSignature as Verify>::Signer;
+/// Some way of identifying an account on the chain. We intentionally make it equivalent
+/// to the public key of our transaction signing scheme.
+pub type AccountId = <<Signature as Verify>::Signer as IdentifyAccount>::AccountId;
 
-/// The type used by authorities to prove their ID.
-pub type AccountSignature = sr25519::Signature;
+/// The type for looking up accounts. We don't expect more than 4 billion of them, but you
+/// never know...
+pub type AccountIndex = u32;
+
+/// Balance of an account.
+pub type Balance = u128;
+
+/// Index of a transaction in the chain.
+pub type Index = u32;
 
 /// A hash of some data used by the chain.
 pub type Hash = primitives::H256;
 
-/// Index of a block number in the chain.
-pub type BlockNumber = u64;
-
-/// Index of an account's extrinsic in the chain.
-pub type Nonce = u64;
+/// Digest item type.
+pub type DigestItem = generic::DigestItem<Hash>;
 
 /// Opaque types. These are used by the CLI to instantiate machinery that don't need to know
 /// the specifics of the runtime. They can then be made to be agnostic over specific formats
@@ -77,46 +81,43 @@ pub type Nonce = u64;
 pub mod opaque {
     use super::*;
 
-    /// Opaque, encoded, unchecked extrinsic.
-    #[derive(PartialEq, Eq, Clone, Default, Encode, Decode)]
-    #[cfg_attr(feature = "std", derive(Serialize, Deserialize))]
-    pub struct UncheckedExtrinsic(#[cfg_attr(feature = "std", serde(with = "bytes"))] pub Vec<u8>);
-    #[cfg(feature = "std")]
-    impl std::fmt::Debug for UncheckedExtrinsic {
-        fn fmt(&self, fmt: &mut std::fmt::Formatter) -> std::fmt::Result {
-            write!(fmt, "{}", primitives::hexdisplay::HexDisplay::from(&self.0))
-        }
-    }
-    impl traits::Extrinsic for UncheckedExtrinsic {
-        fn is_signed(&self) -> Option<bool> {
-            None
-        }
-    }
+    pub use sr_primitives::OpaqueExtrinsic as UncheckedExtrinsic;
+
     /// Opaque block header type.
-    pub type Header = generic::Header<
-        BlockNumber,
-        BlakeTwo256,
-        generic::DigestItem<Hash, AuthorityId, AuthoritySignature>,
-    >;
+    pub type Header = generic::Header<BlockNumber, BlakeTwo256>;
     /// Opaque block type.
     pub type Block = generic::Block<Header, UncheckedExtrinsic>;
     /// Opaque block identifier type.
     pub type BlockId = generic::BlockId<Block>;
-    /// Opaque session key type.
-    pub type SessionKey = AuthorityId;
+
+    impl_opaque_keys! {
+        pub struct SessionKeys {
+            pub aura: Aura,
+            pub grandpa: Grandpa,
+        }
+    }
 }
 
 /// This runtime version.
 pub const VERSION: RuntimeVersion = RuntimeVersion {
     spec_name: create_runtime_str!("katalchain"),
     impl_name: create_runtime_str!("katalchain"),
-    authoring_version: 4,
-    spec_version: 4,
-    impl_version: 4,
+    authoring_version: 1,
+    spec_version: 1,
+    impl_version: 1,
     apis: RUNTIME_API_VERSIONS,
 };
 
-/// The version information used to identify this runtime when compiled natively.
+pub const MILLISECS_PER_BLOCK: u64 = 6000;
+
+pub const SLOT_DURATION: u64 = MILLISECS_PER_BLOCK;
+
+// These time units are defined in number of blocks.
+pub const MINUTES: BlockNumber = 60_000 / (MILLISECS_PER_BLOCK as BlockNumber);
+pub const HOURS: BlockNumber = MINUTES * 60;
+pub const DAYS: BlockNumber = HOURS * 24;
+
+/// The version infromation used to identify this runtime when compiled natively.
 #[cfg(feature = "std")]
 pub fn native_version() -> NativeVersion {
     NativeVersion {
@@ -125,49 +126,59 @@ pub fn native_version() -> NativeVersion {
     }
 }
 
+parameter_types! {
+    pub const BlockHashCount: BlockNumber = 250;
+    pub const MaximumBlockWeight: Weight = 1_000_000;
+    pub const AvailableBlockRatio: Perbill = Perbill::from_percent(75);
+    pub const MaximumBlockLength: u32 = 5 * 1024 * 1024;
+    pub const Version: RuntimeVersion = VERSION;
+}
+
 impl system::Trait for Runtime {
     /// The identifier used to distinguish between accounts.
     type AccountId = AccountId;
+    /// The aggregated dispatch type that is available for extrinsics.
+    type Call = Call;
     /// The lookup mechanism to get account ID from whatever is passed in dispatchers.
     type Lookup = Indices;
     /// The index type for storing how many extrinsics an account has signed.
-    type Index = Nonce;
+    type Index = Index;
     /// The index type for blocks.
     type BlockNumber = BlockNumber;
     /// The type for hashing blocks and tries.
     type Hash = Hash;
     /// The hashing algorithm used.
     type Hashing = BlakeTwo256;
-    /// The header digest type.
-    type Digest = generic::Digest<Log>;
     /// The header type.
-    type Header = generic::Header<BlockNumber, BlakeTwo256, Log>;
+    type Header = generic::Header<BlockNumber, BlakeTwo256>;
     /// The ubiquitous event type.
     type Event = Event;
-    /// The ubiquitous log type.
-    type Log = Log;
     /// The ubiquitous origin type.
     type Origin = Origin;
+    /// Maximum number of block number to block hash mappings to keep (oldest pruned first).
+    type BlockHashCount = BlockHashCount;
+    /// Maximum weight of each block.
+    type MaximumBlockWeight = MaximumBlockWeight;
+    /// Maximum size of all encoded transactions (in bytes) that are allowed in one block.
+    type MaximumBlockLength = MaximumBlockLength;
+    /// Portion of the block weight that is available to all normal transactions.
+    type AvailableBlockRatio = AvailableBlockRatio;
+    /// Version of the runtime.
+    type Version = Version;
 }
 
 impl aura::Trait for Runtime {
-    type HandleReport = ();
+    type AuthorityId = AuraId;
 }
 
-impl consensus::Trait for Runtime {
-    /// The identifier we use to refer to authorities.
-    type SessionKey = AuthorityId;
-    // The aura module handles offline-reports internally
-    // rather than using an explicit report system.
-    type InherentOfflineReport = ();
-    /// The ubiquitous log type.
-    type Log = Log;
+impl grandpa::Trait for Runtime {
+    type Event = Event;
 }
 
 impl indices::Trait for Runtime {
     /// The type for recording indexing into the account enumeration. If this ever overflows, there
     /// will be problems!
-    type AccountIndex = u32;
+    type AccountIndex = AccountIndex;
     /// Use the standard means of resolving an index hint from an id.
     type ResolveHint = indices::SimpleResolveHint<Self::AccountId, Self::AccountIndex>;
     /// Determine whether an account is dead.
@@ -176,79 +187,117 @@ impl indices::Trait for Runtime {
     type Event = Event;
 }
 
+parameter_types! {
+    pub const MinimumPeriod: u64 = SLOT_DURATION / 2;
+}
+
 impl timestamp::Trait for Runtime {
-    /// A timestamp: seconds since the unix epoch.
+    /// A timestamp: milliseconds since the unix epoch.
     type Moment = u64;
     type OnTimestampSet = Aura;
+    type MinimumPeriod = MinimumPeriod;
+}
+
+parameter_types! {
+    pub const ExistentialDeposit: u128 = 500;
+    pub const TransferFee: u128 = 0;
+    pub const CreationFee: u128 = 0;
 }
 
 impl balances::Trait for Runtime {
     /// The type for recording an account's balance.
-    type Balance = u128;
+    type Balance = Balance;
     /// What to do if an account's free balance gets zeroed.
     type OnFreeBalanceZero = ();
     /// What to do if a new account is created.
     type OnNewAccount = Indices;
     /// The ubiquitous event type.
     type Event = Event;
-
-    type TransactionPayment = ();
     type DustRemoval = ();
     type TransferPayment = ();
+    type ExistentialDeposit = ExistentialDeposit;
+    type TransferFee = TransferFee;
+    type CreationFee = CreationFee;
+}
+
+parameter_types! {
+    pub const TransactionBaseFee: Balance = 0;
+    pub const TransactionByteFee: Balance = 1;
+}
+
+impl transaction_payment::Trait for Runtime {
+    type Currency = balances::Module<Runtime>;
+    type OnTransactionPayment = ();
+    type TransactionBaseFee = TransactionBaseFee;
+    type TransactionByteFee = TransactionByteFee;
+    type WeightToFee = ConvertInto;
+    type FeeMultiplierUpdate = ();
 }
 
 impl sudo::Trait for Runtime {
-    /// The ubiquitous event type.
     type Event = Event;
     type Proposal = Call;
 }
 
-impl contracts::Trait for Runtime {}
+impl contracts::Trait for Runtime {
+    // Add `type Event = Event;` in case of event usage
+}
 
 impl oracle::Trait for Runtime {}
 
 impl assets::Trait for Runtime {}
 
 construct_runtime!(
-	pub enum Runtime with Log(InternalLog: DigestItem<Hash, AuthorityId, AuthoritySignature>) where
+	pub enum Runtime where
 		Block = Block,
 		NodeBlock = opaque::Block,
 		UncheckedExtrinsic = UncheckedExtrinsic
 	{
-		System: system::{default, Log(ChangesTrieRoot)},
-		Timestamp: timestamp::{Module, Call, Storage, Config<T>, Inherent},
-		Consensus: consensus::{Module, Call, Storage, Config<T>, Log(AuthoritiesChange), Inherent},
-		Aura: aura::{Module},
-		Indices: indices,
-		Balances: balances,
+		System: system::{Module, Call, Storage, Config, Event},
+		Timestamp: timestamp::{Module, Call, Storage, Inherent},
+		Aura: aura::{Module, Config<T>, Inherent(Timestamp)},
+		Grandpa: grandpa::{Module, Call, Storage, Config, Event},
+		Indices: indices::{default, Config<T>},
+		Balances: balances::{default, Error},
+		TransactionPayment: transaction_payment::{Module, Storage},
 		Sudo: sudo,
-		Contracts: contracts::{Module, Call, Storage},
-		Oracle: oracle::{Module, Call, Storage},
-		Assets: assets::{Module, Call, Storage},
+		RandomnessCollectiveFlip: randomness_collective_flip::{Module, Call, Storage},
+        // Custom modules
+        Oracle: oracle::{Module, Call, Storage},
+        Assets: assets::{Module, Call, Storage},
+        Contracts: contracts::{Module, Call, Storage},
 	}
 );
 
-/// The type used as a helper for interpreting the sender of transactions.
-type Context = system::ChainContext<Runtime>;
 /// The address format for describing accounts.
-type Address = <Indices as StaticLookup>::Source;
+pub type Address = <Indices as StaticLookup>::Source;
 /// Block header type as expected by this runtime.
-pub type Header = generic::Header<BlockNumber, BlakeTwo256, Log>;
+pub type Header = generic::Header<BlockNumber, BlakeTwo256>;
 /// Block type as expected by this runtime.
 pub type Block = generic::Block<Header, UncheckedExtrinsic>;
+/// A Block signed with a Justification
+pub type SignedBlock = generic::SignedBlock<Block>;
 /// BlockId type as expected by this runtime.
 pub type BlockId = generic::BlockId<Block>;
+/// The SignedExtension to the basic transaction logic.
+pub type SignedExtra = (
+    system::CheckVersion<Runtime>,
+    system::CheckGenesis<Runtime>,
+    system::CheckEra<Runtime>,
+    system::CheckNonce<Runtime>,
+    system::CheckWeight<Runtime>,
+    transaction_payment::ChargeTransactionPayment<Runtime>,
+);
 /// Unchecked extrinsic type as expected by this runtime.
-pub type UncheckedExtrinsic =
-    generic::UncheckedMortalCompactExtrinsic<Address, Nonce, Call, AccountSignature>;
+pub type UncheckedExtrinsic = generic::UncheckedExtrinsic<Address, Call, Signature, SignedExtra>;
 /// Extrinsic type that has already been checked.
-pub type CheckedExtrinsic = generic::CheckedExtrinsic<AccountId, Nonce, Call>;
+pub type CheckedExtrinsic = generic::CheckedExtrinsic<AccountId, Call, SignedExtra>;
 /// Executive: handles dispatch to the various modules.
-pub type Executive = executive::Executive<Runtime, Block, Context, Balances, AllModules>;
+pub type Executive =
+    executive::Executive<Runtime, Block, system::ChainContext<Runtime>, Runtime, AllModules>;
 
-// Implement our runtime API endpoints. This is just a bunch of proxying.
 impl_runtime_apis! {
-    impl runtime_api::Core<Block> for Runtime {
+    impl sr_api::Core<Block> for Runtime {
         fn version() -> RuntimeVersion {
             VERSION
         }
@@ -260,20 +309,16 @@ impl_runtime_apis! {
         fn initialize_block(header: &<Block as BlockT>::Header) {
             Executive::initialize_block(header)
         }
-
-        fn authorities() -> Vec<AuthorityId> {
-            panic!("Deprecated, please use `AuthoritiesApi`.")
-        }
     }
 
-    impl runtime_api::Metadata<Block> for Runtime {
+    impl sr_api::Metadata<Block> for Runtime {
         fn metadata() -> OpaqueMetadata {
             Runtime::metadata().into()
         }
     }
 
     impl block_builder_api::BlockBuilder<Block> for Runtime {
-        fn apply_extrinsic(extrinsic: <Block as BlockT>::Extrinsic) -> ApplyResult {
+        fn apply_extrinsic(extrinsic: <Block as BlockT>::Extrinsic) -> ApplyExtrinsicResult {
             Executive::apply_extrinsic(extrinsic)
         }
 
@@ -281,40 +326,53 @@ impl_runtime_apis! {
             Executive::finalize_block()
         }
 
-        fn inherent_extrinsics(data: InherentData) -> Vec<<Block as BlockT>::Extrinsic> {
+        fn inherent_extrinsics(data: inherents::InherentData) -> Vec<<Block as BlockT>::Extrinsic> {
             data.create_extrinsics()
         }
 
-        fn check_inherents(block: Block, data: InherentData) -> CheckInherentsResult {
+        fn check_inherents(
+            block: Block,
+            data: inherents::InherentData,
+        ) -> inherents::CheckInherentsResult {
             data.check_extrinsics(&block)
         }
 
         fn random_seed() -> <Block as BlockT>::Hash {
-            System::random_seed()
+            RandomnessCollectiveFlip::random_seed()
         }
     }
 
-    impl runtime_api::TaggedTransactionQueue<Block> for Runtime {
+    impl tx_pool_api::TaggedTransactionQueue<Block> for Runtime {
         fn validate_transaction(tx: <Block as BlockT>::Extrinsic) -> TransactionValidity {
             Executive::validate_transaction(tx)
         }
     }
 
-    impl consensus_aura::AuraApi<Block> for Runtime {
+    impl offchain_primitives::OffchainWorkerApi<Block> for Runtime {
+        fn offchain_worker(number: NumberFor<Block>) {
+            Executive::offchain_worker(number)
+        }
+    }
+
+    impl aura_primitives::AuraApi<Block, AuraId> for Runtime {
         fn slot_duration() -> u64 {
             Aura::slot_duration()
         }
-    }
 
-    impl offchain_primitives::OffchainWorkerApi<Block> for Runtime {
-        fn offchain_worker(n: NumberFor<Block>) {
-            Executive::offchain_worker(n)
+        fn authorities() -> Vec<AuraId> {
+            Aura::authorities()
         }
     }
 
-    impl consensus_authorities::AuthoritiesApi<Block> for Runtime {
-        fn authorities() -> Vec<AuthorityId> {
-            Consensus::authorities()
+    impl substrate_session::SessionKeys<Block> for Runtime {
+        fn generate_session_keys(seed: Option<Vec<u8>>) -> Vec<u8> {
+            opaque::SessionKeys::generate(seed)
+        }
+    }
+
+    impl fg_primitives::GrandpaApi<Block> for Runtime {
+        fn grandpa_authorities() -> GrandpaAuthorityList {
+            Grandpa::grandpa_authorities()
         }
     }
 }

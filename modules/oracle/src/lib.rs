@@ -23,12 +23,12 @@
 // The above line is needed to compile the Wasm binaries.
 
 // Importing crates necessary to work with Substrate.
-use parity_codec::{Decode, Encode};
+use codec::{Decode, Encode};
 use primitives::H256;
-use support::{decl_module, decl_storage, dispatch::Result, StorageMap};
+use support::{decl_module, decl_storage, dispatch::Result};
 use system::ensure_root;
-// This import is used to convert the timestamp to a Time.
-use runtime_primitives::traits::As;
+// // This import is used to convert the timestamp to a Time.
+use sr_primitives::traits::SaturatedConversion;
 
 // Importing crates from Katal's runtime.
 use structures::*;
@@ -37,7 +37,6 @@ use structures::*;
 mod oracle_state;
 mod set;
 use oracle_state::*;
-use set::*;
 
 // This module's configuration trait.
 pub trait Trait: system::Trait + timestamp::Trait {}
@@ -45,7 +44,7 @@ pub trait Trait: system::Trait + timestamp::Trait {}
 // This module's storage items.
 decl_storage! {
     trait Store for Module<T: Trait> as OracleStorage {
-        pub Oracles: map H256 => OracleState;
+        pub Oracles get(fn oracles): map H256 => OracleState;
     }
 }
 

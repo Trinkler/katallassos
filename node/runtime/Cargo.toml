@@ -5,167 +5,66 @@ authors = ["Trinkler Software <company@trinkler.software>"]
 edition = "2018"
 
 [dependencies]
+aura = { package = "pallet-aura", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+aura-primitives = { package = "substrate-consensus-aura-primitives", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+balances = { package = "pallet-balances", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+block-builder-api = { package = "substrate-block-builder-runtime-api", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+codec = { package = "parity-scale-codec", version = "1.0.0", default-features = false, features = ["derive"] }
+executive = { package = "frame-executive", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+grandpa = { package = "pallet-grandpa", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+indices = { package = "pallet-indices", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+inherents = { package = "substrate-inherents", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+offchain-primitives = { package = "substrate-offchain-primitives", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+primitives = { package = "substrate-primitives", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+randomness-collective-flip = { package = "pallet-randomness-collective-flip", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+rstd = { package = "sr-std", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+runtime-io = { package = "sr-io", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+safe-mix = { version = "1.0.0", default-features = false }
+serde = { version = "1.0.101", optional = true, features = ["derive"] }
+sr-api = { git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+sr-primitives = { git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+substrate-session = { git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+sudo = { package = "pallet-sudo", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+support = { package = "frame-support", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+system = { package = "frame-system", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+timestamp = { package = "pallet-timestamp", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+transaction-payment = { package = "pallet-transaction-payment", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+tx-pool-api = { package = "substrate-transaction-pool-runtime-api", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+version = { package = "sr-version", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+assets = { package = "modules-assets", path = "../../modules/assets", default-features = false }
+oracle = { package = "modules-oracle", path = "../../modules/oracle", default-features = false }
+contracts = { package = "modules-contracts", path = "../../modules/contracts", default-features = false }
 
-  [dependencies.serde]
-  version = "1.0"
-  optional = true
-  features = ["derive"]
-
-  [dependencies.safe-mix]
-  version = "1.0"
-  default-features = false
-
-  [dependencies.parity-codec]
-  version = "3.5"
-  default-features = false
-  features = ["derive"]
-
-  [dependencies.rstd]
-  package = "sr-std"
-  git = "https://github.com/paritytech/substrate"
-  branch = "v1.0"
-  default_features = false
-
-  [dependencies.runtime-io]
-  package = "sr-io"
-  git = "https://github.com/paritytech/substrate"
-  branch = "v1.0"
-  default_features = false
-
-  [dependencies.version]
-  package = "sr-version"
-  git = "https://github.com/paritytech/substrate"
-  branch = "v1.0"
-  default_features = false
-
-  [dependencies.support]
-  package = "srml-support"
-  git = "https://github.com/paritytech/substrate"
-  branch = "v1.0"
-  default_features = false
-
-  [dependencies.primitives]
-  package = "substrate-primitives"
-  git = "https://github.com/paritytech/substrate"
-  branch = "v1.0"
-  default_features = false
-
-  [dependencies.balances]
-  package = "srml-balances"
-  git = "https://github.com/paritytech/substrate"
-  branch = "v1.0"
-  default_features = false
-
-  [dependencies.consensus]
-  package = "srml-consensus"
-  git = "https://github.com/paritytech/substrate"
-  branch = "v1.0"
-  default_features = false
-
-  [dependencies.aura]
-  package = "srml-aura"
-  git = "https://github.com/paritytech/substrate"
-  branch = "v1.0"
-  default_features = false
-
-  [dependencies.executive]
-  package = "srml-executive"
-  git = "https://github.com/paritytech/substrate"
-  branch = "v1.0"
-  default_features = false
-
-  [dependencies.indices]
-  package = "srml-indices"
-  git = "https://github.com/paritytech/substrate"
-  branch = "v1.0"
-  default_features = false
-
-  [dependencies.system]
-  package = "srml-system"
-  git = "https://github.com/paritytech/substrate"
-  branch = "v1.0"
-  default_features = false
-
-  [dependencies.timestamp]
-  package = "srml-timestamp"
-  git = "https://github.com/paritytech/substrate"
-  branch = "v1.0"
-  default_features = false
-
-  [dependencies.sudo]
-  package = "srml-sudo"
-  git = "https://github.com/paritytech/substrate"
-  branch = "v1.0"
-  default_features = false
-
-  [dependencies.runtime-primitives]
-  package = "sr-primitives"
-  git = "https://github.com/paritytech/substrate"
-  branch = "v1.0"
-  default_features = false
-
-  [dependencies.client]
-  package = "substrate-client"
-  git = "https://github.com/paritytech/substrate"
-  branch = "v1.0"
-  default_features = false
-
-  [dependencies.consensus-aura]
-  package = "substrate-consensus-aura-primitives"
-  git = "https://github.com/paritytech/substrate"
-  branch = "v1.0"
-  default_features = false
-
-  [dependencies.offchain-primitives]
-  package = "substrate-offchain-primitives"
-  git = "https://github.com/paritytech/substrate"
-  branch = "v1.0"
-  default-features = false
-
-  [dependencies.consensus_authorities]
-  package = "substrate-consensus-authorities"
-  git = "https://github.com/paritytech/substrate"
-  branch = "v1.0"
-  default-features = false
-
-  [dependencies.contracts]
-  package = "modules-contracts"
-  path = "../../modules/contracts"
-  default-features = false
-
-  [dependencies.oracle]
-  package = "modules-oracle"
-  path = "../../modules/oracle"
-  default-features = false
-
-  [dependencies.assets]
-  package = "modules-assets"
-  path = "../../modules/assets"
-  default-features = false
+[build-dependencies]
+wasm-builder-runner = { package = "substrate-wasm-builder-runner", git = "https://github.com/katalchain/substrate", branch = "polkadot-master", version = "1.0.4" }
 
 [features]
 default = ["std"]
 std = [
-  "parity-codec/std",
-  "primitives/std",
-  "client/std",
-  "rstd/std",
-  "runtime-io/std",
-  "support/std",
-  "balances/std",
-  "executive/std",
-  "aura/std",
-  "indices/std",
-  "primitives/std",
-  "system/std",
-  "timestamp/std",
-  "sudo/std",
-  "version/std",
-  "serde",
-  "safe-mix/std",
-  "consensus-aura/std",
-  "offchain-primitives/std",
-  "contracts/std",
-  "oracle/std",
-  "assets/std"
+	"aura-primitives/std",
+	"aura/std",
+	"balances/std",
+	"block-builder-api/std",
+	"codec/std",
+	"executive/std",
+	"grandpa/std",
+	"indices/std",
+	"inherents/std",
+	"offchain-primitives/std",
+	"primitives/std",
+	"randomness-collective-flip/std",
+	"rstd/std",
+	"runtime-io/std",
+	"safe-mix/std",
+	"serde",
+	"sr-api/std",
+	"sr-primitives/std",
+	"substrate-session/std",
+	"sudo/std",
+	"support/std",
+	"system/std",
+	"timestamp/std",
+	"transaction-payment/std",
+	"tx-pool-api/std",
+	"version/std",
 ]

@@ -24,7 +24,7 @@ impl<T: Trait> Module<T> {
         };
 
         // Store value.
-        <SomeMap<T>>::insert(101, state);
+        <Self as Store>::SomeMap::insert(101, state);
 
         // Return Ok.
         Ok(())
