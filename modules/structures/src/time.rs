@@ -57,8 +57,7 @@
 use super::*;
 
 /// This struct represents the ISO8601 time format.
-#[derive(Copy, Clone, Decode, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Copy, Clone, Decode, Debug, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct UncheckedTime {
     pub year: u16,
     // i8 is used because 'parity_codec' doesn't support u8.
@@ -71,8 +70,7 @@ pub struct UncheckedTime {
 
 /// This struct implements the Time data type. It is a tuple containing a single Option of
 /// the type UncheckedTime.
-#[derive(Copy, Clone, Decode, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Copy, Clone, Decode, Debug, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Time(pub Option<UncheckedTime>);
 
 impl Time {

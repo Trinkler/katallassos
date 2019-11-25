@@ -18,7 +18,7 @@
 // The above line is needed to compile the Wasm binaries.
 
 // Importing crates declared in the cargo.toml file.
-use parity_codec::{Decode, Encode};
+use codec::{Decode, Encode};
 use primitives::H256;
 use structures::Real;
 use support::{decl_module, decl_storage, dispatch::Result, StorageMap};
@@ -37,8 +37,8 @@ pub trait Trait: system::Trait {}
 // This module's storage items.
 decl_storage! {
     trait Store for Module<T: Trait> as AssetsStorage {
-        pub AssetsBalances: map (u32, H256) => Real;
-        pub AssetsSupply: map u32 => Real;
+        pub Balances get(fn balances): map (u32, H256) => Real;
+        pub TotalSupply get(fn total_supply): map u32 => Real;
     }
 }
 

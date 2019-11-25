@@ -11,19 +11,19 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-//! Katal Chain CLI library.
+//! Katal Chain Blockchain CLI library.
 
 #![warn(missing_docs)]
 #![warn(unused_extern_crates)]
 
 mod chain_spec;
-mod cli;
+#[macro_use]
 mod service;
-mod testnet_fixtures;
+mod cli;
 
 pub use substrate_cli::{error, IntoExit, VersionInfo};
 
-fn run() -> cli::error::Result<()> {
+fn main() -> Result<(), cli::error::Error> {
     let version = VersionInfo {
         name: "Katal Chain Blockchain",
         commit: env!("VERGEN_SHA_SHORT"),
@@ -33,7 +33,6 @@ fn run() -> cli::error::Result<()> {
         description: "Cryptocurrency Movement, Standardized.",
         support_url: "https://github.com/katalchain/blockchain/issues/new",
     };
-    cli::run(::std::env::args(), cli::Exit, version)
-}
 
-error_chain::quick_main!(run);
+    cli::run(std::env::args(), cli::Exit, version)
+}

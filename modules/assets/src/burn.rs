@@ -22,25 +22,25 @@ impl<T: Trait> Module<T> {
         }
 
         // Checking that from_address and asset_id exists.
-        if !<AssetsBalances<T>>::exists((asset_id, from_address)) {
+        if !<Self as Store>::Balances::exists((asset_id, from_address)) {
             return Err("From_address doesn't exist at given Asset_ID.");
         }
 
         // Checking that from_address has enough balance.
-        if amount > <AssetsBalances<T>>::get((asset_id, from_address)) {
+        if amount > <Self as Store>::Balances::get((asset_id, from_address)) {
             return Err("From_address doesn't have enough balance.");
         }
 
         // Decreasing supply.
-        let new_supply = <AssetsSupply<T>>::get(asset_id) - amount;
-        <AssetsSupply<T>>::insert(asset_id, new_supply);
+        let new_supply = <Self as Store>::TotalSupply::get(asset_id) - amount;
+        <Self as Store>::TotalSupply::insert(asset_id, new_supply);
 
         // Deducting amount from from_address.
-        let new_balance = <AssetsBalances<T>>::get((asset_id, from_address)) - amount;
+        let new_balance = <Self as Store>::Balances::get((asset_id, from_address)) - amount;
         if new_balance == Real::from(0) {
-            <AssetsBalances<T>>::remove((asset_id, from_address));
+            <Self as Store>::Balances::remove((asset_id, from_address));
         } else {
-            <AssetsBalances<T>>::insert((asset_id, from_address), new_balance);
+            <Self as Store>::Balances::insert((asset_id, from_address), new_balance);
         }
 
         // Return Ok.
@@ -51,48 +51,69 @@ impl<T: Trait> Module<T> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use primitives::{Blake2Hasher, H256};
-    use runtime_io::with_externalities;
-    use runtime_primitives::{
-        testing::{Digest, DigestItem, Header},
+    use primitives::H256;
+    // The testing primitives are very useful for avoiding having to work with signatures
+    // or public keys. `u64` is used as the `AccountId` and no `Signature`s are required.
+    use sr_primitives::{
+        testing::Header,
         traits::{BlakeTwo256, IdentityLookup},
-        BuildStorage,
+        Perbill,
     };
-    use support::{assert_ok, impl_outer_origin};
+    use support::{assert_noop, assert_ok, impl_outer_origin, parameter_types};
 
     impl_outer_origin! {
         pub enum Origin for Test {}
     }
 
+    // For testing the module, we construct most of a mock runtime. This means
+    // first constructing a configuration type (`Test`) which `impl`s each of the
+    // configuration traits of modules we want to use.
     #[derive(Clone, Eq, PartialEq)]
     pub struct Test;
+    parameter_types! {
+        pub const BlockHashCount: u64 = 250;
+        pub const MaximumBlockWeight: u32 = 1024;
+        pub const MaximumBlockLength: u32 = 2 * 1024;
+        pub const AvailableBlockRatio: Perbill = Perbill::one();
+    }
     impl system::Trait for Test {
         type Origin = Origin;
         type Index = u64;
+        type Call = ();
         type BlockNumber = u64;
         type Hash = H256;
         type Hashing = BlakeTwo256;
-        type Digest = Digest;
         type AccountId = u64;
         type Lookup = IdentityLookup<Self::AccountId>;
         type Header = Header;
         type Event = ();
-        type Log = DigestItem;
+        type BlockHashCount = BlockHashCount;
+        type MaximumBlockWeight = MaximumBlockWeight;
+        type AvailableBlockRatio = AvailableBlockRatio;
+        type MaximumBlockLength = MaximumBlockLength;
+        type Version = ();
     }
-    impl Trait for Test {}
+    impl Trait for Test {
+        // If Events are ever added to this module, then the next line
+        // needs to be commented out.
+        // type Event = ();
+    }
+    // This next line should have the name of the module, in this
+    // case it is Assets
     type Assets = Module<Test>;
 
-    fn new_test_ext() -> runtime_io::TestExternalities<Blake2Hasher> {
-        system::GenesisConfig::<Test>::default()
-            .build_storage()
+    // This function basically just builds a genesis storage key/value store according to
+    // our desired mockup.
+    fn new_test_ext() -> runtime_io::TestExternalities {
+        system::GenesisConfig::default()
+            .build_storage::<Test>()
             .unwrap()
-            .0
             .into()
     }
 
     #[test]
     fn burn_works() {
-        with_externalities(&mut new_test_ext(), || {
+        new_test_ext().execute_with(|| {
             // Initialize some values.
             let supply = Real::from(1000);
             let from_address = H256::random();
@@ -100,8 +121,8 @@ mod tests {
             let asset_id = 1;
 
             // Manually store addresses with balances.
-            <AssetsSupply<Test>>::insert(asset_id, supply);
-            <AssetsBalances<Test>>::insert((asset_id, from_address), from_balance);
+            <Assets as Store>::TotalSupply::insert(asset_id, supply);
+            <Assets as Store>::Balances::insert((asset_id, from_address), from_balance);
 
             // Test case of negative transfer amount.
             let mut amount = Real::from(-100);
@@ -120,10 +141,13 @@ mod tests {
 
             // Test normal case.
             assert!(Assets::burn(from_address, asset_id, amount).is_ok());
-            assert_eq!(supply - amount, <AssetsSupply<Test>>::get(asset_id));
+            assert_eq!(
+                supply - amount,
+                <Assets as Store>::TotalSupply::get(asset_id)
+            );
             assert_eq!(
                 from_balance - amount,
-                <AssetsBalances<Test>>::get((asset_id, from_address))
+                <Assets as Store>::Balances::get((asset_id, from_address))
             );
         });
     }

@@ -11,19 +11,18 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
-use crate::testnet_fixtures::*;
-use hex_literal::hex;
-use katalchain_runtime::{
-    AccountId, BalancesConfig, ConsensusConfig, GenesisConfig, IndicesConfig, SudoConfig,
-    TimestampConfig,
+use aura_primitives::sr25519::AuthorityId as AuraId;
+use grandpa_primitives::AuthorityId as GrandpaId;
+use primitives::{sr25519, Pair, Public};
+use runtime::{
+    AccountId, AuraConfig, BalancesConfig, GenesisConfig, GrandpaConfig, IndicesConfig, Signature,
+    SudoConfig, SystemConfig, WASM_BINARY,
 };
-use primitives::{crypto::UncheckedInto, ed25519, sr25519, Pair};
+use sr_primitives::traits::{IdentifyAccount, Verify};
 use substrate_service;
 use substrate_telemetry::TelemetryEndpoints;
 
 const STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
-
-use ed25519::Public as AuthorityId;
 
 // Note this is the URL for the telemetry server
 //const STAGING_TELEMETRY_URL: &str = "wss://telemetry.polkadot.io/submit/";
@@ -40,22 +39,28 @@ pub enum Alternative {
     Development,
     /// Whatever the current runtime is, with simple Alice/Bob auths.
     LocalTestnet,
-    /// Hosted testnet with auto-generated genesis block
-    StagingTestnet,
-    /// Hosted testnet with unified genesis block and non-standard Validators.
-    Testnet,
 }
 
-fn authority_key(s: &str) -> AuthorityId {
-    ed25519::Pair::from_string(&format!("//{}", s), None)
+/// Helper function to generate a crypto pair from seed
+pub fn get_from_seed<TPublic: Public>(seed: &str) -> <TPublic::Pair as Pair>::Public {
+    TPublic::Pair::from_string(&format!("//{}", seed), None)
         .expect("static values are valid; qed")
         .public()
 }
 
-fn account_key(s: &str) -> AccountId {
-    sr25519::Pair::from_string(&format!("//{}", s), None)
-        .expect("static values are valid; qed")
-        .public()
+type AccountPublic = <Signature as Verify>::Signer;
+
+/// Helper function to generate an account ID from seed
+pub fn get_account_id_from_seed<TPublic: Public>(seed: &str) -> AccountId
+where
+    AccountPublic: From<<TPublic::Pair as Pair>::Public>,
+{
+    AccountPublic::from(get_from_seed::<TPublic>(seed)).into_account()
+}
+
+/// Helper function to generate an authority key for Aura
+pub fn get_authority_keys_from_seed(s: &str) -> (AuraId, GrandpaId) {
+    (get_from_seed::<AuraId>(s), get_from_seed::<GrandpaId>(s))
 }
 
 impl Alternative {
@@ -67,9 +72,15 @@ impl Alternative {
                 "dev",
                 || {
                     testnet_genesis(
-                        vec![authority_key("Alice")],
-                        vec![account_key("Alice")],
-                        account_key("Alice"),
+                        vec![get_authority_keys_from_seed("Alice")],
+                        get_account_id_from_seed::<sr25519::Public>("Alice"),
+                        vec![
+                            get_account_id_from_seed::<sr25519::Public>("Alice"),
+                            get_account_id_from_seed::<sr25519::Public>("Bob"),
+                            get_account_id_from_seed::<sr25519::Public>("Alice//stash"),
+                            get_account_id_from_seed::<sr25519::Public>("Bob//stash"),
+                        ],
+                        true,
                     )
                 },
                 vec![],
@@ -83,16 +94,26 @@ impl Alternative {
                 "local_testnet",
                 || {
                     testnet_genesis(
-                        vec![authority_key("Alice"), authority_key("Bob")],
                         vec![
-                            account_key("Alice"),
-                            account_key("Bob"),
-                            account_key("Charlie"),
-                            account_key("Dave"),
-                            account_key("Eve"),
-                            account_key("Ferdie"),
+                            get_authority_keys_from_seed("Alice"),
+                            get_authority_keys_from_seed("Bob"),
                         ],
-                        account_key("Alice"),
+                        get_account_id_from_seed::<sr25519::Public>("Alice"),
+                        vec![
+                            get_account_id_from_seed::<sr25519::Public>("Alice"),
+                            get_account_id_from_seed::<sr25519::Public>("Bob"),
+                            get_account_id_from_seed::<sr25519::Public>("Charlie"),
+                            get_account_id_from_seed::<sr25519::Public>("Dave"),
+                            get_account_id_from_seed::<sr25519::Public>("Eve"),
+                            get_account_id_from_seed::<sr25519::Public>("Ferdie"),
+                            get_account_id_from_seed::<sr25519::Public>("Alice//stash"),
+                            get_account_id_from_seed::<sr25519::Public>("Bob//stash"),
+                            get_account_id_from_seed::<sr25519::Public>("Charlie//stash"),
+                            get_account_id_from_seed::<sr25519::Public>("Dave//stash"),
+                            get_account_id_from_seed::<sr25519::Public>("Eve//stash"),
+                            get_account_id_from_seed::<sr25519::Public>("Ferdie//stash"),
+                        ],
+                        true,
                     )
                 },
                 vec![],
@@ -101,87 +122,49 @@ impl Alternative {
                 None,
                 None,
             ),
-            Alternative::StagingTestnet => ChainSpec::from_genesis(
-                "Katal Chain Staging", // Name
-                "staging",             // Id
-                || {
-                    testnet_genesis(
-                        get_testnet_initial_authorities(), // Initial Authorities
-                        get_testnet_endowed_accounts(),    // Endowed Accounts
-                        get_testnet_root_key(),
-                    )
-                }, // Constructor
-                get_testnet_bootnodes(), // Boot Nodes
-                Some(TelemetryEndpoints::new(vec![(
-                    STAGING_TELEMETRY_URL.to_string(),
-                    0,
-                )])), // Telemetry Endpoints
-                None,                  // Protocol Id
-                None,                  // Consensus Engine
-                get_chain_properties(),
-            ),
-            // TODO import from file when https://github.com/katalchain/blockchain/issues/97 resolved
-            Alternative::Testnet => ChainSpec::from_genesis(
-                "Katal Chain", // Name
-                "testnet",     // Id
-                || {
-                    testnet_genesis(
-                        get_testnet_initial_authorities(), // Initial Authorities
-                        get_testnet_endowed_accounts(),    // Endowed Accounts
-                        get_testnet_root_key(),
-                    )
-                }, // Constructor
-                get_testnet_bootnodes(), // Boot Nodes
-                Some(TelemetryEndpoints::new(vec![(
-                    STAGING_TELEMETRY_URL.to_string(),
-                    0,
-                )])), // Telemetry Endpoints
-                None,          // Protocol Id
-                None,          // Consensus Engine
-                get_chain_properties(),
-            ),
         })
     }
 
     pub(crate) fn from(s: &str) -> Option<Self> {
         match s {
             "dev" => Some(Alternative::Development),
-            "local" => Some(Alternative::LocalTestnet),
-            "staging" => Some(Alternative::StagingTestnet),
-            "" => Some(Alternative::Testnet),
+            "" | "local" => Some(Alternative::LocalTestnet),
             _ => None,
         }
     }
 }
 
 fn testnet_genesis(
-    initial_authorities: Vec<AuthorityId>,
-    endowed_accounts: Vec<AccountId>,
+    initial_authorities: Vec<(AuraId, GrandpaId)>,
     root_key: AccountId,
+    endowed_accounts: Vec<AccountId>,
+    _enable_println: bool,
 ) -> GenesisConfig {
     GenesisConfig {
-		consensus: Some(ConsensusConfig {
-			code: include_bytes!("../runtime/wasm/target/wasm32-unknown-unknown/release/katalchain_runtime_wasm.compact.wasm").to_vec(),
-			authorities: initial_authorities.clone(),
-		}),
-		system: None,
-		timestamp: Some(TimestampConfig {
-			minimum_period: 2, // 4 second block time.
-		}),
-		indices: Some(IndicesConfig {
-			ids: endowed_accounts.clone(),
-		}),
-		balances: Some(BalancesConfig {
-			transaction_base_fee: 1,
-			transaction_byte_fee: 0,
-			existential_deposit: 500,
-			transfer_fee: 0,
-			creation_fee: 0,
-			balances: endowed_accounts.iter().cloned().map(|k|(k, 1 << 60)).collect(),
-			vesting: vec![],
-		}),
-		sudo: Some(SudoConfig {
-			key: root_key,
-		}),
-	}
+        system: Some(SystemConfig {
+            code: WASM_BINARY.to_vec(),
+            changes_trie_config: Default::default(),
+        }),
+        indices: Some(IndicesConfig {
+            ids: endowed_accounts.clone(),
+        }),
+        balances: Some(BalancesConfig {
+            balances: endowed_accounts
+                .iter()
+                .cloned()
+                .map(|k| (k, 1 << 60))
+                .collect(),
+            vesting: vec![],
+        }),
+        sudo: Some(SudoConfig { key: root_key }),
+        aura: Some(AuraConfig {
+            authorities: initial_authorities.iter().map(|x| (x.0.clone())).collect(),
+        }),
+        grandpa: Some(GrandpaConfig {
+            authorities: initial_authorities
+                .iter()
+                .map(|x| (x.1.clone(), 1))
+                .collect(),
+        }),
+    }
 }

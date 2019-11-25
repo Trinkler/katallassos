@@ -17,7 +17,7 @@ use super::*;
 impl<T: Trait> Module<T> {
     pub fn scheduler_run(now: Time) -> Result {
         // Get the current Scheduler Heap from storage.
-        let mut heap = <Scheduler<T>>::get();
+        let mut heap = <Self as Store>::Scheduler::get();
 
         // This loop goes through every scheduled event that is smaller than the
         // current time.
@@ -26,7 +26,7 @@ impl<T: Trait> Module<T> {
 
             // Get the state of the ACTUS contract and the corresponding
             // contract event type to be executed.
-            let mut state = <ContractStates<T>>::get(scheduled_event.contract_id);
+            let mut state = <Self as Store>::ContractStates::get(scheduled_event.contract_id);
             let event = state.schedule[scheduled_event.index as usize];
 
             // Make the ACTUS contract progress.
@@ -55,7 +55,7 @@ impl<T: Trait> Module<T> {
         }
 
         // Put the Scheduler Heap into storage.
-        <Scheduler<T>>::put(heap);
+        <Self as Store>::Scheduler::put(heap);
 
         // Return Ok.
         Ok(())
@@ -65,54 +65,76 @@ impl<T: Trait> Module<T> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use primitives::{Blake2Hasher, H256};
-    use runtime_io::with_externalities;
-    use runtime_primitives::{
-        testing::{Digest, DigestItem, Header},
+    use primitives::H256;
+    // The testing primitives are very useful for avoiding having to work with signatures
+    // or public keys. `u64` is used as the `AccountId` and no `Signature`s are required.
+    use sr_primitives::{
+        testing::Header,
         traits::{BlakeTwo256, IdentityLookup},
-        BuildStorage,
+        Perbill,
     };
-    use support::{assert_ok, impl_outer_origin};
+    use support::{assert_ok, impl_outer_origin, parameter_types};
 
     impl_outer_origin! {
         pub enum Origin for Test {}
     }
 
+    // For testing the module, we construct most of a mock runtime. This means
+    // first constructing a configuration type (`Test`) which `impl`s each of the
+    // configuration traits of modules we want to use.
     #[derive(Clone, Eq, PartialEq)]
     pub struct Test;
+    parameter_types! {
+        pub const BlockHashCount: u64 = 250;
+        pub const MaximumBlockWeight: u32 = 1024;
+        pub const MaximumBlockLength: u32 = 2 * 1024;
+        pub const AvailableBlockRatio: Perbill = Perbill::one();
+    }
     impl system::Trait for Test {
         type Origin = Origin;
         type Index = u64;
+        type Call = ();
         type BlockNumber = u64;
         type Hash = H256;
         type Hashing = BlakeTwo256;
-        type Digest = Digest;
         type AccountId = u64;
         type Lookup = IdentityLookup<Self::AccountId>;
         type Header = Header;
         type Event = ();
-        type Log = DigestItem;
+        type BlockHashCount = BlockHashCount;
+        type MaximumBlockWeight = MaximumBlockWeight;
+        type AvailableBlockRatio = AvailableBlockRatio;
+        type MaximumBlockLength = MaximumBlockLength;
+        type Version = ();
+    }
+
+    pub const MILLISECS_PER_BLOCK: u64 = 6000;
+    pub const SLOT_DURATION: u64 = MILLISECS_PER_BLOCK;
+    parameter_types! {
+        pub const MinimumPeriod: u64 = SLOT_DURATION / 2;
     }
     impl timestamp::Trait for Test {
         type Moment = u64;
         type OnTimestampSet = ();
+        type MinimumPeriod = MinimumPeriod;
     }
     impl oracle::Trait for Test {}
     impl assets::Trait for Test {}
     impl Trait for Test {}
     type Contracts = Module<Test>;
 
-    fn new_test_ext() -> runtime_io::TestExternalities<Blake2Hasher> {
-        system::GenesisConfig::<Test>::default()
-            .build_storage()
+    // This function basically just builds a genesis storage key/value store according to
+    // our desired mockup.
+    fn new_test_ext() -> runtime_io::TestExternalities {
+        system::GenesisConfig::default()
+            .build_storage::<Test>()
             .unwrap()
-            .0
             .into()
     }
 
     #[test]
     fn scheduler_run_works() {
-        with_externalities(&mut new_test_ext(), || {
+        new_test_ext().execute_with(|| {
             let t0 = Time::from_values(2015, 01, 01, 00, 00, 00);
             let id = H256::random();
             let mut attributes = Attributes::new(id);
@@ -140,7 +162,7 @@ mod tests {
             );
 
             let mut state = Contracts::deploy_pam(t0, attributes).unwrap();
-            <ContractStates<Test>>::insert(id, state.clone());
+            <Contracts as Store>::ContractStates::insert(id, state.clone());
             let event = ScheduledEvent {
                 time: state.schedule[0].time,
                 contract_id: id,
@@ -148,14 +170,14 @@ mod tests {
             };
             let mut heap = MinHeap::new();
             heap.push(event);
-            <Scheduler<Test>>::put(heap);
+            <Contracts as Store>::Scheduler::put(heap);
 
             let result = Contracts::scheduler_run(Time::from_values(2015, 01, 02, 00, 00, 05));
-            let new_state = <ContractStates<Test>>::get(id);
+            let new_state = <Contracts as Store>::ContractStates::get(id);
             assert_eq!(new_state.variables.notional_principal, Real::from(1000));
             assert_eq!(new_state.variables.nominal_interest_rate, Real::from(0));
             assert_eq!(new_state.variables.accrued_interest, Real::from(0));
-            let event = <Scheduler<Test>>::get().pop().unwrap();
+            let event = <Contracts as Store>::Scheduler::get().pop().unwrap();
             assert_eq!(event.time, Time::from_values(2015, 04, 02, 00, 00, 00));
             assert_eq!(event.index, 1);
         });

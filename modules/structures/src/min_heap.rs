@@ -24,8 +24,7 @@
 use super::*;
 
 /// This struct implements the binary min heap. It is a tuple containing a single Vec.
-#[derive(Clone, Decode, Encode, Default, PartialEq)]
-#[cfg_attr(feature = "std", derive(Debug))]
+#[derive(Clone, Decode, Debug, Encode, Default, PartialEq)]
 pub struct MinHeap<T>(pub Vec<T>)
 where
     T: Ord;

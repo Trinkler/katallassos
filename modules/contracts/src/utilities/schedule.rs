@@ -20,7 +20,7 @@ pub fn schedule(
     t: Time,
     cycle: Option<Cycle>,
     end_of_month_convention: Option<EndOfMonthConvention>,
-) -> MyResult<Vec<Time>> {
+) -> ContractResult<Vec<Time>> {
     // Checking some assumptions about the inputs.
     if s != Time(None) && t != Time(None) && s >= t {
         return Err("Couldn't create schedule. [1]");
