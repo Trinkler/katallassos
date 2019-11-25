@@ -24,14 +24,16 @@
 
 // These are necessary to work with Substrate.
 use codec::{Decode, Encode};
-use rstd::prelude::*;
+pub use rstd::prelude::*;
 // These are necessary to do operator overloading.
 use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
+mod contract_result;
 mod min_heap;
 mod reals;
 mod time;
 
+pub use contract_result::*;
 pub use min_heap::*;
 pub use reals::*;
 pub use time::*;

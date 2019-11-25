@@ -239,9 +239,9 @@ impl sudo::Trait for Runtime {
     type Proposal = Call;
 }
 
-// impl contracts::Trait for Runtime {
-//     // Add `type Event = Event;` in case of event usage
-// }
+impl contracts::Trait for Runtime {
+    // Add `type Event = Event;` in case of event usage
+}
 
 impl oracle::Trait for Runtime {}
 
@@ -263,9 +263,9 @@ construct_runtime!(
 		Sudo: sudo,
 		RandomnessCollectiveFlip: randomness_collective_flip::{Module, Call, Storage},
         // Custom modules
-        // Contracts: contracts::{Module, Call, Storage},
         Oracle: oracle::{Module, Call, Storage},
         Assets: assets::{Module, Call, Storage},
+        Contracts: contracts::{Module, Call, Storage},
 	}
 );
 

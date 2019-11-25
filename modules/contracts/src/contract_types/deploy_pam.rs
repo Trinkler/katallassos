@@ -14,7 +14,7 @@
 use super::*;
 
 impl<T: Trait> Module<T> {
-    pub fn deploy_pam(t0: Time, input: Attributes) -> MyResult<ContractState> {
+    pub fn deploy_pam(t0: Time, input: Attributes) -> ContractResult<ContractState> {
         // The ContractID, necessary to create any contract.
         let mut attributes = Attributes::new(input.contract_id);
 

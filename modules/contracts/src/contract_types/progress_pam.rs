@@ -18,7 +18,7 @@ impl<T: Trait> Module<T> {
     pub fn progress_pam(
         event: ContractEvent,
         mut state: ContractState,
-    ) -> MyResult<(ContractState, Real)> {
+    ) -> ContractResult<(ContractState, Real)> {
         // Getting t0 from the status_date attribute since they are equal.
         // (And status_date is not supposed to change)
         let t0 = state.attributes.status_date;
