@@ -69,6 +69,9 @@ impl<T: Trait> Module<T> {
         attributes.calendar = input.calendar;
         attributes.capitalization_end_date = input.capitalization_end_date;
         attributes.credit_line_amount = input.credit_line_amount;
+        attributes.cycle_anchor_date_of_interest_payment =
+            input.cycle_anchor_date_of_interest_payment;
+        attributes.cycle_of_interest_payment = input.cycle_of_interest_payment;
         attributes.end_of_month_convention = input.end_of_month_convention;
         attributes.market_object_code = input.market_object_code;
         attributes.market_value_observed = input.market_value_observed;
@@ -108,23 +111,54 @@ impl<T: Trait> Module<T> {
             attributes.cycle_of_fee = input.cycle_of_fee; // -> x(1,2,_)
         }
 
-        // Group 2
+        // Group 3
         // Business rule ‘a’ applies unconditionally
-        attributes.cycle_anchor_date_of_interest_payment =
-            input.cycle_anchor_date_of_interest_payment; // -> x(2,0,_)
-        attributes.cycle_of_interest_payment = input.cycle_of_interest_payment; // -> x(2,0,_)
+        attributes.interest_calculation_base = input.interest_calculation_base; // -> x(3,0,_)
 
-        // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
-        if input.cycle_anchor_date_of_interest_payment.0.is_some()
-            || input.cycle_of_interest_payment.is_some()
-        {
-            if input.cycle_point_of_interest_payment == Some(CyclePointOfInterestPayment::B)
-                && input.cycle_point_of_rate_reset != Some(CyclePointOfRateReset::B)
-            {
+        // Business rule ‘a’ applies provided that attribute IPCB of the group takes the value NTIED
+        if input.interest_calculation_base = InterestCalculationBase::NTIED {
+            if input.interest_calculation_base_amount.0.is_none() {
                 return Err("Error while initializing attributes. [5]");
+            } else {
+                attributes.interest_calculation_base_amount =
+                    input.interest_calculation_base_amount;
+                // -> NN(3,3,_)
             }
-            attributes.cycle_point_of_interest_payment = input.cycle_point_of_interest_payment;
-            // -> x(2,1,_)1
+        }
+
+        // At least one of the attributes with c=4 in this group has to be defined provided that attribute IPCB of the group takes the value NTL
+        if input.interest_calculation_base = InterestCalculationBase::NTL {
+            if input
+                .cycle_anchor_date_of_interest_calculation_base
+                .0
+                .is_none()
+                && input.cycle_of_interest_calculation_base.is_none()
+            {
+                return Err("Error while initializing attributes. [6]");
+            } else {
+                attributes.cycle_anchor_date_of_interest_calculation_base =
+                    input.cycle_anchor_date_of_interest_calculation_base;
+                // -> x(3,4,_)
+                attributes.cycle_of_interest_calculation_base =
+                    input.cycle_of_interest_calculation_base;
+                // -> x(3,4,_)
+            }
+        }
+
+        // Group 4
+        // At least one of the attributes with c=2 in this group has to be defined provided that at least one of the unconditional attributes of the group is defined (if any exists)
+        if input.cycle_anchor_date_of_principal_redemption.0.is_none()
+            && input.cycle_of_principal_redemption.is_none()
+        {
+            return Err("Error while initializing attributes. [7]");
+        } else if input.cycle_of_principal_redemption != input.cycle_of_rate_reset {
+            return Err("Error while initializing attributes. [8]");
+        } else {
+            attributes.cycle_anchor_date_of_principal_redemption =
+                input.cycle_anchor_date_of_principal_redemption;
+            // -> x(4,2,_)2
+            attributes.cycle_of_principal_redemption = input.cycle_of_principal_redemption;
+            // -> x(4,2,_)2
         }
 
         // Group 5
@@ -134,7 +168,7 @@ impl<T: Trait> Module<T> {
         // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
         if input.purchase_date.0.is_some() {
             if input.price_at_purchase_date.0.is_none() {
-                return Err("Error while initializing attributes. [6]");
+                return Err("Error while initializing attributes. [9]");
             } else {
                 attributes.price_at_purchase_date = input.price_at_purchase_date;
                 // -> NN(5,1,1)
@@ -148,7 +182,7 @@ impl<T: Trait> Module<T> {
         // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
         if input.termination_date.0.is_some() {
             if input.price_at_termination_date.0.is_none() {
-                return Err("Error while initializing attributes. [7]");
+                return Err("Error while initializing attributes. [10]");
             } else {
                 attributes.price_at_termination_date = input.price_at_termination_date;
                 // -> NN(6,1,1)
@@ -164,7 +198,7 @@ impl<T: Trait> Module<T> {
             if input.market_object_code_of_scaling_index.is_none()
                 || input.scaling_index_at_status_date.0.is_none()
             {
-                return Err("Error while initializing attributes. [8]");
+                return Err("Error while initializing attributes. [11]");
             }
             attributes.market_object_code_of_scaling_index =
                 input.market_object_code_of_scaling_index; // -> NN(7,1,_)
@@ -177,7 +211,7 @@ impl<T: Trait> Module<T> {
             if input.cycle_anchor_date_of_scaling_index.0.is_none()
                 && input.cycle_of_scaling_index.is_none()
             {
-                return Err("Error while initializing attributes. [9]");
+                return Err("Error while initializing attributes. [12]");
             }
             attributes.cycle_anchor_date_of_scaling_index =
                 input.cycle_anchor_date_of_scaling_index; // -> x(7,2,_)
@@ -207,7 +241,7 @@ impl<T: Trait> Module<T> {
         if input.cycle_anchor_date_of_rate_reset.0.is_some() || input.cycle_of_rate_reset.is_some()
         {
             if input.market_object_code_rate_reset.is_none() || input.rate_spread.0.is_none() {
-                return Err("Error while initializing attributes. [10]");
+                return Err("Error while initializing attributes. [13]");
             } else {
                 attributes.market_object_code_rate_reset = input.market_object_code_rate_reset; // -> NN(9,1,_)
                 attributes.rate_spread = input.rate_spread; // -> NN(9,1,_)
@@ -225,7 +259,7 @@ impl<T: Trait> Module<T> {
 
         // Checking if the attributes all have allowed values
         if attributes.is_valid() == false {
-            return Err("Error while initializing attributes. [11]");
+            return Err("Error while initializing attributes. [14]");
         }
 
         // Creating the schedule for all the events.
