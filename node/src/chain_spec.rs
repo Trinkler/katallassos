@@ -20,7 +20,7 @@ use runtime::{
     SudoConfig, SystemConfig, WASM_BINARY,
 };
 use sr_primitives::traits::{IdentifyAccount, Verify};
-use std::path::PathBuf; // Used to import from json file
+use std::borrow::Cow; // Used to import from json file
 use substrate_service;
 use substrate_telemetry::TelemetryEndpoints;
 
@@ -157,9 +157,10 @@ impl Alternative {
                 None,                  // Consensus Engine
                 None,
             ),
-            Alternative::Testnet => {
-                ChainSpec::from_json_file(PathBuf::from("../res/katalchain.json")).unwrap()
-            }
+            Alternative::Testnet => ChainSpec::from_json_bytes(Cow::Owned(
+                include_bytes!("../res/katalchain.json").to_vec(),
+            ))
+            .unwrap(),
         })
     }
 

@@ -1,6 +1,6 @@
 [package]
 name = "katalchain-runtime"
-version = "0.5.1"
+version = "0.5.2"
 authors = ["Trinkler Software <company@trinkler.software>"]
 edition = "2018"
 
