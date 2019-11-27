@@ -269,6 +269,35 @@ impl<T: Trait> Module<T> {
         let event = ContractEvent::new(attributes.initial_exchange_date, ContractEventType::IED);
         schedule.push(event);
 
+        // Principal Redemption event
+        let mut s: Time = Time(None);
+        if attributes.cycle_anchor_date_of_principal_redemption == Time(None)
+            && attributes.cycle_of_principal_redemption == None
+        {
+            s = Time(None);
+        } else if attributes.cycle_anchor_date_of_principal_redemption == Time(None) {
+            s = utilities::sum_cycle(
+                attributes.initial_exchange_date,
+                attributes.cycle_of_principal_redemption,
+                attributes.end_of_month_convention,
+            );
+        } else {
+            s = attributes.cycle_anchor_date_of_principal_redemption;
+        }
+
+        let vec = utilities::schedule(
+            s,
+            attributes.maturity_date,
+            attributes.cycle_of_principal_redemption,
+            attributes.end_of_month_convention,
+        )?;
+
+        // Note: The last entry in vec is supposed to not enter the schedule.
+        for i in 0..vec.size() - 2 {
+            let event = ContractEvent::new(vec[i], ContractEventType::PR);
+            schedule.push(event);
+        }
+
         // Maturity date event
         let event = ContractEvent::new(attributes.maturity_date, ContractEventType::MD);
         schedule.push(event);
