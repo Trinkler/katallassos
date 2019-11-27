@@ -30,7 +30,7 @@ cargo build # Build native and wasm binaries in debug mode
 
 ```sh
 cargo install --locked --path . --force # Build and install native binaries
-katalchain --chain ./node/res/katalchain.json # Synchronize chain data
+katalchain # Synchronize testnet chain data
 ```
 
 ### Usage
