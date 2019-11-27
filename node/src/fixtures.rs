@@ -23,7 +23,7 @@ pub type Properties = json::map::Map<String, json::Value>;
 
 pub fn get_staging_bootnodes() -> Vec<String> {
     return vec![
-        "/dns4/bootnode-01.katalchain.com/tcp/30333/p2p/QmUn4Mz3vA4DZD6XUG667yRxcUF35pGBLmg4PCNo8tNuKT"
+        "/dns4/bootnode-01.katalchain.com/tcp/30333/p2p/QmaY72HvoT8QfZ1xxSESPyCqPj6Umzx5537QCCQfmcrw2u"
             .to_string(),
         "/dns4/bootnode-02.katalchain.com/tcp/30333/p2p/QmYYfe4n7BKjfbpMPjr8HnzKxEefrDXU8pqpnYEUWUM2FR"
             .to_string(),
