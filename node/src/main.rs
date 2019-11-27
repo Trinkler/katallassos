@@ -20,6 +20,7 @@ mod chain_spec;
 #[macro_use]
 mod service;
 mod cli;
+mod fixtures;
 
 pub use substrate_cli::{error, IntoExit, VersionInfo};
 
