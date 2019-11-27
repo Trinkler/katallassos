@@ -45,6 +45,12 @@ pub enum Alternative {
     /// generate a template for a unified genesis block.
     /// Use `katalchain build-spec --chain staging >> node/res/katalchain.json` to generate
     /// Testnet chainspec json file
+    /// Update name, id, properties and if necessary bootnodes
+    // "properties": {
+    //     "ss58Format": 7,
+    //     "tokenDecimals": 9,
+    //     "tokenSymbol": "XTL"
+    //   },
     StagingTestnet,
     /// Hosted testnet with unified genesis block and non-standard Validators.
     Testnet,
