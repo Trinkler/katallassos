@@ -142,7 +142,11 @@ impl Alternative {
                 "staging",             // Id
                 || {
                     testnet_genesis(
-                        get_staging_initial_authorities(), // Initial Authorities
+                        // TODO: Replace with get_staging_initial_authorities() once key generation is fixed
+                        vec![
+                            get_authority_keys_from_seed("Alice"),
+                            get_authority_keys_from_seed("Bob"),
+                        ], // Initial Authorities
                         get_staging_root_key(),
                         get_staging_endowed_accounts(), // Endowed Accounts
                         true,
