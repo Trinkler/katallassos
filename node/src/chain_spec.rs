@@ -162,7 +162,7 @@ impl Alternative {
                 None,
             ),
             Alternative::Testnet => ChainSpec::from_json_bytes(Cow::Owned(
-                include_bytes!("../res/katalchain.json").to_vec(),
+                include_bytes!("../res/katalchain-0.5.3.json").to_vec(),
             ))
             .unwrap(),
         })

@@ -1,6 +1,6 @@
 [package]
 name = "katal-chain"
-version = "0.5.2"
+version = "0.5.3"
 authors = ["Trinkler Software <company@trinkler.software>"]
 build = "node/build.rs"
 edition = "2018"
