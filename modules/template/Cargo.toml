@@ -9,16 +9,16 @@ edition = "2018"
 serde = { version = "1.0.101", optional = true }
 codec = { package = "parity-scale-codec", version = "1.0.0", default-features = false }
 # Needed for various traits.
-sr-primitives = { git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+sr-primitives = { git = "https://github.com/paritytech/substrate", default-features = false, branch = "master" }
 # Needed for type-safe access to storage DB.
-support = { package = "frame-support", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+support = { package = "frame-support", git = "https://github.com/paritytech/substrate", default-features = false, branch = "master" }
 # `system` module provides us with all sorts of useful stuff and macros depend on it being around.
-system = { package = "frame-system", git = "https://github.com/katalchain/substrate", default-features = false, branch = "polkadot-master" }
+system = { package = "frame-system", git = "https://github.com/paritytech/substrate", default-features = false, branch = "master" }
 
 [dev-dependencies]
-primitives = { package = "substrate-primitives", git = "https://github.com/katalchain/substrate", branch = "polkadot-master" }
-rstd = { package = "sr-std", git = "https://github.com/katalchain/substrate", branch = "polkadot-master" }
-runtime-io = { package = "sr-io", git = "https://github.com/katalchain/substrate", branch = "polkadot-master" }
+primitives = { package = "substrate-primitives", git = "https://github.com/paritytech/substrate", branch = "master" }
+rstd = { package = "sr-std", git = "https://github.com/paritytech/substrate", branch = "master" }
+runtime-io = { package = "sr-io", git = "https://github.com/paritytech/substrate", branch = "master" }
 
 [features]
 default = ["std"]
