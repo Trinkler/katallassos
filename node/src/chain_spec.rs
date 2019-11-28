@@ -11,6 +11,7 @@
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 // GNU General Public License for more details.
 
+use crate::fixtures::*;
 use aura_primitives::sr25519::AuthorityId as AuraId;
 use grandpa_primitives::AuthorityId as GrandpaId;
 use primitives::{sr25519, Pair, Public};
@@ -19,6 +20,7 @@ use runtime::{
     SudoConfig, SystemConfig, WASM_BINARY,
 };
 use sr_primitives::traits::{IdentifyAccount, Verify};
+use std::borrow::Cow; // Used to import from json file
 use substrate_service;
 use substrate_telemetry::TelemetryEndpoints;
 
@@ -39,6 +41,19 @@ pub enum Alternative {
     Development,
     /// Whatever the current runtime is, with simple Alice/Bob auths.
     LocalTestnet,
+    /// Hosted testnet with auto-generated genesis block. Use this to build-spec and
+    /// generate a template for a unified genesis block.
+    /// Use `katalchain build-spec --chain staging >> node/res/katalchain.json` to generate
+    /// Testnet chainspec json file
+    /// Update name, id, properties and if necessary bootnodes
+    // "properties": {
+    //     "ss58Format": 7,
+    //     "tokenDecimals": 9,
+    //     "tokenSymbol": "XTL"
+    //   },
+    StagingTestnet,
+    /// Hosted testnet with unified genesis block and non-standard Validators.
+    Testnet,
 }
 
 /// Helper function to generate a crypto pair from seed
@@ -122,13 +137,43 @@ impl Alternative {
                 None,
                 None,
             ),
+            Alternative::StagingTestnet => ChainSpec::from_genesis(
+                "Katal Chain Staging", // Name
+                "staging",             // Id
+                || {
+                    testnet_genesis(
+                        // TODO: Replace with get_staging_initial_authorities() once key generation is fixed
+                        vec![
+                            get_authority_keys_from_seed("Alice"),
+                            get_authority_keys_from_seed("Bob"),
+                        ], // Initial Authorities
+                        get_staging_root_key(),
+                        get_staging_endowed_accounts(), // Endowed Accounts
+                        true,
+                    )
+                }, // Constructor
+                get_staging_bootnodes(), // Boot Nodes
+                Some(TelemetryEndpoints::new(vec![(
+                    STAGING_TELEMETRY_URL.to_string(),
+                    0,
+                )])), // Telemetry Endpoints
+                None,                  // Protocol Id
+                None,                  // Consensus Engine
+                None,
+            ),
+            Alternative::Testnet => ChainSpec::from_json_bytes(Cow::Owned(
+                include_bytes!("../res/katalchain-0.5.3.json").to_vec(),
+            ))
+            .unwrap(),
         })
     }
 
     pub(crate) fn from(s: &str) -> Option<Self> {
         match s {
             "dev" => Some(Alternative::Development),
-            "" | "local" => Some(Alternative::LocalTestnet),
+            "local" => Some(Alternative::LocalTestnet),
+            "staging" => Some(Alternative::StagingTestnet),
+            "" | "testnet" => Some(Alternative::Testnet),
             _ => None,
         }
     }

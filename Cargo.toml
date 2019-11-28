@@ -1,6 +1,6 @@
 [package]
 name = "katal-chain"
-version = "0.5.0"
+version = "0.5.3"
 authors = ["Trinkler Software <company@trinkler.software>"]
 build = "node/build.rs"
 edition = "2018"
@@ -10,9 +10,9 @@ name = "katalchain"
 path = "node/src/main.rs"
 
 [dependencies]
-# Used for testnet_fixtures
+# Used for fixtures
 hex-literal = "0.2.1"
-serde_json = "1.0"
+serde_json = "1.0.41"
 substrate-telemetry = { git = "https://github.com/katalchain/substrate", branch = "polkadot-master" }
 # Used for node
 derive_more = "0.15.0"
