@@ -13,7 +13,7 @@ path = "node/src/main.rs"
 # Used for fixtures
 hex-literal = "0.2.1"
 serde_json = "1.0.41"
-substrate-telemetry = { git = "https://github.com/paritytech/substrate", branch = "master" }
+substrate-telemetry = { git = "https://github.com/katalchain/substrate", branch = "master" }
 # Used for node
 futures = "0.3.1"
 futures01 = { package = "futures", version = "0.1.29" }
@@ -23,24 +23,24 @@ tokio = "0.1.22"
 parking_lot = "0.9.0"
 codec = { package = "parity-scale-codec", version = "1.0.0" }
 trie-root = "0.15.2"
-sr-io = { git = "https://github.com/paritytech/substrate", branch = "master" }
-substrate-cli = { git = "https://github.com/paritytech/substrate", branch = "master" }
-primitives = { package = "substrate-primitives", git = "https://github.com/paritytech/substrate", branch = "master" }
-substrate-executor = { git = "https://github.com/paritytech/substrate", branch = "master" }
-substrate-service = { git = "https://github.com/paritytech/substrate", branch = "master" }
-inherents = { package = "substrate-inherents", git = "https://github.com/paritytech/substrate", branch = "master" }
-txpool = { package = "sc-transaction-pool", git = "https://github.com/paritytech/substrate", branch = "master" }
-txpool-api = { package = "sp-transaction-pool-api", git = "https://github.com/paritytech/substrate", branch = "master" }
-network = { package = "substrate-network", git = "https://github.com/paritytech/substrate", branch = "master" }
-aura = { package = "substrate-consensus-aura", git = "https://github.com/paritytech/substrate", branch = "master" }
-aura-primitives = { package = "substrate-consensus-aura-primitives", git = "https://github.com/paritytech/substrate", branch = "master" }
-grandpa = { package = "substrate-finality-grandpa", git = "https://github.com/paritytech/substrate", branch = "master" }
-grandpa-primitives = { package = "substrate-finality-grandpa-primitives", git = "https://github.com/paritytech/substrate", branch = "master" }
-substrate-client = {  git = "https://github.com/paritytech/substrate", branch = "master" }
+sr-io = { git = "https://github.com/katalchain/substrate", branch = "master" }
+substrate-cli = { git = "https://github.com/katalchain/substrate", branch = "master" }
+primitives = { package = "substrate-primitives", git = "https://github.com/katalchain/substrate", branch = "master" }
+substrate-executor = { git = "https://github.com/katalchain/substrate", branch = "master" }
+substrate-service = { git = "https://github.com/katalchain/substrate", branch = "master" }
+inherents = { package = "substrate-inherents", git = "https://github.com/katalchain/substrate", branch = "master" }
+txpool = { package = "sc-transaction-pool", git = "https://github.com/katalchain/substrate", branch = "master" }
+txpool-api = { package = "sp-transaction-pool-api", git = "https://github.com/katalchain/substrate", branch = "master" }
+network = { package = "substrate-network", git = "https://github.com/katalchain/substrate", branch = "master" }
+aura = { package = "substrate-consensus-aura", git = "https://github.com/katalchain/substrate", branch = "master" }
+aura-primitives = { package = "substrate-consensus-aura-primitives", git = "https://github.com/katalchain/substrate", branch = "master" }
+grandpa = { package = "substrate-finality-grandpa", git = "https://github.com/katalchain/substrate", branch = "master" }
+grandpa-primitives = { package = "substrate-finality-grandpa-primitives", git = "https://github.com/katalchain/substrate", branch = "master" }
+substrate-client = {  git = "https://github.com/katalchain/substrate", branch = "master" }
 runtime = { package = "katalchain-runtime", path = "node/runtime" }
-sr-primitives = { git = "https://github.com/paritytech/substrate", branch = "master" }
-basic-authorship = { package = "substrate-basic-authorship", git = "https://github.com/paritytech/substrate", branch = "master" }
+sr-primitives = { git = "https://github.com/katalchain/substrate", branch = "master" }
+basic-authorship = { package = "substrate-basic-authorship", git = "https://github.com/katalchain/substrate", branch = "master" }
 
 [build-dependencies]
 vergen = "3.0.4"
-build-script-utils = { package = "substrate-build-script-utils", git = "https://github.com/paritytech/substrate", branch = "master" }
+build-script-utils = { package = "substrate-build-script-utils", git = "https://github.com/katalchain/substrate", branch = "master" }
