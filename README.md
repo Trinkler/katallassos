@@ -1,6 +1,12 @@
 [<img src = "https://raw.githubusercontent.com/katalchain/brand/master/assets/banner/banner.png" width = "100%">](https://katalchain.com)
 
-# blockchain
+# blockchain 
+
+| Pipeline | Status |
+|:-|:-|
+`Build&Test` | [![buddy pipeline](https://app.buddy.works/katalchain/blockchain/pipelines/pipeline/223446/badge.svg?token=09f33f1c410caf2aa98947c7e846b94f0f86e6f3cbcdf1c74546eb9052ab8da3 "buddy pipeline")](https://app.buddy.works/katalchain/blockchain/pipelines/pipeline/223446)
+ `Deploy Endpoint` | [![buddy pipeline](https://app.buddy.works/katalchain/blockchain/pipelines/pipeline/223697/badge.svg?token=09f33f1c410caf2aa98947c7e846b94f0f86e6f3cbcdf1c74546eb9052ab8da3 "buddy pipeline")](https://app.buddy.works/katalchain/blockchain/pipelines/pipeline/223697)
+ `Deploy Bootnodes, Validators` | [![buddy pipeline](https://app.buddy.works/katalchain/blockchain/pipelines/pipeline/223447/badge.svg?token=09f33f1c410caf2aa98947c7e846b94f0f86e6f3cbcdf1c74546eb9052ab8da3 "buddy pipeline")](https://app.buddy.works/katalchain/blockchain/pipelines/pipeline/223447)
 
 > [Katal Chain](https://katalchain.com) is a domain-specific blockchain creating a deterministic financial paradigm.
 >
@@ -8,6 +14,7 @@
 >
 > Katal Chain is based on [Substrate](https://github.com/katalchain/substrate) and aims to connect to the multichain framework [Polkadot](https://polkadot.network) to interact with assets
 > of [other connected blockchains](https://forum.web3.foundation/t/teams-building-on-polkadot/67) as well as to allow other connected blockchains to have access to contract types built using Katal Chain. View on [Telemetry](https://telemetry.polkadot.io/#list/Katal%20Chain).
+
 
 ### Setup
 
