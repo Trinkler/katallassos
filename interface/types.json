@@ -14,7 +14,6 @@
       "time": "Time",
       "value": "Real"
    },
-   "MinHeap": "Vec<T>",
    "ArrayFixedVariable": {
       "_enum": [
          "F",
@@ -53,11 +52,6 @@
          "DF"
       ]
    },
-   "ContractStructure": {
-      "_object": "H256",
-      "_type": "ContractReferenceType",
-      "_role": "ContractReferenceRole"
-   },
    "ContractReferenceRole": {
       "_enum": [
          "Underlying",
@@ -86,6 +80,7 @@
          "SEL",
          "RFL",
          "PFL",
+         "COL",
          "GUA",
          "OBL"
       ]
@@ -119,15 +114,14 @@
          "DF"
       ]
    },
-   "CycleType": "(u16, bool)",
    "Cycle": {
       "_enum": {
-         "Days": "CycleType",
-         "Weeks": "CycleType",
-         "Months": "CycleType",
-         "Quarters": "CycleType",
-         "Halfyears": "CycleType",
-         "Years": "CycleType"
+         "Days": "(u16, bool)",
+         "Weeks": "(u16, bool)",
+         "Months": "(u16, bool)",
+         "Quarters": "(u16, bool)",
+         "Halfyears": "(u16, bool)",
+         "Years": "(u16, bool)"
       }
    },
    "CyclePointOfInterestPayment": {
@@ -147,9 +141,7 @@
          "AAISDA",
          "A360",
          "A365",
-         "_30E360ISDA",
-         "_30E360",
-         "_BUS252"
+         "_30E360"
       ]
    },
    "DeliverySettlement": {
@@ -215,10 +207,7 @@
    "Period": {
       "_enum": {
          "Days": "u16",
-         "Weeks": "u16",
          "Months": "u16",
-         "Quarters": "u16",
-         "HalfYears": "u16",
          "Years": "u16"
       }
    },
@@ -255,6 +244,11 @@
          "TON",
          "TRO"
       ]
+   },
+   "ContractStructure": {
+      "_object": "H256",
+      "_type": "ContractReferenceType",
+      "_role": "ContractReferenceRole"
    },
    "Attributes": {
       "accrued_interest": "Real",
@@ -364,7 +358,6 @@
       "scaling_effect": "Option<ScalingEffect>",
       "scaling_index_at_status_date": "Real",
       "seniority": "Option<Seniority>",
-      "settlement_date": "Time",
       "settlement_currency": "Option<u32>",
       "settlement_days": "Option<Period>",
       "status_date": "Time",

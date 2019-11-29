@@ -170,14 +170,6 @@ pub enum ContractPerformance {
     DF,
 }
 
-// The underscore is necessary because 'type' is a reserved word.
-#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
-pub struct ContractStructure {
-    pub _object: H256,
-    pub _type: ContractReferenceType,
-    pub _role: ContractReferenceRole,
-}
-
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum ContractReferenceRole {
     Underlying,
@@ -375,6 +367,14 @@ pub enum Unit {
     STN,
     TON,
     TRO,
+}
+
+// The underscore is necessary because 'type' is a reserved word.
+#[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
+pub struct ContractStructure {
+    pub _object: H256,
+    pub _type: ContractReferenceType,
+    pub _role: ContractReferenceRole,
 }
 
 impl Attributes {
