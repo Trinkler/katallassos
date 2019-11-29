@@ -31,7 +31,7 @@ use system::ensure_root;
 use sr_primitives::traits::SaturatedConversion;
 
 // Importing crates from Katal's runtime.
-use structures::*;
+use structures::{Real, Time};
 
 // Importing the rest of the files in this crate.
 mod oracle_state;
