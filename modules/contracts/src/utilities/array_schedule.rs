@@ -21,7 +21,7 @@ pub fn array_schedule(
     t: Time,
     arr_cycle: Vec<Option<Cycle>>,
     end_of_month_convention: Option<EndOfMonthConvention>,
-) -> MyResult<Vec<Time>> {
+) -> ContractResult<Vec<Time>> {
     if arr_s.len() != arr_cycle.len() {
         return Err("Couldn't create array schedule");
     }

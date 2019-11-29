@@ -26,7 +26,7 @@ impl<T: Trait> Module<T> {
         let number = pure_function();
 
         // Store value.
-        <SomeValue<T>>::put(number);
+        <Self as Store>::SomeValue::put(number);
 
         // Return Ok.
         Ok(())

@@ -23,15 +23,17 @@
 // The above line is needed to compile the Wasm binaries.
 
 // These are necessary to work with Substrate.
-use parity_codec::{Decode, Encode};
-use runtime_std::prelude::*;
+use codec::{Decode, Encode};
+pub use rstd::prelude::*;
 // These are necessary to do operator overloading.
 use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAssign};
 
+mod contract_result;
 mod min_heap;
 mod reals;
 mod time;
 
+pub use contract_result::*;
 pub use min_heap::*;
 pub use reals::*;
 pub use time::*;
