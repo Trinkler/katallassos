@@ -34,6 +34,7 @@ txpool-api = { package = "sp-transaction-pool-api", git = "https://github.com/ka
 network = { package = "substrate-network", git = "https://github.com/katalchain/substrate", branch = "master" }
 aura = { package = "substrate-consensus-aura", git = "https://github.com/katalchain/substrate", branch = "master" }
 aura-primitives = { package = "substrate-consensus-aura-primitives", git = "https://github.com/katalchain/substrate", branch = "master" }
+consensus-common = { package = "substrate-consensus-common", git = "https://github.com/katalchain/substrate", branch = "master" }
 grandpa = { package = "substrate-finality-grandpa", git = "https://github.com/katalchain/substrate", branch = "master" }
 grandpa-primitives = { package = "substrate-finality-grandpa-primitives", git = "https://github.com/katalchain/substrate", branch = "master" }
 substrate-client = {  git = "https://github.com/katalchain/substrate", branch = "master" }
