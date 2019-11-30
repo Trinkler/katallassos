@@ -383,36 +383,72 @@ impl<T: Trait> Module<T> {
         schedule.push(event);
 
         // Interest payment event
-        if attributes.nominal_interest_rate == Real(None) {
+        let r = if attributes.capitalization_end_date = !Time(None) {
+            attributes.capitalization_end_date
+        } else if attributes.cycle_anchor_date_of_interest_payment != Time(None) {
+            attributes.cycle_anchor_date_of_interest_payment
+        } else if attributes.cycle_of_interest_payment != Time(None) {
+            utilities::sum_cycle(
+                attributes.initial_exchange_date,
+                attributes.cycle_of_interest_payment,
+                attributes.end_of_month_convention,
+            )
         } else {
-            let mut s: Time = Time(None);
-            if attributes.cycle_anchor_date_of_interest_payment == Time(None)
-                && attributes.cycle_of_interest_payment == None
-            {
-                s = Time(None);
-            } else if attributes.capitalization_end_date != Time(None) {
-                s = attributes.capitalization_end_date;
-            } else if attributes.cycle_anchor_date_of_interest_payment == Time(None) {
-                s = utilities::sum_cycle(
-                    attributes.initial_exchange_date,
-                    attributes.cycle_of_interest_payment,
-                    attributes.end_of_month_convention,
-                );
-            } else {
-                s = attributes.cycle_anchor_date_of_interest_payment;
-            }
+            Time(None)
+        };
 
+        let s = if attributes.cycle_anchor_date_of_principal_redemption == Time(None) {
+            utilities::sum_cycle(
+                attributes.initial_exchange_date,
+                attributes.cycle_of_principal_redemption,
+                attributes.end_of_month_convention,
+            )
+        } else {
+            attributes.cycle_anchor_date_of_principal_redemption
+        };
+
+        if attributes.cycle_anchor_date_of_interest_payment == Time(None)
+            && attributes.cycle_of_interest_payment == Time(None)
+        {
+        } else if attributes.capitalization_end_date = !Time(None)
+            && utilities::sum_cycle(
+                attributes.capitalization_end_date,
+                attributes.cycle_of_principal_redemption,
+                attributes.end_of_month_convention,
+            ) >= s
+        {
+        } else {
             let vec = utilities::schedule(
+                r,
                 s,
-                attributes.maturity_date,
                 attributes.cycle_of_interest_payment,
                 attributes.end_of_month_convention,
             )?;
 
             for t in vec {
+                if utilities::sum_cycle(
+                    t,
+                    attributes.cycle_of_principal_redemption,
+                    attributes.end_of_month_convention,
+                ) > s
+                {
+                    break;
+                }
                 let event = ContractEvent::new(t, ContractEventType::IP);
                 schedule.push(event);
             }
+        }
+
+        let vec = utilities::schedule(
+            s,
+            attributes.maturity_date,
+            attributes.cycle_of_principal_redemption,
+            attributes.end_of_month_convention,
+        )?;
+
+        for t in vec {
+            let event = ContractEvent::new(t, ContractEventType::IP);
+            schedule.push(event);
         }
 
         // Interest capitalization event
@@ -442,6 +478,36 @@ impl<T: Trait> Module<T> {
 
             for t in vec {
                 let event = ContractEvent::new(t, ContractEventType::IPCI);
+                schedule.push(event);
+            }
+        }
+
+        // Interest Calculation Base Fixing event
+        if attributes.interest_calculation_base = !InterestCalculationBase::NTL {
+        } else {
+            let s = if attributes.cycle_anchor_date_of_interest_calculation_base == Time(None)
+                && attributes.cycle_of_interest_calculation_base == None
+            {
+                s = Time(None);
+            } else if attributes.cycle_anchor_date_of_interest_calculation_base == Time(None) {
+                s = utilities::sum_cycle(
+                    attributes.initial_exchange_date,
+                    attributes.cycle_of_interest_calculation_base,
+                    attributes.end_of_month_convention,
+                );
+            } else {
+                s = attributes.cycle_anchor_date_of_interest_calculation_base;
+            };
+
+            let vec = utilities::schedule(
+                s,
+                attributes.maturity_date,
+                attributes.cycle_of_interest_calculation_base,
+                attributes.end_of_month_convention,
+            )?;
+
+            for t in vec {
+                let event = ContractEvent::new(t, ContractEventType::IPCB);
                 schedule.push(event);
             }
         }
