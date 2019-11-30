@@ -1,6 +1,6 @@
 [<img src = "https://raw.githubusercontent.com/katalchain/brand/master/assets/banner/banner.png" width = "100%">](https://katalchain.com)
 
-# blockchain 
+# blockchain ![Matrix](https://img.shields.io/matrix/katalchain-watercooler:matrix.org) ![Matrix](https://img.shields.io/matrix/katalchain-validator-lounge:matrix.org)
 
 | Pipeline | Status |
 |:-|:-|
@@ -47,7 +47,7 @@ To access the [Katal Chain Testnet](https://telemetry.polkadot.io/#list/Katal%20
 1.  In [Settings](https://polkadot.js.org/apps/#/settings) tab under the `General` section select `wss://endpoint.katalchain.com` as remote endpoint.
 2.  In [Settings](https://polkadot.js.org/apps/#/settings) tab under the `Developer` section copy paste the [custom types definitions](./interface/types.json) into the interface and click the "Save" button.
 
-All done you are now able to for example deploy a contract under the [Extrinsics](https://polkadot.js.org/apps/#/extrinsics) tab using the `contracts` module. If you don't feel like going through all the attributes yourself then you might also want to have a look at the Javascript [example](./interface/example.js)
+All done you are now able to for example deploy a contract under the [Extrinsics](https://polkadot.js.org/apps/#/extrinsics) tab using the `contracts` module. If you don't feel like going through all the attributes yourself then you might also want to have a look at the Javascript [example](./interface/example.js).
 
 ### Custom Modules
 
