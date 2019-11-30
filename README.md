@@ -30,7 +30,7 @@ cargo build # Build native and wasm binaries in debug mode
 
 ```sh
 cargo install --locked --path . --force # Build and install native binaries
-katalchain --chain ./node/res/katalchain.json # Synchronize chain data
+katalchain # Synchronize testnet chain data
 ```
 
 ### Usage
@@ -38,9 +38,9 @@ katalchain --chain ./node/res/katalchain.json # Synchronize chain data
 To access the [Katal Chain Testnet](https://telemetry.polkadot.io/#list/Katal%20Chain) using the great [Polkadot JS Apps Interface](https://polkadot.js.org/apps/#/explorer) do the following:
 
 1.  In [Settings](https://polkadot.js.org/apps/#/settings) tab under the `General` section select `wss://endpoint.katalchain.com` as remote endpoint.
-2.  In [Settings](https://polkadot.js.org/apps/#/settings) tab under the `Developer` section copy paste the [custom types definitions](https://raw.githubusercontent.com/katalchain/blockchain/master/interface/types.json) into the interface and click the "Save" button.
+2.  In [Settings](https://polkadot.js.org/apps/#/settings) tab under the `Developer` section copy paste the [custom types definitions](./interface/types.json) into the interface and click the "Save" button.
 
-All done you are now able to for example deploy a contract under the [Extrinsics](https://polkadot.js.org/apps/#/extrinsics) tab using the `contracts` module.
+All done you are now able to for example deploy a contract under the [Extrinsics](https://polkadot.js.org/apps/#/extrinsics) tab using the `contracts` module. If you don't feel like going through all the attributes yourself then you might also want to have a look at the Javascript [example](./interface/example.js)
 
 ### Custom Modules
 

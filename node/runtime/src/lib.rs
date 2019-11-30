@@ -102,7 +102,12 @@ pub mod opaque {
 pub const VERSION: RuntimeVersion = RuntimeVersion {
     spec_name: create_runtime_str!("katalchain"),
     impl_name: create_runtime_str!("katalchain"),
-    authoring_version: 1,
+    authoring_version: 4,
+    // Per convention: if the runtime behavior changes, increment spec_version
+    // and set impl_version to equal spec_version. If only runtime
+    // implementation changes and behavior does not, then leave spec_version as
+    // is and increment impl_version.
+    // Spec version is also needed for transaction signing.
     spec_version: 1,
     impl_version: 1,
     apis: RUNTIME_API_VERSIONS,
@@ -257,7 +262,7 @@ construct_runtime!(
 		Timestamp: timestamp::{Module, Call, Storage, Inherent},
 		Aura: aura::{Module, Config<T>, Inherent(Timestamp)},
 		Grandpa: grandpa::{Module, Call, Storage, Config, Event},
-		Indices: indices::{default, Config<T>},
+		Indices: indices,
 		Balances: balances::{default, Error},
 		TransactionPayment: transaction_payment::{Module, Storage},
 		Sudo: sudo,
@@ -342,7 +347,7 @@ impl_runtime_apis! {
         }
     }
 
-    impl tx_pool_api::TaggedTransactionQueue<Block> for Runtime {
+    impl txpool_runtime_api::TaggedTransactionQueue<Block> for Runtime {
         fn validate_transaction(tx: <Block as BlockT>::Extrinsic) -> TransactionValidity {
             Executive::validate_transaction(tx)
         }
