@@ -40,7 +40,7 @@ pub enum Alternative {
     LocalTestnet,
     /// Hosted testnet with auto-generated genesis block. Use this to build-spec and
     /// generate a template for a unified genesis block.
-    /// Use `katalchain build-spec --chain staging >> node/res/katalchain.json` to generate
+    /// Use `katalchain build-spec --chain staging >> node/res/katalchain-${version}.json` to generate
     /// Testnet chainspec json file
     /// Update name, id, properties and if necessary bootnodes
     // "properties": {
@@ -159,7 +159,7 @@ impl Alternative {
                 None,
             ),
             Alternative::Testnet => ChainSpec::from_json_bytes(Cow::Owned(
-                include_bytes!("../res/katalchain-0.5.3.json").to_vec(),
+                include_bytes!("../res/katalchain-0.5.4.json").to_vec(),
             ))
             .unwrap(),
         })

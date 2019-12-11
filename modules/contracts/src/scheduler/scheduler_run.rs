@@ -24,10 +24,10 @@ impl<T: Trait> Module<T> {
         while heap.peek().is_some() && now >= heap.peek().unwrap().time {
             let mut scheduled_event = heap.pop().unwrap();
 
-            // Get the state of the ACTUS contract and the corresponding
+            // Get the contract state of the ACTUS contract and the corresponding
             // contract event type to be executed.
-            let mut state = <Self as Store>::ContractStates::get(scheduled_event.contract_id);
-            let event = state.schedule[scheduled_event.index as usize];
+            let mut contract = <Self as Store>::Contracts::get(scheduled_event.contract_id);
+            let event = contract.schedule[scheduled_event.index as usize];
 
             // Make the ACTUS contract progress.
             <Module<T>>::progress(event, scheduled_event.contract_id)?;
@@ -36,9 +36,9 @@ impl<T: Trait> Module<T> {
             // the time has come. This is more efficient than just pushing the next event
             // to the Scheduler heap.
             scheduled_event.index += 1;
-            while scheduled_event.index < state.schedule.len() as u32 {
+            while scheduled_event.index < contract.schedule.len() as u32 {
                 // Get the next event for this contract.
-                let event = state.schedule[scheduled_event.index as usize];
+                let event = contract.schedule[scheduled_event.index as usize];
                 // Compare the event's time with the current time.
                 if now >= event.time {
                     // Make the ACTUS contract progress.
@@ -137,34 +137,34 @@ mod tests {
         new_test_ext().execute_with(|| {
             let t0 = Time::from_values(2015, 01, 01, 00, 00, 00);
             let id = H256::random();
-            let mut attributes = Attributes::new(id);
-            attributes.contract_deal_date = Time::from_values(2015, 01, 01, 00, 00, 00);
-            attributes.contract_id = id;
-            attributes.contract_role = Some(ContractRole::RPA);
-            attributes.contract_type = Some(ContractType::PAM);
-            attributes.counterparty_id = Some(H256::random());
-            attributes.creator_id = Some(H256::random());
-            attributes.currency = Some(1);
-            attributes.settlement_currency = Some(1);
-            attributes.day_count_convention = Some(DayCountConvention::_30E360);
-            attributes.initial_exchange_date = Time::from_values(2015, 01, 02, 00, 00, 00);
-            attributes.maturity_date = Time::from_values(2015, 04, 02, 00, 00, 00);
-            attributes.nominal_interest_rate = Real::from(0);
-            attributes.notional_principal = Real::from(1000);
-            attributes.premium_discount_at_ied = Real::from(-5);
-            attributes.rate_spread = Real::from(0);
-            attributes.scaling_effect = None;
+            let mut terms = Terms::new(id);
+            terms.contract_deal_date = Time::from_values(2015, 01, 01, 00, 00, 00);
+            terms.contract_id = id;
+            terms.contract_role = Some(ContractRole::RPA);
+            terms.contract_type = Some(ContractType::PAM);
+            terms.counterparty_id = Some(H256::random());
+            terms.creator_id = Some(H256::random());
+            terms.currency = Some(1);
+            terms.settlement_currency = Some(1);
+            terms.day_count_convention = Some(DayCountConvention::_30E360);
+            terms.initial_exchange_date = Time::from_values(2015, 01, 02, 00, 00, 00);
+            terms.maturity_date = Time::from_values(2015, 04, 02, 00, 00, 00);
+            terms.nominal_interest_rate = Real::from(0);
+            terms.notional_principal = Real::from(1000);
+            terms.premium_discount_at_ied = Real::from(-5);
+            terms.rate_spread = Real::from(0);
+            terms.scaling_effect = None;
 
             <assets::Module<Test>>::mint(
-                attributes.creator_id.unwrap(),
-                attributes.currency.unwrap(),
-                attributes.notional_principal,
+                terms.creator_id.unwrap(),
+                terms.currency.unwrap(),
+                terms.notional_principal,
             );
 
-            let mut state = Contracts::deploy_pam(t0, attributes).unwrap();
-            <Contracts as Store>::ContractStates::insert(id, state.clone());
+            let mut contract = Contracts::deploy_pam(t0, terms).unwrap();
+            <Contracts as Store>::Contracts::insert(id, contract.clone());
             let event = ScheduledEvent {
-                time: state.schedule[0].time,
+                time: contract.schedule[0].time,
                 contract_id: id,
                 index: 0,
             };
@@ -173,10 +173,16 @@ mod tests {
             <Contracts as Store>::Scheduler::put(heap);
 
             let result = Contracts::scheduler_run(Time::from_values(2015, 01, 02, 00, 00, 05));
-            let new_state = <Contracts as Store>::ContractStates::get(id);
-            assert_eq!(new_state.variables.notional_principal, Real::from(1000));
-            assert_eq!(new_state.variables.nominal_interest_rate, Real::from(0));
-            assert_eq!(new_state.variables.accrued_interest, Real::from(0));
+            let progressed_contract = <Contracts as Store>::Contracts::get(id);
+            assert_eq!(
+                progressed_contract.states.notional_principal,
+                Real::from(1000)
+            );
+            assert_eq!(
+                progressed_contract.states.nominal_interest_rate,
+                Real::from(0)
+            );
+            assert_eq!(progressed_contract.states.accrued_interest, Real::from(0));
             let event = <Contracts as Store>::Scheduler::get().pop().unwrap();
             assert_eq!(event.time, Time::from_values(2015, 04, 02, 00, 00, 00));
             assert_eq!(event.index, 1);
