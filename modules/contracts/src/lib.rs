@@ -25,19 +25,21 @@ use sr_primitives::traits::SaturatedConversion;
 use structures::*;
 
 // Importing the rest of the files in this crate.
-mod storage;
-mod types;
 mod deploy;
+mod functions;
 mod init;
 mod progress;
 mod scheduler;
+mod storage;
+mod types;
 mod utilities;
-use storage::*;
-use types::*;
 use deploy::*;
+use functions::*;
 use init::*;
 use progress::*;
 use scheduler::*;
+use storage::*;
+use types::*;
 use utilities::*;
 
 // This module's configuration trait.

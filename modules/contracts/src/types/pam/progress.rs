@@ -22,37 +22,8 @@ impl<T: Trait> Module<T> {
 
         match event.event_type {
             EventType::IED => {
-                // Payoff Function
-                let payoff = utilities::contract_role_sign(contract.terms.contract_role)
-                    * Real::from(-1)
-                    * (contract.terms.notional_principal + contract.terms.premium_discount_at_ied);
-                // State Transition Function
-                contract.states.notional_principal =
-                    utilities::contract_role_sign(contract.terms.contract_role)
-                        * contract.terms.notional_principal;
-                if contract.terms.nominal_interest_rate == Real(None) {
-                    contract.states.nominal_interest_rate = Real::from(0);
-                } else {
-                    contract.states.nominal_interest_rate = contract.terms.nominal_interest_rate;
-                }
-                if contract.terms.accrued_interest != Real(None) {
-                    contract.states.accrued_interest = contract.terms.accrued_interest;
-                } else if contract.terms.cycle_anchor_date_of_interest_payment != Time(None)
-                    && contract.terms.cycle_anchor_date_of_interest_payment < event.time
-                {
-                    let y = utilities::year_fraction(
-                        contract.terms.cycle_anchor_date_of_interest_payment,
-                        event.time,
-                        contract.terms.day_count_convention.unwrap(), // Unwraping poses no danger since day_count_convention is mandatory for the PAM contract. It will never panic.
-                    );
-                    contract.states.accrued_interest = y
-                        * contract.states.notional_principal
-                        * contract.states.nominal_interest_rate;
-                } else {
-                    contract.states.accrued_interest = Real::from(0);
-                }
-                contract.states.status_date = event.time;
-                // Return the contract contract and payoff
+                let payoff = functions::pof_ied_pam(event, &contract);
+                contract = functions::stf_ied_pam(event, contract);
                 Ok((contract, payoff))
             }
             EventType::MD => {

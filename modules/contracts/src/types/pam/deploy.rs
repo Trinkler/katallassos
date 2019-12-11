@@ -499,7 +499,7 @@ impl<T: Trait> Module<T> {
         // Ordering the schedule
         schedule.sort_unstable();
 
-        // Initializing the states
+        // Initializing the contract states
         let mut states = States::new();
 
         // Time At Maturity Date variable
