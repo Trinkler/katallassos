@@ -15,13 +15,13 @@ use super::*;
 
 // TODO: Add support for user-initiated events.
 impl<T: Trait> Module<T> {
-    pub fn progress_ann(event: Event, mut contract: Contract) -> ContractResult<(Contract, Real)> {
+    pub fn progress_ann(event: Event, mut contract: Contract) -> ContractResult<(Real, Contract)> {
         // Getting t0 from the status_date attribute since they are equal.
         // (And status_date is not supposed to change)
         let t0 = contract.terms.status_date;
 
         // TODO: Remove this and update contract state and calculate payoff using matched events
-        Ok((contract, Real::from(0)))
+        Ok((Real::from(0), contract))
     }
 }
 

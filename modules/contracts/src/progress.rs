@@ -24,8 +24,8 @@ impl<T: Trait> Module<T> {
         match contract.terms.contract_type {
             Some(ContractType::PAM) => {
                 let result = Self::progress_pam(event, contract)?;
-                contract = result.0;
-                payoff = result.1;
+                payoff = result.0;
+                contract = result.1;
             }
             _ => {
                 Err("Contract type not supported")?;
@@ -163,10 +163,7 @@ mod tests {
             <Contracts as Store>::Contracts::insert(id, contract.clone());
             assert_eq!(
                 contract.schedule[0],
-                Event::new(
-                    Time::from_values(2015, 01, 02, 00, 00, 00),
-                    EventType::IED
-                )
+                Event::new(Time::from_values(2015, 01, 02, 00, 00, 00), EventType::IED)
             );
             Contracts::progress(contract.schedule[0], id);
             contract = <Contracts as Store>::Contracts::get(id);
@@ -183,10 +180,7 @@ mod tests {
             // on the contract).
             assert_eq!(
                 contract.schedule[3],
-                Event::new(
-                    Time::from_values(2015, 04, 02, 00, 00, 00),
-                    EventType::MD
-                )
+                Event::new(Time::from_values(2015, 04, 02, 00, 00, 00), EventType::MD)
             );
             Contracts::progress(contract.schedule[3], id);
             contract = <Contracts as Store>::Contracts::get(id);

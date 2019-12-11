@@ -15,77 +15,64 @@ use super::*;
 
 // TODO: Add support for user-initiated events.
 impl<T: Trait> Module<T> {
-    pub fn progress_pam(event: Event, mut contract: Contract) -> ContractResult<(Contract, Real)> {
+    pub fn progress_pam(event: Event, mut contract: Contract) -> ContractResult<(Real, Contract)> {
         // Getting t0 from the status_date attribute since they are equal.
         // (And status_date is not supposed to change)
         let t0 = contract.terms.status_date;
 
         match event.event_type {
-            EventType::IED => {
-                let payoff = functions::pof_ied_pam(event, &contract);
-                contract = functions::stf_ied_pam(event, &t0, contract);
-                Ok((contract, payoff))
-            }
-            EventType::MD => {
-                let payoff = functions::pof_md_pam(event, &contract);
-                contract = functions::stf_md_pam(event, &t0, contract);
-                Ok((contract, payoff))
-            }
-            EventType::PP => {
-                let payoff = functions::pof_pp_pam(event, &contract);
-                contract = functions::stf_pp_pam(event, &t0, contract);
-                Ok((contract, payoff))
-            }
-            EventType::PY => {
-                let payoff = Self::pof_py_pam(event, &contract);
-                contract = functions::stf_py_pam(event, &t0, contract);
-                Ok((contract, payoff))
-            }
-            EventType::FP => {
-                let payoff = functions::pof_fp_pam(event, &contract);
-                contract = functions::stf_fp_pam(event, &t0, contract);
-                Ok((contract, payoff))
-            }
-            EventType::PRD => {
-                let payoff = functions::pof_prd_pam(event, &contract);
-                contract = functions::stf_prd_pam(event, &t0, contract);
-                Ok((contract, payoff))
-            }
-            EventType::TD => {
-                let payoff = functions::pof_td_pam(event, &contract);
-                contract = functions::stf_td_pam(event, &t0, contract);
-                Ok((contract, payoff))
-            }
-            EventType::IP => {
-                let payoff = functions::pof_ip_pam(event, &contract);
-                contract = functions::stf_ip_pam(event, &t0, contract);
-                Ok((contract, payoff))
-            }
-            EventType::IPCI => {
-                let payoff = functions::pof_ipci_pam(event, &contract);
-                contract = functions::stf_ipci_pam(event, &t0, contract);
-                Ok((contract, payoff))
-            }
-            EventType::RR => {
-                let payoff = functions::pof_rr_pam(event, &contract);
-                contract = Self::stf_rr_pam(event, &t0, contract);
-                Ok((contract, payoff))
-            }
-            EventType::RRF => {
-                let payoff = functions::pof_rrf_pam(event, &contract);
-                contract = functions::stf_rrf_pam(event, &t0, contract);
-                Ok((contract, payoff))
-            }
-            EventType::SC => {
-                let payoff = functions::pof_sc_pam(event, &contract);
-                contract = Self::stf_sc_pam(event, &t0, contract);
-                Ok((contract, payoff))
-            }
-            EventType::CE => {
-                let payoff = functions::pof_ce_pam(event, &contract);
-                contract = functions::stf_ce_pam(event, &t0, contract);
-                Ok((contract, payoff))
-            }
+            EventType::IED => Ok((
+                functions::pof_ied_pam(event, &contract),
+                functions::stf_ied_pam(event, &t0, contract),
+            )),
+            EventType::MD => Ok((
+                functions::pof_md_pam(event, &contract),
+                functions::stf_md_pam(event, &t0, contract),
+            )),
+            EventType::PP => Ok((
+                functions::pof_pp_pam(event, &contract),
+                functions::stf_pp_pam(event, &t0, contract),
+            )),
+            EventType::PY => Ok((
+                Self::pof_py_pam(event, &contract),
+                functions::stf_py_pam(event, &t0, contract),
+            )),
+            EventType::FP => Ok((
+                functions::pof_fp_pam(event, &contract),
+                functions::stf_fp_pam(event, &t0, contract),
+            )),
+            EventType::PRD => Ok((
+                functions::pof_prd_pam(event, &contract),
+                functions::stf_prd_pam(event, &t0, contract),
+            )),
+            EventType::TD => Ok((
+                functions::pof_td_pam(event, &contract),
+                functions::stf_td_pam(event, &t0, contract),
+            )),
+            EventType::IP => Ok((
+                functions::pof_ip_pam(event, &contract),
+                functions::stf_ip_pam(event, &t0, contract),
+            )),
+            EventType::IPCI => Ok((
+                functions::pof_ipci_pam(event, &contract),
+                functions::stf_ipci_pam(event, &t0, contract),
+            )),
+            EventType::RR => Ok((
+                functions::pof_rr_pam(event, &contract),
+                Self::stf_rr_pam(event, &t0, contract),
+            )),
+            EventType::RRF => Ok((
+                functions::pof_rrf_pam(event, &contract),
+                functions::stf_rrf_pam(event, &t0, contract),
+            )),
+            EventType::SC => Ok((
+                functions::pof_sc_pam(event, &contract),
+                Self::stf_sc_pam(event, &t0, contract),
+            )),
+            EventType::CE => Ok((
+                functions::pof_ce_pam(event, &contract),
+                functions::stf_ce_pam(event, &t0, contract),
+            )),
             _ => Err("Event not applicable"),
         }
     }
@@ -191,7 +178,7 @@ mod tests {
             );
             contract = Contracts::progress_pam(contract.schedule[0], contract)
                 .unwrap()
-                .0;
+                .1;
             assert_eq!(contract.states.notional_principal, Real::from(1000));
             assert_eq!(contract.states.nominal_interest_rate, Real::from(0));
             assert_eq!(contract.states.accrued_interest, Real::from(0));
@@ -205,7 +192,7 @@ mod tests {
             );
             contract = Contracts::progress_pam(contract.schedule[3], contract)
                 .unwrap()
-                .0;
+                .1;
             assert_eq!(contract.states.notional_principal, Real::from(0));
             assert_eq!(contract.states.nominal_interest_rate, Real::from(0));
             assert_eq!(contract.states.accrued_interest, Real::from(0));
