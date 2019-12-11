@@ -21,7 +21,7 @@ impl<T: Trait> Module<T> {
         let id = terms.contract_id;
 
         // Checking if ID is available.
-        if <Self as Store>::ContractStates::exists(id) {
+        if <Self as Store>::Contracts::exists(id) {
             return Err("Contract ID already exists");
         }
 
@@ -53,7 +53,7 @@ impl<T: Trait> Module<T> {
         <Self as Store>::Scheduler::put(heap);
 
         // Storing the contract state.
-        <Self as Store>::ContractStates::insert(id, state);
+        <Self as Store>::Contracts::insert(id, state);
 
         // Return Ok if successful.
         Ok(())
@@ -156,11 +156,11 @@ mod tests {
             assert!(result.is_ok());
 
             // Checks if contract state has been stored
-            assert_eq!(<Contracts as Store>::ContractStates::exists(id), true);
+            assert_eq!(<Contracts as Store>::Contracts::exists(id), true);
 
             // Checks if scheduler was correctly updated.
             let event = <Contracts as Store>::Scheduler::get().pop().unwrap();
-            let state = <Contracts as Store>::ContractStates::get(id);
+            let state = <Contracts as Store>::Contracts::get(id);
             assert_eq!(event.time, state.schedule[0].time);
             assert_eq!(event.contract_id, state.terms.contract_id);
             assert_eq!(event.index, 0);

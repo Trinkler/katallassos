@@ -13,51 +13,68 @@
 
 use super::*;
 
-// This function creates a new ACTUS contract.
+// TODO: Add support for user-initiated events.
 impl<T: Trait> Module<T> {
-    pub fn progress(event: Event, contract_id: H256) -> Result {
-        // Getting the contract.
-        let mut contract = <Self as Store>::Contracts::get(contract_id);
+    pub fn progress_pam(event: Event, mut contract: Contract) -> ContractResult<(Real, Contract)> {
+        // Getting t0 from the status_date attribute since they are equal.
+        // (And status_date is not supposed to change)
+        let t0 = contract.terms.status_date;
 
-        // Calculating the resulting contract contract.
-        let mut payoff = Real::from(0);
-        match contract.terms.contract_type {
-            Some(ContractType::PAM) => {
-                let result = Self::progress_pam(event, contract)?;
-                payoff = result.0;
-                contract = result.1;
-            }
-            _ => {
-                Err("Contract type not supported")?;
-            }
+        match event.event_type {
+            EventType::IED => Ok((
+                functions::pof_ied_pam(event, &contract),
+                functions::stf_ied_pam(event, &t0, contract),
+            )),
+            EventType::MD => Ok((
+                functions::pof_md_pam(event, &contract),
+                functions::stf_md_pam(event, &t0, contract),
+            )),
+            EventType::PP => Ok((
+                functions::pof_pp_pam(event, &contract),
+                functions::stf_pp_pam(event, &t0, contract),
+            )),
+            EventType::PY => Ok((
+                Self::pof_py_pam(event, &contract),
+                functions::stf_py_pam(event, &t0, contract),
+            )),
+            EventType::FP => Ok((
+                functions::pof_fp_pam(event, &contract),
+                functions::stf_fp_pam(event, &t0, contract),
+            )),
+            EventType::PRD => Ok((
+                functions::pof_prd_pam(event, &contract),
+                functions::stf_prd_pam(event, &t0, contract),
+            )),
+            EventType::TD => Ok((
+                functions::pof_td_pam(event, &contract),
+                functions::stf_td_pam(event, &t0, contract),
+            )),
+            EventType::IP => Ok((
+                functions::pof_ip_pam(event, &contract),
+                functions::stf_ip_pam(event, &t0, contract),
+            )),
+            EventType::IPCI => Ok((
+                functions::pof_ipci_pam(event, &contract),
+                functions::stf_ipci_pam(event, &t0, contract),
+            )),
+            EventType::RR => Ok((
+                functions::pof_rr_pam(event, &contract),
+                Self::stf_rr_pam(event, &t0, contract),
+            )),
+            EventType::RRF => Ok((
+                functions::pof_rrf_pam(event, &contract),
+                functions::stf_rrf_pam(event, &t0, contract),
+            )),
+            EventType::SC => Ok((
+                functions::pof_sc_pam(event, &contract),
+                Self::stf_sc_pam(event, &t0, contract),
+            )),
+            EventType::CE => Ok((
+                functions::pof_ce_pam(event, &contract),
+                functions::stf_ce_pam(event, &t0, contract),
+            )),
+            _ => Err("Event not applicable"),
         }
-
-        // Executing the payoff.
-        // Note: not sure if those unwrap() will not panic.
-        // TODO: Real is Option<i64> but use generic_asset T::Balance
-        if payoff >= Real::from(0) {
-            <assets::Module<T>>::transfer(
-                contract.terms.counterparty_id.unwrap(),
-                contract.terms.creator_id.unwrap(),
-                contract.terms.settlement_currency.unwrap(),
-                payoff.abs(),
-            )?;
-        } else {
-            <assets::Module<T>>::transfer(
-                contract.terms.creator_id.unwrap(),
-                contract.terms.counterparty_id.unwrap(),
-                contract.terms.settlement_currency.unwrap(),
-                payoff.abs(),
-            )?;
-        }
-
-        // TODO: Set contract performance variable to something other than `Performant`
-
-        // Storing the contract contract.
-        <Self as Store>::Contracts::insert(contract_id, contract);
-
-        // Return Ok if successful.
-        Ok(())
     }
 }
 
@@ -120,10 +137,9 @@ mod tests {
     impl oracle::Trait for Test {}
     impl assets::Trait for Test {}
     impl Trait for Test {}
-    type Assets = assets::Module<Test>;
     type Contracts = Module<Test>;
 
-    // This function basically just builds a genesis storage key/value store according to
+    // This function basically just builds a genesis contract key/value store according to
     // our desired mockup.
     fn new_test_ext() -> runtime_io::TestExternalities {
         system::GenesisConfig::default()
@@ -133,22 +149,18 @@ mod tests {
     }
 
     #[test]
-    fn progress_works() {
+    fn progress_pam_works() {
         new_test_ext().execute_with(|| {
             let t0 = Time::from_values(2015, 01, 01, 00, 00, 00);
             let id = H256::random();
-            let creator_id = H256::random();
-            let counterparty_id = H256::random();
-            let currency = 1;
             let mut terms = Terms::new(id);
             terms.contract_deal_date = Time::from_values(2015, 01, 01, 00, 00, 00);
             terms.contract_id = id;
             terms.contract_role = Some(ContractRole::RPA);
             terms.contract_type = Some(ContractType::PAM);
-            terms.counterparty_id = Some(counterparty_id);
-            terms.creator_id = Some(creator_id);
-            terms.settlement_currency = Some(currency);
-            terms.currency = Some(currency);
+            terms.counterparty_id = Some(H256::random());
+            terms.creator_id = Some(H256::random());
+            terms.currency = Some(1);
             terms.day_count_convention = Some(DayCountConvention::_30E360);
             terms.initial_exchange_date = Time::from_values(2015, 01, 02, 00, 00, 00);
             terms.maturity_date = Time::from_values(2015, 04, 02, 00, 00, 00);
@@ -157,24 +169,20 @@ mod tests {
             terms.premium_discount_at_ied = Real::from(-5);
             terms.rate_spread = Real::from(0);
             terms.scaling_effect = None;
-            Assets::mint(creator_id, currency, Real::from(1000));
-            Assets::mint(counterparty_id, currency, Real::from(1000));
+
             let mut contract = Contracts::deploy_pam(t0, terms).unwrap();
-            <Contracts as Store>::Contracts::insert(id, contract.clone());
+
             assert_eq!(
                 contract.schedule[0],
                 Event::new(Time::from_values(2015, 01, 02, 00, 00, 00), EventType::IED)
             );
-            Contracts::progress(contract.schedule[0], id);
-            contract = <Contracts as Store>::Contracts::get(id);
+            contract = Contracts::progress_pam(contract.schedule[0], contract)
+                .unwrap()
+                .1;
             assert_eq!(contract.states.notional_principal, Real::from(1000));
             assert_eq!(contract.states.nominal_interest_rate, Real::from(0));
             assert_eq!(contract.states.accrued_interest, Real::from(0));
-            assert_eq!(Assets::balances((currency, creator_id)), Real::from(5));
-            assert_eq!(
-                Assets::balances((currency, counterparty_id)),
-                Real::from(1995)
-            );
+
             // Event 3 is being used, instead of the next in the sequence 1, because the
             // given test vectors don't mention event 1 (probably because it has no effect
             // on the contract).
@@ -182,16 +190,12 @@ mod tests {
                 contract.schedule[3],
                 Event::new(Time::from_values(2015, 04, 02, 00, 00, 00), EventType::MD)
             );
-            Contracts::progress(contract.schedule[3], id);
-            contract = <Contracts as Store>::Contracts::get(id);
+            contract = Contracts::progress_pam(contract.schedule[3], contract)
+                .unwrap()
+                .1;
             assert_eq!(contract.states.notional_principal, Real::from(0));
             assert_eq!(contract.states.nominal_interest_rate, Real::from(0));
             assert_eq!(contract.states.accrued_interest, Real::from(0));
-            assert_eq!(Assets::balances((currency, creator_id)), Real::from(1005));
-            assert_eq!(
-                Assets::balances((currency, counterparty_id)),
-                Real::from(995)
-            );
         });
     }
 }

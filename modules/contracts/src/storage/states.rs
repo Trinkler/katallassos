@@ -13,9 +13,9 @@
 
 use super::*;
 
-/// All ACTUS contract variables as specifed in the ACTUS paper.
+/// All ACTUS contract states as specifed in the ACTUS paper.
 #[derive(Clone, Copy, Decode, Debug, Encode, Default, PartialEq)]
-pub struct Variables {
+pub struct States {
     pub accrued_interest: Real,
     pub accrued_interest_2: Real,
     pub contract_performance: Option<ContractPerformance>,
@@ -35,10 +35,10 @@ pub struct Variables {
     pub time_at_maturity_date: Time,
 }
 
-impl Variables {
-    // Creates an instance of Variables with every field set to None.
-    pub fn new() -> Variables {
-        Variables {
+impl States {
+    // Creates an instance of States with every field set to None.
+    pub fn new() -> States {
+        States {
             accrued_interest: Real(None),
             accrued_interest_2: Real(None),
             contract_performance: None,

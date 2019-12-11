@@ -25,19 +25,21 @@ use sr_primitives::traits::SaturatedConversion;
 use structures::*;
 
 // Importing the rest of the files in this crate.
-mod contract_state;
-mod contract_types;
 mod deploy;
+mod functions;
 mod init;
 mod progress;
 mod scheduler;
+mod storage;
+mod types;
 mod utilities;
-use contract_state::*;
-use contract_types::*;
 use deploy::*;
+use functions::*;
 use init::*;
 use progress::*;
 use scheduler::*;
+use storage::*;
+use types::*;
 use utilities::*;
 
 // This module's configuration trait.
@@ -46,7 +48,7 @@ pub trait Trait: system::Trait + oracle::Trait + assets::Trait + timestamp::Trai
 // This module's storage items.
 decl_storage! {
     trait Store for Module<T: Trait> as ContractsStorage {
-        pub ContractStates: map H256 => ContractState;
+        pub Contracts: map H256 => Contract;
         pub Scheduler: MinHeap<ScheduledEvent> = MinHeap::new();
     }
 }
@@ -71,7 +73,7 @@ decl_module! {
             Ok(())
         }
 
-        pub fn dispatch_progress(origin, event: ContractEvent, contract_id: H256) -> Result {
+        pub fn dispatch_progress(origin, event: Event, contract_id: H256) -> Result {
             // TODO: Assert rules for user initiated events
 
             // Call corresponding internal function.

@@ -13,12 +13,6 @@
 
 use super::*;
 
-mod terms;
-mod contract_events;
-mod contract_state;
-mod variables;
-
-pub use terms::*;
-pub use contract_events::*;
-pub use contract_state::*;
-pub use variables::*;
+pub fn pof_ce_pam(event: Event, contract: &Contract) -> Real {
+    Real::from(0)
+}

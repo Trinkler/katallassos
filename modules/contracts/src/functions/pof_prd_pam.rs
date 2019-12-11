@@ -13,12 +13,16 @@
 
 use super::*;
 
-mod deploy_ann;
-mod deploy_pam;
-mod progress_ann;
-mod progress_pam;
-
-pub use deploy_ann::*;
-pub use deploy_pam::*;
-pub use progress_ann::*;
-pub use progress_pam::*;
+pub fn pof_prd_pam(event: Event, contract: &Contract) -> Real {
+    // TODO: Add O^{rf}(CURS, t)
+    utilities::contract_role_sign(contract.terms.contract_role)
+        * Real::from(-1)
+        * (contract.terms.price_at_purchase_date
+            + contract.states.accrued_interest
+            + utilities::year_fraction(
+                contract.states.status_date,
+                event.time,
+                contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+            ) * contract.states.nominal_interest_rate
+                * contract.states.notional_principal)
+}

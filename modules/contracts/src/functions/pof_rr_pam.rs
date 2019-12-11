@@ -13,10 +13,6 @@
 
 use super::*;
 
-// This struct contains all the information that defines a contract state.
-#[derive(Clone, Decode, Debug, Encode, Default, PartialEq)]
-pub struct ContractState {
-    pub terms: Terms,
-    pub variables: Variables,
-    pub schedule: Vec<ContractEvent>,
+pub fn pof_rr_pam(event: Event, contract: &Contract) -> Real {
+    Real::from(0)
 }
