@@ -21,7 +21,7 @@ impl<T: Trait> Module<T> {
 
         // Calculating the resulting contract state.
         let mut payoff = Real::from(0);
-        match state.attributes.contract_type {
+        match state.terms.contract_type {
             Some(ContractType::PAM) => {
                 let result = Self::progress_pam(event, state)?;
                 state = result.0;
@@ -37,16 +37,16 @@ impl<T: Trait> Module<T> {
         // TODO: Real is Option<i64> but use generic_asset T::Balance
         if payoff >= Real::from(0) {
             <assets::Module<T>>::transfer(
-                state.attributes.counterparty_id.unwrap(),
-                state.attributes.creator_id.unwrap(),
-                state.attributes.settlement_currency.unwrap(),
+                state.terms.counterparty_id.unwrap(),
+                state.terms.creator_id.unwrap(),
+                state.terms.settlement_currency.unwrap(),
                 payoff.abs(),
             )?;
         } else {
             <assets::Module<T>>::transfer(
-                state.attributes.creator_id.unwrap(),
-                state.attributes.counterparty_id.unwrap(),
-                state.attributes.settlement_currency.unwrap(),
+                state.terms.creator_id.unwrap(),
+                state.terms.counterparty_id.unwrap(),
+                state.terms.settlement_currency.unwrap(),
                 payoff.abs(),
             )?;
         }
@@ -140,26 +140,26 @@ mod tests {
             let creator_id = H256::random();
             let counterparty_id = H256::random();
             let currency = 1;
-            let mut attributes = Attributes::new(id);
-            attributes.contract_deal_date = Time::from_values(2015, 01, 01, 00, 00, 00);
-            attributes.contract_id = id;
-            attributes.contract_role = Some(ContractRole::RPA);
-            attributes.contract_type = Some(ContractType::PAM);
-            attributes.counterparty_id = Some(counterparty_id);
-            attributes.creator_id = Some(creator_id);
-            attributes.settlement_currency = Some(currency);
-            attributes.currency = Some(currency);
-            attributes.day_count_convention = Some(DayCountConvention::_30E360);
-            attributes.initial_exchange_date = Time::from_values(2015, 01, 02, 00, 00, 00);
-            attributes.maturity_date = Time::from_values(2015, 04, 02, 00, 00, 00);
-            attributes.nominal_interest_rate = Real::from(0);
-            attributes.notional_principal = Real::from(1000);
-            attributes.premium_discount_at_ied = Real::from(-5);
-            attributes.rate_spread = Real::from(0);
-            attributes.scaling_effect = None;
+            let mut terms = Terms::new(id);
+            terms.contract_deal_date = Time::from_values(2015, 01, 01, 00, 00, 00);
+            terms.contract_id = id;
+            terms.contract_role = Some(ContractRole::RPA);
+            terms.contract_type = Some(ContractType::PAM);
+            terms.counterparty_id = Some(counterparty_id);
+            terms.creator_id = Some(creator_id);
+            terms.settlement_currency = Some(currency);
+            terms.currency = Some(currency);
+            terms.day_count_convention = Some(DayCountConvention::_30E360);
+            terms.initial_exchange_date = Time::from_values(2015, 01, 02, 00, 00, 00);
+            terms.maturity_date = Time::from_values(2015, 04, 02, 00, 00, 00);
+            terms.nominal_interest_rate = Real::from(0);
+            terms.notional_principal = Real::from(1000);
+            terms.premium_discount_at_ied = Real::from(-5);
+            terms.rate_spread = Real::from(0);
+            terms.scaling_effect = None;
             Assets::mint(creator_id, currency, Real::from(1000));
             Assets::mint(counterparty_id, currency, Real::from(1000));
-            let mut state = Contracts::deploy_pam(t0, attributes).unwrap();
+            let mut state = Contracts::deploy_pam(t0, terms).unwrap();
             <Contracts as Store>::ContractStates::insert(id, state.clone());
             assert_eq!(
                 state.schedule[0],

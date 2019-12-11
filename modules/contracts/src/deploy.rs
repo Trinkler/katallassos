@@ -15,10 +15,10 @@ use super::*;
 
 // This function creates a new ACTUS contract.
 impl<T: Trait> Module<T> {
-    pub fn deploy(attributes: Attributes) -> Result {
+    pub fn deploy(terms: Terms) -> Result {
         // Getting the contract ID.
-        // TODO: Determine contract_id as a hash of its attributes.
-        let id = attributes.contract_id;
+        // TODO: Determine contract_id as a hash of its terms.
+        let id = terms.contract_id;
 
         // Checking if ID is available.
         if <Self as Store>::ContractStates::exists(id) {
@@ -30,13 +30,13 @@ impl<T: Trait> Module<T> {
 
         // Calculating the initial contract state.
         let state;
-        match attributes.contract_type {
+        match terms.contract_type {
             Some(ContractType::PAM) => {
-                state = Self::deploy_pam(t0, attributes)?;
+                state = Self::deploy_pam(t0, terms)?;
             }
-            Some(ContractType::ANN => {
-                state = Self::deploy_ann(t0, attributes)?;
-            })
+            Some(ContractType::ANN) => {
+                state = Self::deploy_ann(t0, terms)?;
+            }
             _ => {
                 state = Err("Contract type not supported")?;
             }
@@ -133,26 +133,26 @@ mod tests {
     #[test]
     fn deploy_works() {
         new_test_ext().execute_with(|| {
-            // Mock parameters and initialize attributes
+            // Mock parameters and initialize terms
             let t0 = Time::from_values(1969, 07, 20, 20, 17, 00);
             let id = H256::random();
-            let mut attributes = Attributes::new(id);
+            let mut terms = Terms::new(id);
 
-            // Starts a PAM contract with the right attributes.
-            attributes.counterparty_id = Some(H256::random());
-            attributes.contract_deal_date = Time::from_values(1968, 07, 21, 02, 56, 15);
-            attributes.contract_id = id;
-            attributes.contract_role = Some(ContractRole::RPA);
-            attributes.contract_type = Some(ContractType::PAM);
-            attributes.creator_id = Some(H256::random());
-            attributes.currency = Some(1);
-            attributes.day_count_convention = Some(DayCountConvention::A365);
-            attributes.initial_exchange_date = Time::from_values(1969, 07, 21, 02, 56, 15);
-            attributes.maturity_date = Time::from_values(1979, 07, 21, 02, 56, 15);
-            attributes.nominal_interest_rate = Real::from(1000);
-            attributes.notional_principal = Real(Some(50000000));
-            attributes.scaling_effect = None;
-            let result = Contracts::deploy(attributes.clone());
+            // Starts a PAM contract with the right terms.
+            terms.counterparty_id = Some(H256::random());
+            terms.contract_deal_date = Time::from_values(1968, 07, 21, 02, 56, 15);
+            terms.contract_id = id;
+            terms.contract_role = Some(ContractRole::RPA);
+            terms.contract_type = Some(ContractType::PAM);
+            terms.creator_id = Some(H256::random());
+            terms.currency = Some(1);
+            terms.day_count_convention = Some(DayCountConvention::A365);
+            terms.initial_exchange_date = Time::from_values(1969, 07, 21, 02, 56, 15);
+            terms.maturity_date = Time::from_values(1979, 07, 21, 02, 56, 15);
+            terms.nominal_interest_rate = Real::from(1000);
+            terms.notional_principal = Real(Some(50000000));
+            terms.scaling_effect = None;
+            let result = Contracts::deploy(terms.clone());
             assert!(result.is_ok());
 
             // Checks if contract state has been stored
@@ -162,7 +162,7 @@ mod tests {
             let event = <Contracts as Store>::Scheduler::get().pop().unwrap();
             let state = <Contracts as Store>::ContractStates::get(id);
             assert_eq!(event.time, state.schedule[0].time);
-            assert_eq!(event.contract_id, state.attributes.contract_id);
+            assert_eq!(event.contract_id, state.terms.contract_id);
             assert_eq!(event.index, 0);
         });
     }

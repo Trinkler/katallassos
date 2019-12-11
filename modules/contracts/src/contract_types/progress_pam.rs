@@ -21,33 +21,33 @@ impl<T: Trait> Module<T> {
     ) -> ContractResult<(ContractState, Real)> {
         // Getting t0 from the status_date attribute since they are equal.
         // (And status_date is not supposed to change)
-        let t0 = state.attributes.status_date;
+        let t0 = state.terms.status_date;
 
         match event.event_type {
             ContractEventType::IED => {
                 // Payoff Function
-                let payoff = utilities::contract_role_sign(state.attributes.contract_role)
+                let payoff = utilities::contract_role_sign(state.terms.contract_role)
                     * Real::from(-1)
-                    * (state.attributes.notional_principal
-                        + state.attributes.premium_discount_at_ied);
+                    * (state.terms.notional_principal
+                        + state.terms.premium_discount_at_ied);
                 // State Transition Function
                 state.variables.notional_principal =
-                    utilities::contract_role_sign(state.attributes.contract_role)
-                        * state.attributes.notional_principal;
-                if state.attributes.nominal_interest_rate == Real(None) {
+                    utilities::contract_role_sign(state.terms.contract_role)
+                        * state.terms.notional_principal;
+                if state.terms.nominal_interest_rate == Real(None) {
                     state.variables.nominal_interest_rate = Real::from(0);
                 } else {
-                    state.variables.nominal_interest_rate = state.attributes.nominal_interest_rate;
+                    state.variables.nominal_interest_rate = state.terms.nominal_interest_rate;
                 }
-                if state.attributes.accrued_interest != Real(None) {
-                    state.variables.accrued_interest = state.attributes.accrued_interest;
-                } else if state.attributes.cycle_anchor_date_of_interest_payment != Time(None)
-                    && state.attributes.cycle_anchor_date_of_interest_payment < event.time
+                if state.terms.accrued_interest != Real(None) {
+                    state.variables.accrued_interest = state.terms.accrued_interest;
+                } else if state.terms.cycle_anchor_date_of_interest_payment != Time(None)
+                    && state.terms.cycle_anchor_date_of_interest_payment < event.time
                 {
                     let y = utilities::year_fraction(
-                        state.attributes.cycle_anchor_date_of_interest_payment,
+                        state.terms.cycle_anchor_date_of_interest_payment,
                         event.time,
-                        state.attributes.day_count_convention.unwrap(), // Unwraping poses no danger since day_count_convention is mandatory for the PAM contract. It will never panic.
+                        state.terms.day_count_convention.unwrap(), // Unwraping poses no danger since day_count_convention is mandatory for the PAM contract. It will never panic.
                     );
                     state.variables.accrued_interest = y
                         * state.variables.notional_principal
@@ -83,17 +83,17 @@ impl<T: Trait> Module<T> {
                     + utilities::year_fraction(
                         state.variables.status_date,
                         event.time,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * state.variables.nominal_interest_rate
                         * state.variables.notional_principal;
-                if state.attributes.fee_basis == Some(FeeBasis::N) {
+                if state.terms.fee_basis == Some(FeeBasis::N) {
                     state.variables.fee_accrued = state.variables.fee_accrued
                         + utilities::year_fraction(
                             state.variables.status_date,
                             event.time,
-                            state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                         ) * state.variables.notional_principal
-                            * state.attributes.fee_rate;
+                            * state.terms.fee_rate;
                 } else {
                     let mut t_minus = Time(None);
                     let mut t_plus = Time(None);
@@ -109,14 +109,14 @@ impl<T: Trait> Module<T> {
                     state.variables.fee_accrued = utilities::year_fraction(
                         t_minus,
                         event.time,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) / year_fraction(
                         t_minus,
                         t_plus,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * utilities::contract_role_sign(
-                        state.attributes.contract_role,
-                    ) * state.attributes.fee_rate;
+                        state.terms.contract_role,
+                    ) * state.terms.fee_rate;
                 }
                 // TODO: Add the user-initiated events based on the "PPMO".
                 state.variables.notional_principal = state.variables.notional_principal;
@@ -127,33 +127,33 @@ impl<T: Trait> Module<T> {
             ContractEventType::PY => {
                 // Payoff Function
                 let mut payoff = Real::from(0);
-                if state.attributes.penalty_type == Some(PenaltyType::A) {
-                    payoff = utilities::contract_role_sign(state.attributes.contract_role)
-                        * state.attributes.penalty_rate;
+                if state.terms.penalty_type == Some(PenaltyType::A) {
+                    payoff = utilities::contract_role_sign(state.terms.contract_role)
+                        * state.terms.penalty_rate;
                 }
-                if state.attributes.penalty_type == Some(PenaltyType::N) {
-                    payoff = utilities::contract_role_sign(state.attributes.contract_role)
+                if state.terms.penalty_type == Some(PenaltyType::N) {
+                    payoff = utilities::contract_role_sign(state.terms.contract_role)
                         * utilities::year_fraction(
                             state.variables.status_date,
                             event.time,
-                            state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                         )
                         * state.variables.notional_principal
-                        * state.attributes.penalty_rate;
+                        * state.terms.penalty_rate;
                 }
-                if state.attributes.penalty_type == Some(PenaltyType::I) {
-                    payoff = utilities::contract_role_sign(state.attributes.contract_role)
+                if state.terms.penalty_type == Some(PenaltyType::I) {
+                    payoff = utilities::contract_role_sign(state.terms.contract_role)
                         * utilities::year_fraction(
                             state.variables.status_date,
                             event.time,
-                            state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                         )
                         * state.variables.notional_principal
                         * Real::max(
                             Real::from(0),
                             state.variables.nominal_interest_rate
                                 - <oracle::Module<T>>::oracles(
-                                    state.attributes.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
+                                    state.terms.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
                                 )
                                 .value,
                         );
@@ -163,17 +163,17 @@ impl<T: Trait> Module<T> {
                     + utilities::year_fraction(
                         state.variables.status_date,
                         event.time,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * state.variables.nominal_interest_rate
                         * state.variables.notional_principal;
-                if state.attributes.fee_basis == Some(FeeBasis::N) {
+                if state.terms.fee_basis == Some(FeeBasis::N) {
                     state.variables.fee_accrued = state.variables.fee_accrued
                         + utilities::year_fraction(
                             state.variables.status_date,
                             event.time,
-                            state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                         ) * state.variables.notional_principal
-                            * state.attributes.fee_rate;
+                            * state.terms.fee_rate;
                 } else {
                     let mut t_minus = Time(None);
                     let mut t_plus = Time(None);
@@ -189,14 +189,14 @@ impl<T: Trait> Module<T> {
                     state.variables.fee_accrued = utilities::year_fraction(
                         t_minus,
                         event.time,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) / year_fraction(
                         t_minus,
                         t_plus,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * utilities::contract_role_sign(
-                        state.attributes.contract_role,
-                    ) * state.attributes.fee_rate;
+                        state.terms.contract_role,
+                    ) * state.terms.fee_rate;
                 }
                 state.variables.status_date = event.time;
                 // Return the contract state and payoff
@@ -205,16 +205,16 @@ impl<T: Trait> Module<T> {
             ContractEventType::FP => {
                 // Payoff Function
                 let mut payoff = Real::from(0);
-                if state.attributes.fee_basis == Some(FeeBasis::A) {
-                    payoff = utilities::contract_role_sign(state.attributes.contract_role)
-                        * state.attributes.fee_rate;
+                if state.terms.fee_basis == Some(FeeBasis::A) {
+                    payoff = utilities::contract_role_sign(state.terms.contract_role)
+                        * state.terms.fee_rate;
                 }
-                if state.attributes.fee_basis == Some(FeeBasis::N) {
-                    payoff = state.attributes.fee_rate
+                if state.terms.fee_basis == Some(FeeBasis::N) {
+                    payoff = state.terms.fee_rate
                         * utilities::year_fraction(
                             state.variables.status_date,
                             event.time,
-                            state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                         )
                         * state.variables.notional_principal
                         + state.variables.fee_accrued;
@@ -224,7 +224,7 @@ impl<T: Trait> Module<T> {
                     + utilities::year_fraction(
                         state.variables.status_date,
                         event.time,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * state.variables.nominal_interest_rate
                         * state.variables.notional_principal;
                 state.variables.fee_accrued = Real::from(0);
@@ -234,14 +234,14 @@ impl<T: Trait> Module<T> {
             }
             ContractEventType::PRD => {
                 // Payoff Function
-                let payoff = utilities::contract_role_sign(state.attributes.contract_role)
+                let payoff = utilities::contract_role_sign(state.terms.contract_role)
                     * Real::from(-1)
-                    * (state.attributes.price_at_purchase_date
+                    * (state.terms.price_at_purchase_date
                         + state.variables.accrued_interest
                         + utilities::year_fraction(
                             state.variables.status_date,
                             event.time,
-                            state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                         ) * state.variables.nominal_interest_rate
                             * state.variables.notional_principal);
                 // State Transition Function
@@ -249,17 +249,17 @@ impl<T: Trait> Module<T> {
                     + utilities::year_fraction(
                         state.variables.status_date,
                         event.time,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * state.variables.nominal_interest_rate
                         * state.variables.notional_principal;
-                if state.attributes.fee_basis == Some(FeeBasis::N) {
+                if state.terms.fee_basis == Some(FeeBasis::N) {
                     state.variables.fee_accrued = state.variables.fee_accrued
                         + utilities::year_fraction(
                             state.variables.status_date,
                             event.time,
-                            state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                         ) * state.variables.notional_principal
-                            * state.attributes.fee_rate;
+                            * state.terms.fee_rate;
                 } else {
                     let mut t_minus = Time(None);
                     let mut t_plus = Time(None);
@@ -275,14 +275,14 @@ impl<T: Trait> Module<T> {
                     state.variables.fee_accrued = utilities::year_fraction(
                         t_minus,
                         event.time,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) / year_fraction(
                         t_minus,
                         t_plus,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * utilities::contract_role_sign(
-                        state.attributes.contract_role,
-                    ) * state.attributes.fee_rate;
+                        state.terms.contract_role,
+                    ) * state.terms.fee_rate;
                 }
                 state.variables.status_date = event.time;
                 // Return the contract state and payoff
@@ -290,13 +290,13 @@ impl<T: Trait> Module<T> {
             }
             ContractEventType::TD => {
                 // Payoff Function
-                let payoff = utilities::contract_role_sign(state.attributes.contract_role)
-                    * (state.attributes.price_at_termination_date
+                let payoff = utilities::contract_role_sign(state.terms.contract_role)
+                    * (state.terms.price_at_termination_date
                         + state.variables.accrued_interest
                         + utilities::year_fraction(
                             state.variables.status_date,
                             event.time,
-                            state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                         ) * state.variables.nominal_interest_rate
                             * state.variables.notional_principal);
                 // State Transition Function
@@ -315,19 +315,19 @@ impl<T: Trait> Module<T> {
                         + utilities::year_fraction(
                             state.variables.status_date,
                             event.time,
-                            state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                         ) * state.variables.nominal_interest_rate
                             * state.variables.notional_principal);
                 // State Transition Function
                 state.variables.accrued_interest = Real::from(0);
-                if state.attributes.fee_basis == Some(FeeBasis::N) {
+                if state.terms.fee_basis == Some(FeeBasis::N) {
                     state.variables.fee_accrued = state.variables.fee_accrued
                         + utilities::year_fraction(
                             state.variables.status_date,
                             event.time,
-                            state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                         ) * state.variables.notional_principal
-                            * state.attributes.fee_rate;
+                            * state.terms.fee_rate;
                 } else {
                     let mut t_minus = Time(None);
                     let mut t_plus = Time(None);
@@ -343,14 +343,14 @@ impl<T: Trait> Module<T> {
                     state.variables.fee_accrued = utilities::year_fraction(
                         t_minus,
                         event.time,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) / year_fraction(
                         t_minus,
                         t_plus,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * utilities::contract_role_sign(
-                        state.attributes.contract_role,
-                    ) * state.attributes.fee_rate;
+                        state.terms.contract_role,
+                    ) * state.terms.fee_rate;
                 }
                 state.variables.status_date = event.time;
                 // Return the contract state and payoff
@@ -366,18 +366,18 @@ impl<T: Trait> Module<T> {
                     + utilities::year_fraction(
                         state.variables.status_date,
                         event.time,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * state.variables.notional_principal
                         * state.variables.nominal_interest_rate;
                 state.variables.accrued_interest = Real::from(0);
-                if state.attributes.fee_basis == Some(FeeBasis::N) {
+                if state.terms.fee_basis == Some(FeeBasis::N) {
                     state.variables.fee_accrued = state.variables.fee_accrued
                         + utilities::year_fraction(
                             state.variables.status_date,
                             event.time,
-                            state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                         ) * notional_principal_minus
-                            * state.attributes.fee_rate;
+                            * state.terms.fee_rate;
                 } else {
                     let mut t_minus = Time(None);
                     let mut t_plus = Time(None);
@@ -393,14 +393,14 @@ impl<T: Trait> Module<T> {
                     state.variables.fee_accrued = utilities::year_fraction(
                         t_minus,
                         event.time,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) / year_fraction(
                         t_minus,
                         t_plus,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * utilities::contract_role_sign(
-                        state.attributes.contract_role,
-                    ) * state.attributes.fee_rate;
+                        state.terms.contract_role,
+                    ) * state.terms.fee_rate;
                 }
                 state.variables.status_date = event.time;
                 // Return the contract state and payoff
@@ -414,17 +414,17 @@ impl<T: Trait> Module<T> {
                     + utilities::year_fraction(
                         state.variables.status_date,
                         event.time,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * state.variables.nominal_interest_rate
                         * state.variables.notional_principal;
-                if state.attributes.fee_basis == Some(FeeBasis::N) {
+                if state.terms.fee_basis == Some(FeeBasis::N) {
                     state.variables.fee_accrued = state.variables.fee_accrued
                         + utilities::year_fraction(
                             state.variables.status_date,
                             event.time,
-                            state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                         ) * state.variables.notional_principal
-                            * state.attributes.fee_rate;
+                            * state.terms.fee_rate;
                 } else {
                     let mut t_minus = Time(None);
                     let mut t_plus = Time(None);
@@ -440,34 +440,34 @@ impl<T: Trait> Module<T> {
                     state.variables.fee_accrued = utilities::year_fraction(
                         t_minus,
                         event.time,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) / year_fraction(
                         t_minus,
                         t_plus,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * utilities::contract_role_sign(
-                        state.attributes.contract_role,
-                    ) * state.attributes.fee_rate;
+                        state.terms.contract_role,
+                    ) * state.terms.fee_rate;
                 }
                 let delta_r = Real::min(
                     Real::max(
                         <oracle::Module<T>>::oracles(
-                            state.attributes.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
+                            state.terms.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
                         )
                         .value
-                            * state.attributes.rate_multiplier
-                            + state.attributes.rate_spread
+                            * state.terms.rate_multiplier
+                            + state.terms.rate_spread
                             - state.variables.nominal_interest_rate,
-                        state.attributes.period_floor,
+                        state.terms.period_floor,
                     ),
-                    state.attributes.period_cap,
+                    state.terms.period_cap,
                 );
                 state.variables.nominal_interest_rate = Real::min(
                     Real::max(
                         state.variables.nominal_interest_rate + delta_r,
-                        state.attributes.life_floor,
+                        state.terms.life_floor,
                     ),
-                    state.attributes.life_cap,
+                    state.terms.life_cap,
                 );
                 state.variables.status_date = event.time;
                 // Return the contract state and payoff
@@ -481,17 +481,17 @@ impl<T: Trait> Module<T> {
                     + utilities::year_fraction(
                         state.variables.status_date,
                         event.time,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * state.variables.nominal_interest_rate
                         * state.variables.notional_principal;
-                if state.attributes.fee_basis == Some(FeeBasis::N) {
+                if state.terms.fee_basis == Some(FeeBasis::N) {
                     state.variables.fee_accrued = state.variables.fee_accrued
                         + utilities::year_fraction(
                             state.variables.status_date,
                             event.time,
-                            state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                         ) * state.variables.notional_principal
-                            * state.attributes.fee_rate;
+                            * state.terms.fee_rate;
                 } else {
                     let mut t_minus = Time(None);
                     let mut t_plus = Time(None);
@@ -507,16 +507,16 @@ impl<T: Trait> Module<T> {
                     state.variables.fee_accrued = utilities::year_fraction(
                         t_minus,
                         event.time,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) / year_fraction(
                         t_minus,
                         t_plus,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * utilities::contract_role_sign(
-                        state.attributes.contract_role,
-                    ) * state.attributes.fee_rate;
+                        state.terms.contract_role,
+                    ) * state.terms.fee_rate;
                 }
-                state.variables.nominal_interest_rate = state.attributes.next_reset_rate;
+                state.variables.nominal_interest_rate = state.terms.next_reset_rate;
                 state.variables.status_date = event.time;
                 // Return the contract state and payoff
                 Ok((state, payoff))
@@ -529,17 +529,17 @@ impl<T: Trait> Module<T> {
                     + utilities::year_fraction(
                         state.variables.status_date,
                         event.time,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * state.variables.nominal_interest_rate
                         * state.variables.notional_principal;
-                if state.attributes.fee_basis == Some(FeeBasis::N) {
+                if state.terms.fee_basis == Some(FeeBasis::N) {
                     state.variables.fee_accrued = state.variables.fee_accrued
                         + utilities::year_fraction(
                             state.variables.status_date,
                             event.time,
-                            state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                         ) * state.variables.notional_principal
-                            * state.attributes.fee_rate;
+                            * state.terms.fee_rate;
                 } else {
                     let mut t_minus = Time(None);
                     let mut t_plus = Time(None);
@@ -555,44 +555,44 @@ impl<T: Trait> Module<T> {
                     state.variables.fee_accrued = utilities::year_fraction(
                         t_minus,
                         event.time,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) / year_fraction(
                         t_minus,
                         t_plus,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * utilities::contract_role_sign(
-                        state.attributes.contract_role,
-                    ) * state.attributes.fee_rate;
+                        state.terms.contract_role,
+                    ) * state.terms.fee_rate;
                 }
                 // Unwrap will never panic because of the lazy evaluation.
-                if state.attributes.scaling_effect.is_some()
-                    && (state.attributes.scaling_effect.unwrap() == ScalingEffect::_000
-                        || state.attributes.scaling_effect.unwrap() == ScalingEffect::I00)
+                if state.terms.scaling_effect.is_some()
+                    && (state.terms.scaling_effect.unwrap() == ScalingEffect::_000
+                        || state.terms.scaling_effect.unwrap() == ScalingEffect::I00)
                 {
                     state.variables.notional_scaling_multiplier =
                         state.variables.notional_scaling_multiplier;
                 } else {
                     state.variables.notional_scaling_multiplier = (<oracle::Module<T>>::oracles(
-                        state.attributes.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
+                        state.terms.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
                     )
                     .value
-                        - state.attributes.scaling_index_at_status_date)
-                        / state.attributes.scaling_index_at_status_date;
+                        - state.terms.scaling_index_at_status_date)
+                        / state.terms.scaling_index_at_status_date;
                 }
                 // Unwrap will never panic because of the lazy evaluation.
-                if state.attributes.scaling_effect.is_some()
-                    && (state.attributes.scaling_effect.unwrap() == ScalingEffect::_000
-                        || state.attributes.scaling_effect.unwrap() == ScalingEffect::_0N0)
+                if state.terms.scaling_effect.is_some()
+                    && (state.terms.scaling_effect.unwrap() == ScalingEffect::_000
+                        || state.terms.scaling_effect.unwrap() == ScalingEffect::_0N0)
                 {
                     state.variables.interest_scaling_multiplier =
                         state.variables.interest_scaling_multiplier;
                 } else {
                     state.variables.interest_scaling_multiplier = (<oracle::Module<T>>::oracles(
-                        state.attributes.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
+                        state.terms.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
                     )
                     .value
-                        - state.attributes.scaling_index_at_status_date)
-                        / state.attributes.scaling_index_at_status_date;
+                        - state.terms.scaling_index_at_status_date)
+                        / state.terms.scaling_index_at_status_date;
                 }
                 state.variables.status_date = event.time;
                 // Return the contract state and payoff
@@ -606,7 +606,7 @@ impl<T: Trait> Module<T> {
                     + utilities::year_fraction(
                         state.variables.status_date,
                         event.time,
-                        state.attributes.day_count_convention.unwrap(), // This unwrap will never panic.
+                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * state.variables.nominal_interest_rate
                         * state.variables.notional_principal;
                 state.variables.status_date = event.time;
@@ -693,24 +693,24 @@ mod tests {
         new_test_ext().execute_with(|| {
             let t0 = Time::from_values(2015, 01, 01, 00, 00, 00);
             let id = H256::random();
-            let mut attributes = Attributes::new(id);
-            attributes.contract_deal_date = Time::from_values(2015, 01, 01, 00, 00, 00);
-            attributes.contract_id = id;
-            attributes.contract_role = Some(ContractRole::RPA);
-            attributes.contract_type = Some(ContractType::PAM);
-            attributes.counterparty_id = Some(H256::random());
-            attributes.creator_id = Some(H256::random());
-            attributes.currency = Some(1);
-            attributes.day_count_convention = Some(DayCountConvention::_30E360);
-            attributes.initial_exchange_date = Time::from_values(2015, 01, 02, 00, 00, 00);
-            attributes.maturity_date = Time::from_values(2015, 04, 02, 00, 00, 00);
-            attributes.nominal_interest_rate = Real::from(0);
-            attributes.notional_principal = Real::from(1000);
-            attributes.premium_discount_at_ied = Real::from(-5);
-            attributes.rate_spread = Real::from(0);
-            attributes.scaling_effect = None;
+            let mut terms = Terms::new(id);
+            terms.contract_deal_date = Time::from_values(2015, 01, 01, 00, 00, 00);
+            terms.contract_id = id;
+            terms.contract_role = Some(ContractRole::RPA);
+            terms.contract_type = Some(ContractType::PAM);
+            terms.counterparty_id = Some(H256::random());
+            terms.creator_id = Some(H256::random());
+            terms.currency = Some(1);
+            terms.day_count_convention = Some(DayCountConvention::_30E360);
+            terms.initial_exchange_date = Time::from_values(2015, 01, 02, 00, 00, 00);
+            terms.maturity_date = Time::from_values(2015, 04, 02, 00, 00, 00);
+            terms.nominal_interest_rate = Real::from(0);
+            terms.notional_principal = Real::from(1000);
+            terms.premium_discount_at_ied = Real::from(-5);
+            terms.rate_spread = Real::from(0);
+            terms.scaling_effect = None;
 
-            let mut state = Contracts::deploy_pam(t0, attributes).unwrap();
+            let mut state = Contracts::deploy_pam(t0, terms).unwrap();
 
             assert_eq!(
                 state.schedule[0],

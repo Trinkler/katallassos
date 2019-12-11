@@ -13,9 +13,9 @@
 
 use super::*;
 
-/// All ACTUS contract attributes as specified in the data dictionary in the Github.
+/// All ACTUS contract terms as specified in the data dictionary in the Github.
 #[derive(Clone, Decode, Debug, Encode, Default, PartialEq)]
-pub struct Attributes {
+pub struct Terms {
     pub accrued_interest: Real,
     pub amortization_date: Time,
     pub array_cycle_anchor_date_of_interest_payment: Vec<Time>,
@@ -377,11 +377,11 @@ pub struct ContractStructure {
     pub _role: ContractReferenceRole,
 }
 
-impl Attributes {
-    // Creates a new Attributes instance with every field set to the default value (as defined by
+impl Terms {
+    // Creates a new Terms instance with every field set to the default value (as defined by
     // the ACTUS data dictionary).
-    pub fn new(contract_id: H256) -> Attributes {
-        Attributes {
+    pub fn new(contract_id: H256) -> Terms {
+        Terms {
             accrued_interest: Real(None),
             amortization_date: Time(None),
             array_cycle_anchor_date_of_interest_payment: Vec::new(),
