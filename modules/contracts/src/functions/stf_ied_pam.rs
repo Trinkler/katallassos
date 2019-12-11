@@ -13,7 +13,7 @@
 
 use super::*;
 
-pub fn stf_ied_pam(event: Event, mut contract: Contract) -> Contract {
+pub fn stf_ied_pam(event: Event, t0: &Time, mut contract: Contract) -> Contract {
     contract.states.notional_principal =
         utilities::contract_role_sign(contract.terms.contract_role)
             * contract.terms.notional_principal;
