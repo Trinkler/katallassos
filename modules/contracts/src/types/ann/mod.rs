@@ -13,18 +13,8 @@
 
 use super::*;
 
-mod events;
-mod states;
-mod terms;
+mod deploy;
+mod progress;
 
-pub use events::*;
-pub use states::*;
-pub use terms::*;
-
-// This struct contains all the information that defines a contract state.
-#[derive(Clone, Decode, Debug, Encode, Default, PartialEq)]
-pub struct ContractState {
-    pub terms: Terms,
-    pub states: States,
-    pub schedule: Vec<Event>,
-}
+pub use deploy::*;
+pub use progress::*;

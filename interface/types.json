@@ -416,7 +416,7 @@
       "time": "Time",
       "event_type": "EventType"
    },
-   "ContractState": {
+   "Contract": {
       "terms": "Terms",
       "states": "States",
       "schedule": "Vec<Event>"

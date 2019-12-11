@@ -14,7 +14,7 @@
 use super::*;
 
 impl<T: Trait> Module<T> {
-    pub fn deploy_pam(t0: Time, input: Terms) -> ContractResult<ContractState> {
+    pub fn deploy_ann(t0: Time, input: Terms) -> ContractResult<Contract> {
         // The ContractID, necessary to create any contract.
         let mut terms = Terms::new(input.contract_id);
 
@@ -64,13 +64,18 @@ impl<T: Trait> Module<T> {
 
         // Optional in all cases -> x
         terms.accrued_interest = input.accrued_interest;
+        terms.amortization_date = input.amortization_date;
         terms.business_day_convention = input.business_day_convention;
         terms.calendar = input.calendar;
         terms.capitalization_end_date = input.capitalization_end_date;
         terms.credit_line_amount = input.credit_line_amount;
+        terms.cycle_anchor_date_of_interest_payment = input.cycle_anchor_date_of_interest_payment;
+        terms.cycle_of_interest_payment = input.cycle_of_interest_payment;
         terms.end_of_month_convention = input.end_of_month_convention;
         terms.market_object_code = input.market_object_code;
         terms.market_value_observed = input.market_value_observed;
+        terms.maturity_date = input.maturity_date;
+        terms.next_principal_redemption_payment = input.next_principal_redemption_payment;
         terms.premium_discount_at_ied = input.premium_discount_at_ied;
         terms.settlement_currency = input.settlement_currency;
 
@@ -105,22 +110,52 @@ impl<T: Trait> Module<T> {
             terms.cycle_of_fee = input.cycle_of_fee; // -> x(1,2,_)
         }
 
-        // Group 2
+        // Group 3
         // Business rule ‘a’ applies unconditionally
-        terms.cycle_anchor_date_of_interest_payment = input.cycle_anchor_date_of_interest_payment; // -> x(2,0,_)
-        terms.cycle_of_interest_payment = input.cycle_of_interest_payment; // -> x(2,0,_)
+        terms.interest_calculation_base = input.interest_calculation_base; // -> x(3,0,_)
 
-        // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
-        if input.cycle_anchor_date_of_interest_payment.0.is_some()
-            || input.cycle_of_interest_payment.is_some()
-        {
-            if input.cycle_point_of_interest_payment == Some(CyclePointOfInterestPayment::B)
-                && input.cycle_point_of_rate_reset != Some(CyclePointOfRateReset::B)
-            {
+        // Business rule ‘a’ applies provided that attribute IPCB of the group takes the value NTIED
+        if input.interest_calculation_base == Some(InterestCalculationBase::NTIED) {
+            if input.interest_calculation_base_amount.0.is_none() {
                 return Err("Error while initializing terms. [5]");
+            } else {
+                terms.interest_calculation_base_amount = input.interest_calculation_base_amount;
+                // -> NN(3,3,_)
             }
-            terms.cycle_point_of_interest_payment = input.cycle_point_of_interest_payment;
-            // -> x(2,1,_)1
+        }
+
+        // At least one of the terms with c=4 in this group has to be defined provided that attribute IPCB of the group takes the value NTL
+        if input.interest_calculation_base == Some(InterestCalculationBase::NTL) {
+            if input
+                .cycle_anchor_date_of_interest_calculation_base
+                .0
+                .is_none()
+                && input.cycle_of_interest_calculation_base.is_none()
+            {
+                return Err("Error while initializing terms. [6]");
+            } else {
+                terms.cycle_anchor_date_of_interest_calculation_base =
+                    input.cycle_anchor_date_of_interest_calculation_base;
+                // -> x(3,4,_)
+                terms.cycle_of_interest_calculation_base = input.cycle_of_interest_calculation_base;
+                // -> x(3,4,_)
+            }
+        }
+
+        // Group 4
+        // At least one of the terms with c=2 in this group has to be defined provided that at least one of the unconditional terms of the group is defined (if any exists)
+        if input.cycle_anchor_date_of_principal_redemption.0.is_none()
+            && input.cycle_of_principal_redemption.is_none()
+        {
+            return Err("Error while initializing terms. [7]");
+        } else if input.cycle_of_principal_redemption != input.cycle_of_rate_reset {
+            return Err("Error while initializing terms. [8]");
+        } else {
+            terms.cycle_anchor_date_of_principal_redemption =
+                input.cycle_anchor_date_of_principal_redemption;
+            // -> x(4,2,_)2
+            terms.cycle_of_principal_redemption = input.cycle_of_principal_redemption;
+            // -> x(4,2,_)2
         }
 
         // Group 5
@@ -130,7 +165,7 @@ impl<T: Trait> Module<T> {
         // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
         if input.purchase_date.0.is_some() {
             if input.price_at_purchase_date.0.is_none() {
-                return Err("Error while initializing terms. [6]");
+                return Err("Error while initializing terms. [9]");
             } else {
                 terms.price_at_purchase_date = input.price_at_purchase_date;
                 // -> NN(5,1,1)
@@ -144,7 +179,7 @@ impl<T: Trait> Module<T> {
         // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
         if input.termination_date.0.is_some() {
             if input.price_at_termination_date.0.is_none() {
-                return Err("Error while initializing terms. [7]");
+                return Err("Error while initializing terms. [10]");
             } else {
                 terms.price_at_termination_date = input.price_at_termination_date;
                 // -> NN(6,1,1)
@@ -160,7 +195,7 @@ impl<T: Trait> Module<T> {
             if input.market_object_code_of_scaling_index.is_none()
                 || input.scaling_index_at_status_date.0.is_none()
             {
-                return Err("Error while initializing terms. [8]");
+                return Err("Error while initializing terms. [11]");
             }
             terms.market_object_code_of_scaling_index = input.market_object_code_of_scaling_index; // -> NN(7,1,_)
             terms.scaling_index_at_status_date = input.scaling_index_at_status_date;
@@ -172,7 +207,7 @@ impl<T: Trait> Module<T> {
             if input.cycle_anchor_date_of_scaling_index.0.is_none()
                 && input.cycle_of_scaling_index.is_none()
             {
-                return Err("Error while initializing terms. [9]");
+                return Err("Error while initializing terms. [12]");
             }
             terms.cycle_anchor_date_of_scaling_index = input.cycle_anchor_date_of_scaling_index; // -> x(7,2,_)
             terms.cycle_of_scaling_index = input.cycle_of_scaling_index; // -> x(7,2,_)
@@ -201,7 +236,7 @@ impl<T: Trait> Module<T> {
         if input.cycle_anchor_date_of_rate_reset.0.is_some() || input.cycle_of_rate_reset.is_some()
         {
             if input.market_object_code_rate_reset.is_none() || input.rate_spread.0.is_none() {
-                return Err("Error while initializing terms. [10]");
+                return Err("Error while initializing terms. [13]");
             } else {
                 terms.market_object_code_rate_reset = input.market_object_code_rate_reset; // -> NN(9,1,_)
                 terms.rate_spread = input.rate_spread; // -> NN(9,1,_)
@@ -219,7 +254,7 @@ impl<T: Trait> Module<T> {
 
         // Checking if the terms all have allowed values
         if terms.is_valid() == false {
-            return Err("Error while initializing terms. [11]");
+            return Err("Error while initializing terms. [14]");
         }
 
         // Creating the schedule for all the events.
@@ -228,6 +263,35 @@ impl<T: Trait> Module<T> {
         // Inital exchange date event
         let event = Event::new(terms.initial_exchange_date, EventType::IED);
         schedule.push(event);
+
+        // Principal Redemption event
+        let mut s: Time = Time(None);
+        if terms.cycle_anchor_date_of_principal_redemption == Time(None)
+            && terms.cycle_of_principal_redemption == None
+        {
+            s = Time(None);
+        } else if terms.cycle_anchor_date_of_principal_redemption == Time(None) {
+            s = utilities::sum_cycle(
+                terms.initial_exchange_date,
+                terms.cycle_of_principal_redemption,
+                terms.end_of_month_convention,
+            );
+        } else {
+            s = terms.cycle_anchor_date_of_principal_redemption;
+        }
+
+        let vec = utilities::schedule(
+            s,
+            terms.maturity_date,
+            terms.cycle_of_principal_redemption,
+            terms.end_of_month_convention,
+        )?;
+
+        // Note: The last entry in vec is supposed to not enter the schedule.
+        for i in 0..vec.len() - 2 {
+            let event = Event::new(vec[i], EventType::PR);
+            schedule.push(event);
+        }
 
         // Maturity date event
         let event = Event::new(terms.maturity_date, EventType::MD);
@@ -313,36 +377,72 @@ impl<T: Trait> Module<T> {
         schedule.push(event);
 
         // Interest payment event
-        if terms.nominal_interest_rate == Real(None) {
+        let r = if terms.capitalization_end_date != Time(None) {
+            terms.capitalization_end_date
+        } else if terms.cycle_anchor_date_of_interest_payment != Time(None) {
+            terms.cycle_anchor_date_of_interest_payment
+        } else if terms.cycle_of_interest_payment != None {
+            utilities::sum_cycle(
+                terms.initial_exchange_date,
+                terms.cycle_of_interest_payment,
+                terms.end_of_month_convention,
+            )
         } else {
-            let mut s: Time = Time(None);
-            if terms.cycle_anchor_date_of_interest_payment == Time(None)
-                && terms.cycle_of_interest_payment == None
-            {
-                s = Time(None);
-            } else if terms.capitalization_end_date != Time(None) {
-                s = terms.capitalization_end_date;
-            } else if terms.cycle_anchor_date_of_interest_payment == Time(None) {
-                s = utilities::sum_cycle(
-                    terms.initial_exchange_date,
-                    terms.cycle_of_interest_payment,
-                    terms.end_of_month_convention,
-                );
-            } else {
-                s = terms.cycle_anchor_date_of_interest_payment;
-            }
+            Time(None)
+        };
 
+        let s = if terms.cycle_anchor_date_of_principal_redemption == Time(None) {
+            utilities::sum_cycle(
+                terms.initial_exchange_date,
+                terms.cycle_of_principal_redemption,
+                terms.end_of_month_convention,
+            )
+        } else {
+            terms.cycle_anchor_date_of_principal_redemption
+        };
+
+        if terms.cycle_anchor_date_of_interest_payment == Time(None)
+            && terms.cycle_of_interest_payment == None
+        {
+        } else if terms.capitalization_end_date != Time(None)
+            && utilities::sum_cycle(
+                terms.capitalization_end_date,
+                terms.cycle_of_principal_redemption,
+                terms.end_of_month_convention,
+            ) >= s
+        {
+        } else {
             let vec = utilities::schedule(
+                r,
                 s,
-                terms.maturity_date,
                 terms.cycle_of_interest_payment,
                 terms.end_of_month_convention,
             )?;
 
             for t in vec {
+                if utilities::sum_cycle(
+                    t,
+                    terms.cycle_of_principal_redemption,
+                    terms.end_of_month_convention,
+                ) > s
+                {
+                    break;
+                }
                 let event = Event::new(t, EventType::IP);
                 schedule.push(event);
             }
+        }
+
+        let vec = utilities::schedule(
+            s,
+            terms.maturity_date,
+            terms.cycle_of_principal_redemption,
+            terms.end_of_month_convention,
+        )?;
+
+        for t in vec {
+            let event = Event::new(t, EventType::IP);
+            schedule.push(event);
         }
 
         // Interest capitalization event
@@ -372,6 +472,37 @@ impl<T: Trait> Module<T> {
 
             for t in vec {
                 let event = Event::new(t, EventType::IPCI);
+                schedule.push(event);
+            }
+        }
+
+        // Interest Calculation Base Fixing event
+        if terms.interest_calculation_base != Some(InterestCalculationBase::NTL) {
+        } else {
+            let mut s: Time = Time(None);
+            if terms.cycle_anchor_date_of_interest_calculation_base == Time(None)
+                && terms.cycle_of_interest_calculation_base == None
+            {
+                s = Time(None);
+            } else if terms.cycle_anchor_date_of_interest_calculation_base == Time(None) {
+                s = utilities::sum_cycle(
+                    terms.initial_exchange_date,
+                    terms.cycle_of_interest_calculation_base,
+                    terms.end_of_month_convention,
+                );
+            } else {
+                s = terms.cycle_anchor_date_of_interest_calculation_base;
+            };
+
+            let vec = utilities::schedule(
+                s,
+                terms.maturity_date,
+                terms.cycle_of_interest_calculation_base,
+                terms.end_of_month_convention,
+            )?;
+
+            for t in vec {
+                let event = Event::new(t, EventType::IPCB);
                 schedule.push(event);
             }
         }
@@ -605,7 +736,7 @@ impl<T: Trait> Module<T> {
         states.status_date = t0;
 
         // Returning the initialized Contract State
-        Ok(ContractState {
+        Ok(Contract {
             terms: terms,
             states: states,
             schedule: schedule,
@@ -684,35 +815,9 @@ mod tests {
     }
 
     #[test]
-    fn deploy_pam_works() {
+    fn deploy_ann_works() {
         new_test_ext().execute_with(|| {
-            // Tries to start a contract with the wrong terms.
-            let t0 = Time::from_values(1969, 07, 20, 20, 17, 00);
-            let id = H256::random();
-            let mut terms = Terms::new(id);
-            let result = Contracts::deploy_pam(t0, terms.clone());
-            assert!(result.is_err());
-
-            // Starts a PAM contract with the wrong terms.
-            terms.counterparty_id = Some(H256::random());
-            terms.contract_deal_date = Time::from_values(1968, 07, 21, 02, 56, 15);
-            terms.contract_id = id;
-            terms.contract_role = Some(ContractRole::RPA);
-            terms.contract_type = Some(ContractType::PAM);
-            terms.creator_id = Some(H256::random());
-            terms.currency = Some(1);
-            terms.day_count_convention = Some(DayCountConvention::A365);
-            terms.initial_exchange_date = Time::from_values(1969, 07, 21, 02, 56, 15);
-            terms.maturity_date = Time::from_values(1979, 07, 21, 02, 56, 15);
-            terms.nominal_interest_rate = Real::from(1000);
-            terms.notional_principal = Real(Some(50000000));
-            let result = Contracts::deploy_pam(t0, terms.clone());
-            assert!(result.is_err());
-
-            // Starts a PAM contract with the right terms.
-            terms.scaling_effect = None;
-            let result = Contracts::deploy_pam(t0, terms.clone());
-            assert!(result.is_ok());
+            // TODO: Implement test cases
         });
     }
 }

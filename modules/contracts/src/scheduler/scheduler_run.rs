@@ -26,7 +26,7 @@ impl<T: Trait> Module<T> {
 
             // Get the contract state of the ACTUS contract and the corresponding
             // contract event type to be executed.
-            let mut contract = <Self as Store>::ContractStates::get(scheduled_event.contract_id);
+            let mut contract = <Self as Store>::Contracts::get(scheduled_event.contract_id);
             let event = contract.schedule[scheduled_event.index as usize];
 
             // Make the ACTUS contract progress.
@@ -162,7 +162,7 @@ mod tests {
             );
 
             let mut contract = Contracts::deploy_pam(t0, terms).unwrap();
-            <Contracts as Store>::ContractStates::insert(id, contract.clone());
+            <Contracts as Store>::Contracts::insert(id, contract.clone());
             let event = ScheduledEvent {
                 time: contract.schedule[0].time,
                 contract_id: id,
@@ -173,10 +173,16 @@ mod tests {
             <Contracts as Store>::Scheduler::put(heap);
 
             let result = Contracts::scheduler_run(Time::from_values(2015, 01, 02, 00, 00, 05));
-            let new_contract = <Contracts as Store>::ContractStates::get(id);
-            assert_eq!(new_contract.states.notional_principal, Real::from(1000));
-            assert_eq!(new_contract.states.nominal_interest_rate, Real::from(0));
-            assert_eq!(new_contract.states.accrued_interest, Real::from(0));
+            let progressed_contract = <Contracts as Store>::Contracts::get(id);
+            assert_eq!(
+                progressed_contract.states.notional_principal,
+                Real::from(1000)
+            );
+            assert_eq!(
+                progressed_contract.states.nominal_interest_rate,
+                Real::from(0)
+            );
+            assert_eq!(progressed_contract.states.accrued_interest, Real::from(0));
             let event = <Contracts as Store>::Scheduler::get().pop().unwrap();
             assert_eq!(event.time, Time::from_values(2015, 04, 02, 00, 00, 00));
             assert_eq!(event.index, 1);

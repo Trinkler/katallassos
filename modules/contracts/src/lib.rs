@@ -25,15 +25,15 @@ use sr_primitives::traits::SaturatedConversion;
 use structures::*;
 
 // Importing the rest of the files in this crate.
-mod contract_state;
-mod contract_types;
+mod storage;
+mod types;
 mod deploy;
 mod init;
 mod progress;
 mod scheduler;
 mod utilities;
-use contract_state::*;
-use contract_types::*;
+use storage::*;
+use types::*;
 use deploy::*;
 use init::*;
 use progress::*;
@@ -46,7 +46,7 @@ pub trait Trait: system::Trait + oracle::Trait + assets::Trait + timestamp::Trai
 // This module's storage items.
 decl_storage! {
     trait Store for Module<T: Trait> as ContractsStorage {
-        pub ContractStates: map H256 => ContractState;
+        pub Contracts: map H256 => Contract;
         pub Scheduler: MinHeap<ScheduledEvent> = MinHeap::new();
     }
 }

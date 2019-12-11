@@ -17,7 +17,7 @@ use super::*;
 impl<T: Trait> Module<T> {
     pub fn progress(event: Event, contract_id: H256) -> Result {
         // Getting the contract.
-        let mut contract = <Self as Store>::ContractStates::get(contract_id);
+        let mut contract = <Self as Store>::Contracts::get(contract_id);
 
         // Calculating the resulting contract contract.
         let mut payoff = Real::from(0);
@@ -54,7 +54,7 @@ impl<T: Trait> Module<T> {
         // TODO: Set contract performance variable to something other than `Performant`
 
         // Storing the contract contract.
-        <Self as Store>::ContractStates::insert(contract_id, contract);
+        <Self as Store>::Contracts::insert(contract_id, contract);
 
         // Return Ok if successful.
         Ok(())
@@ -160,7 +160,7 @@ mod tests {
             Assets::mint(creator_id, currency, Real::from(1000));
             Assets::mint(counterparty_id, currency, Real::from(1000));
             let mut contract = Contracts::deploy_pam(t0, terms).unwrap();
-            <Contracts as Store>::ContractStates::insert(id, contract.clone());
+            <Contracts as Store>::Contracts::insert(id, contract.clone());
             assert_eq!(
                 contract.schedule[0],
                 Event::new(
@@ -169,7 +169,7 @@ mod tests {
                 )
             );
             Contracts::progress(contract.schedule[0], id);
-            contract = <Contracts as Store>::ContractStates::get(id);
+            contract = <Contracts as Store>::Contracts::get(id);
             assert_eq!(contract.states.notional_principal, Real::from(1000));
             assert_eq!(contract.states.nominal_interest_rate, Real::from(0));
             assert_eq!(contract.states.accrued_interest, Real::from(0));
@@ -189,7 +189,7 @@ mod tests {
                 )
             );
             Contracts::progress(contract.schedule[3], id);
-            contract = <Contracts as Store>::ContractStates::get(id);
+            contract = <Contracts as Store>::Contracts::get(id);
             assert_eq!(contract.states.notional_principal, Real::from(0));
             assert_eq!(contract.states.nominal_interest_rate, Real::from(0));
             assert_eq!(contract.states.accrued_interest, Real::from(0));

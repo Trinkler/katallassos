@@ -15,10 +15,7 @@ use super::*;
 
 // TODO: Add support for user-initiated events.
 impl<T: Trait> Module<T> {
-    pub fn progress_pam(
-        event: Event,
-        mut contract: ContractState,
-    ) -> ContractResult<(ContractState, Real)> {
+    pub fn progress_pam(event: Event, mut contract: Contract) -> ContractResult<(Contract, Real)> {
         // Getting t0 from the status_date attribute since they are equal.
         // (And status_date is not supposed to change)
         let t0 = contract.terms.status_date;
@@ -713,10 +710,7 @@ mod tests {
 
             assert_eq!(
                 contract.schedule[0],
-                Event::new(
-                    Time::from_values(2015, 01, 02, 00, 00, 00),
-                    EventType::IED
-                )
+                Event::new(Time::from_values(2015, 01, 02, 00, 00, 00), EventType::IED)
             );
             contract = Contracts::progress_pam(contract.schedule[0], contract)
                 .unwrap()
@@ -730,10 +724,7 @@ mod tests {
             // on the contract).
             assert_eq!(
                 contract.schedule[3],
-                Event::new(
-                    Time::from_values(2015, 04, 02, 00, 00, 00),
-                    EventType::MD
-                )
+                Event::new(Time::from_values(2015, 04, 02, 00, 00, 00), EventType::MD)
             );
             contract = Contracts::progress_pam(contract.schedule[3], contract)
                 .unwrap()
