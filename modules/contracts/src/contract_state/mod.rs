@@ -13,12 +13,12 @@
 
 use super::*;
 
-mod attributes;
+mod terms;
 mod contract_events;
 mod contract_state;
 mod variables;
 
-pub use attributes::*;
+pub use terms::*;
 pub use contract_events::*;
 pub use contract_state::*;
 pub use variables::*;

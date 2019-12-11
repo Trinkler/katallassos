@@ -13,50 +13,18 @@
 
 use super::*;
 
-// This function creates a new ACTUS contract.
+// TODO: Add support for user-initiated events.
 impl<T: Trait> Module<T> {
-    pub fn deploy(terms: Terms) -> Result {
-        // Getting the contract ID.
-        // TODO: Determine contract_id as a hash of its terms.
-        let id = terms.contract_id;
+    pub fn progress_ann(
+        event: ContractEvent,
+        mut state: ContractState,
+    ) -> ContractResult<(ContractState, Real)> {
+        // Getting t0 from the status_date attribute since they are equal.
+        // (And status_date is not supposed to change)
+        let t0 = state.terms.status_date;
 
-        // Checking if ID is available.
-        if <Self as Store>::ContractStates::exists(id) {
-            return Err("Contract ID already exists");
-        }
-
-        // Get current time.
-        let t0 = Time::from_unix(<timestamp::Module<T>>::get().saturated_into::<u64>());
-
-        // Calculating the initial contract state.
-        let state;
-        match terms.contract_type {
-            Some(ContractType::PAM) => {
-                state = Self::deploy_pam(t0, terms)?;
-            }
-            Some(ContractType::ANN) => {
-                state = Self::deploy_ann(t0, terms)?;
-            }
-            _ => {
-                state = Err("Contract type not supported")?;
-            }
-        }
-
-        // Adding first event to the heap.
-        let mut heap = <Self as Store>::Scheduler::get();
-        let event = ScheduledEvent {
-            time: state.schedule[0].time,
-            contract_id: id,
-            index: 0,
-        };
-        heap.push(event);
-        <Self as Store>::Scheduler::put(heap);
-
-        // Storing the contract state.
-        <Self as Store>::ContractStates::insert(id, state);
-
-        // Return Ok if successful.
-        Ok(())
+        // TODO: Remove this and update state and calculate payoff using matched events
+        Ok((state, Real::from(0)))
     }
 }
 
@@ -131,39 +99,9 @@ mod tests {
     }
 
     #[test]
-    fn deploy_works() {
+    fn progress_ann_works() {
         new_test_ext().execute_with(|| {
-            // Mock parameters and initialize terms
-            let t0 = Time::from_values(1969, 07, 20, 20, 17, 00);
-            let id = H256::random();
-            let mut terms = Terms::new(id);
-
-            // Starts a PAM contract with the right terms.
-            terms.counterparty_id = Some(H256::random());
-            terms.contract_deal_date = Time::from_values(1968, 07, 21, 02, 56, 15);
-            terms.contract_id = id;
-            terms.contract_role = Some(ContractRole::RPA);
-            terms.contract_type = Some(ContractType::PAM);
-            terms.creator_id = Some(H256::random());
-            terms.currency = Some(1);
-            terms.day_count_convention = Some(DayCountConvention::A365);
-            terms.initial_exchange_date = Time::from_values(1969, 07, 21, 02, 56, 15);
-            terms.maturity_date = Time::from_values(1979, 07, 21, 02, 56, 15);
-            terms.nominal_interest_rate = Real::from(1000);
-            terms.notional_principal = Real(Some(50000000));
-            terms.scaling_effect = None;
-            let result = Contracts::deploy(terms.clone());
-            assert!(result.is_ok());
-
-            // Checks if contract state has been stored
-            assert_eq!(<Contracts as Store>::ContractStates::exists(id), true);
-
-            // Checks if scheduler was correctly updated.
-            let event = <Contracts as Store>::Scheduler::get().pop().unwrap();
-            let state = <Contracts as Store>::ContractStates::get(id);
-            assert_eq!(event.time, state.schedule[0].time);
-            assert_eq!(event.contract_id, state.terms.contract_id);
-            assert_eq!(event.index, 0);
+            // TODO: Test
         });
     }
 }

@@ -16,7 +16,7 @@ use super::*;
 // This struct contains all the information that defines a contract state.
 #[derive(Clone, Decode, Debug, Encode, Default, PartialEq)]
 pub struct ContractState {
-    pub attributes: Attributes,
+    pub terms: Terms,
     pub variables: Variables,
     pub schedule: Vec<ContractEvent>,
 }

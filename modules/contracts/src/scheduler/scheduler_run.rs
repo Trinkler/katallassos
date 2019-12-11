@@ -137,31 +137,31 @@ mod tests {
         new_test_ext().execute_with(|| {
             let t0 = Time::from_values(2015, 01, 01, 00, 00, 00);
             let id = H256::random();
-            let mut attributes = Attributes::new(id);
-            attributes.contract_deal_date = Time::from_values(2015, 01, 01, 00, 00, 00);
-            attributes.contract_id = id;
-            attributes.contract_role = Some(ContractRole::RPA);
-            attributes.contract_type = Some(ContractType::PAM);
-            attributes.counterparty_id = Some(H256::random());
-            attributes.creator_id = Some(H256::random());
-            attributes.currency = Some(1);
-            attributes.settlement_currency = Some(1);
-            attributes.day_count_convention = Some(DayCountConvention::_30E360);
-            attributes.initial_exchange_date = Time::from_values(2015, 01, 02, 00, 00, 00);
-            attributes.maturity_date = Time::from_values(2015, 04, 02, 00, 00, 00);
-            attributes.nominal_interest_rate = Real::from(0);
-            attributes.notional_principal = Real::from(1000);
-            attributes.premium_discount_at_ied = Real::from(-5);
-            attributes.rate_spread = Real::from(0);
-            attributes.scaling_effect = None;
+            let mut terms = Terms::new(id);
+            terms.contract_deal_date = Time::from_values(2015, 01, 01, 00, 00, 00);
+            terms.contract_id = id;
+            terms.contract_role = Some(ContractRole::RPA);
+            terms.contract_type = Some(ContractType::PAM);
+            terms.counterparty_id = Some(H256::random());
+            terms.creator_id = Some(H256::random());
+            terms.currency = Some(1);
+            terms.settlement_currency = Some(1);
+            terms.day_count_convention = Some(DayCountConvention::_30E360);
+            terms.initial_exchange_date = Time::from_values(2015, 01, 02, 00, 00, 00);
+            terms.maturity_date = Time::from_values(2015, 04, 02, 00, 00, 00);
+            terms.nominal_interest_rate = Real::from(0);
+            terms.notional_principal = Real::from(1000);
+            terms.premium_discount_at_ied = Real::from(-5);
+            terms.rate_spread = Real::from(0);
+            terms.scaling_effect = None;
 
             <assets::Module<Test>>::mint(
-                attributes.creator_id.unwrap(),
-                attributes.currency.unwrap(),
-                attributes.notional_principal,
+                terms.creator_id.unwrap(),
+                terms.currency.unwrap(),
+                terms.notional_principal,
             );
 
-            let mut state = Contracts::deploy_pam(t0, attributes).unwrap();
+            let mut state = Contracts::deploy_pam(t0, terms).unwrap();
             <Contracts as Store>::ContractStates::insert(id, state.clone());
             let event = ScheduledEvent {
                 time: state.schedule[0].time,

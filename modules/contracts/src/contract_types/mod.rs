@@ -13,8 +13,12 @@
 
 use super::*;
 
+mod deploy_ann;
 mod deploy_pam;
+mod progress_ann;
 mod progress_pam;
 
+pub use deploy_ann::*;
 pub use deploy_pam::*;
+pub use progress_ann::*;
 pub use progress_pam::*;
