@@ -17,6 +17,7 @@ use super::*;
 impl<T: Trait> Module<T> {
     pub fn deploy(attributes: Attributes) -> Result {
         // Getting the contract ID.
+        // TODO: Determine contract_id as a hash of its attributes.
         let id = attributes.contract_id;
 
         // Checking if ID is available.
@@ -33,6 +34,9 @@ impl<T: Trait> Module<T> {
             Some(ContractType::PAM) => {
                 state = Self::deploy_pam(t0, attributes)?;
             }
+            Some(ContractType::ANN => {
+                state = Self::deploy_ann(t0, attributes)?;
+            })
             _ => {
                 state = Err("Contract type not supported")?;
             }

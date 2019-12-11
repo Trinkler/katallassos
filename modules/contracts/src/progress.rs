@@ -34,6 +34,7 @@ impl<T: Trait> Module<T> {
 
         // Executing the payoff.
         // Note: not sure if those unwrap() will not panic.
+        // TODO: Real is Option<i64> but use generic_asset T::Balance
         if payoff >= Real::from(0) {
             <assets::Module<T>>::transfer(
                 state.attributes.counterparty_id.unwrap(),

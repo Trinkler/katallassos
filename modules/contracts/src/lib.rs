@@ -64,6 +64,7 @@ decl_module! {
 
         pub fn dispatch_deploy(origin, attributes: Attributes) -> Result {
             // Call corresponding internal function.
+            // TODO: Check for third party signatures
             Self::deploy(attributes)?;
 
             // Return Ok if successful.
