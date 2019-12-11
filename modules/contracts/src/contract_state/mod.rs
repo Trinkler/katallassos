@@ -13,12 +13,18 @@
 
 use super::*;
 
+mod events;
+mod states;
 mod terms;
-mod contract_events;
-mod contract_state;
-mod variables;
 
+pub use events::*;
+pub use states::*;
 pub use terms::*;
-pub use contract_events::*;
-pub use contract_state::*;
-pub use variables::*;
+
+// This struct contains all the information that defines a contract state.
+#[derive(Clone, Decode, Debug, Encode, Default, PartialEq)]
+pub struct ContractState {
+    pub terms: Terms,
+    pub states: States,
+    pub schedule: Vec<Event>,
+}

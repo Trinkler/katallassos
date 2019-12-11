@@ -24,10 +24,10 @@ impl<T: Trait> Module<T> {
         while heap.peek().is_some() && now >= heap.peek().unwrap().time {
             let mut scheduled_event = heap.pop().unwrap();
 
-            // Get the state of the ACTUS contract and the corresponding
+            // Get the contract state of the ACTUS contract and the corresponding
             // contract event type to be executed.
-            let mut state = <Self as Store>::ContractStates::get(scheduled_event.contract_id);
-            let event = state.schedule[scheduled_event.index as usize];
+            let mut contract = <Self as Store>::ContractStates::get(scheduled_event.contract_id);
+            let event = contract.schedule[scheduled_event.index as usize];
 
             // Make the ACTUS contract progress.
             <Module<T>>::progress(event, scheduled_event.contract_id)?;
@@ -36,9 +36,9 @@ impl<T: Trait> Module<T> {
             // the time has come. This is more efficient than just pushing the next event
             // to the Scheduler heap.
             scheduled_event.index += 1;
-            while scheduled_event.index < state.schedule.len() as u32 {
+            while scheduled_event.index < contract.schedule.len() as u32 {
                 // Get the next event for this contract.
-                let event = state.schedule[scheduled_event.index as usize];
+                let event = contract.schedule[scheduled_event.index as usize];
                 // Compare the event's time with the current time.
                 if now >= event.time {
                     // Make the ACTUS contract progress.
@@ -161,10 +161,10 @@ mod tests {
                 terms.notional_principal,
             );
 
-            let mut state = Contracts::deploy_pam(t0, terms).unwrap();
-            <Contracts as Store>::ContractStates::insert(id, state.clone());
+            let mut contract = Contracts::deploy_pam(t0, terms).unwrap();
+            <Contracts as Store>::ContractStates::insert(id, contract.clone());
             let event = ScheduledEvent {
-                time: state.schedule[0].time,
+                time: contract.schedule[0].time,
                 contract_id: id,
                 index: 0,
             };
@@ -173,10 +173,10 @@ mod tests {
             <Contracts as Store>::Scheduler::put(heap);
 
             let result = Contracts::scheduler_run(Time::from_values(2015, 01, 02, 00, 00, 05));
-            let new_state = <Contracts as Store>::ContractStates::get(id);
-            assert_eq!(new_state.variables.notional_principal, Real::from(1000));
-            assert_eq!(new_state.variables.nominal_interest_rate, Real::from(0));
-            assert_eq!(new_state.variables.accrued_interest, Real::from(0));
+            let new_contract = <Contracts as Store>::ContractStates::get(id);
+            assert_eq!(new_contract.states.notional_principal, Real::from(1000));
+            assert_eq!(new_contract.states.nominal_interest_rate, Real::from(0));
+            assert_eq!(new_contract.states.accrued_interest, Real::from(0));
             let event = <Contracts as Store>::Scheduler::get().pop().unwrap();
             assert_eq!(event.time, Time::from_values(2015, 04, 02, 00, 00, 00));
             assert_eq!(event.index, 1);

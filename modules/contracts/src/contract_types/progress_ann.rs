@@ -16,7 +16,7 @@ use super::*;
 // TODO: Add support for user-initiated events.
 impl<T: Trait> Module<T> {
     pub fn progress_ann(
-        event: ContractEvent,
+        event: Event,
         mut state: ContractState,
     ) -> ContractResult<(ContractState, Real)> {
         // Getting t0 from the status_date attribute since they are equal.

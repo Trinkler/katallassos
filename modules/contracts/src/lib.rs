@@ -71,7 +71,7 @@ decl_module! {
             Ok(())
         }
 
-        pub fn dispatch_progress(origin, event: ContractEvent, contract_id: H256) -> Result {
+        pub fn dispatch_progress(origin, event: Event, contract_id: H256) -> Result {
             // TODO: Assert rules for user initiated events
 
             // Call corresponding internal function.

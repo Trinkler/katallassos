@@ -107,8 +107,7 @@ impl<T: Trait> Module<T> {
 
         // Group 2
         // Business rule ‘a’ applies unconditionally
-        terms.cycle_anchor_date_of_interest_payment =
-            input.cycle_anchor_date_of_interest_payment; // -> x(2,0,_)
+        terms.cycle_anchor_date_of_interest_payment = input.cycle_anchor_date_of_interest_payment; // -> x(2,0,_)
         terms.cycle_of_interest_payment = input.cycle_of_interest_payment; // -> x(2,0,_)
 
         // Business rule ‘a’ applies if at least one of the unconditional CAs of this group is defined
@@ -163,8 +162,7 @@ impl<T: Trait> Module<T> {
             {
                 return Err("Error while initializing terms. [8]");
             }
-            terms.market_object_code_of_scaling_index =
-                input.market_object_code_of_scaling_index; // -> NN(7,1,_)
+            terms.market_object_code_of_scaling_index = input.market_object_code_of_scaling_index; // -> NN(7,1,_)
             terms.scaling_index_at_status_date = input.scaling_index_at_status_date;
             // -> NN(7,1,_)
         }
@@ -176,8 +174,7 @@ impl<T: Trait> Module<T> {
             {
                 return Err("Error while initializing terms. [9]");
             }
-            terms.cycle_anchor_date_of_scaling_index =
-                input.cycle_anchor_date_of_scaling_index; // -> x(7,2,_)
+            terms.cycle_anchor_date_of_scaling_index = input.cycle_anchor_date_of_scaling_index; // -> x(7,2,_)
             terms.cycle_of_scaling_index = input.cycle_of_scaling_index; // -> x(7,2,_)
         }
 
@@ -226,14 +223,14 @@ impl<T: Trait> Module<T> {
         }
 
         // Creating the schedule for all the events.
-        let mut schedule: Vec<ContractEvent> = Vec::new();
+        let mut schedule: Vec<Event> = Vec::new();
 
         // Inital exchange date event
-        let event = ContractEvent::new(terms.initial_exchange_date, ContractEventType::IED);
+        let event = Event::new(terms.initial_exchange_date, EventType::IED);
         schedule.push(event);
 
         // Maturity date event
-        let event = ContractEvent::new(terms.maturity_date, ContractEventType::MD);
+        let event = Event::new(terms.maturity_date, EventType::MD);
         schedule.push(event);
 
         // Principal prepayment event
@@ -262,7 +259,7 @@ impl<T: Trait> Module<T> {
             )?;
 
             for t in vec {
-                let event = ContractEvent::new(t, ContractEventType::PP);
+                let event = Event::new(t, EventType::PP);
                 schedule.push(event);
             }
         }
@@ -271,8 +268,8 @@ impl<T: Trait> Module<T> {
         if terms.penalty_type == Some(PenaltyType::O) {
         } else {
             for e in schedule.clone() {
-                if e.event_type == ContractEventType::PP {
-                    let event = ContractEvent::new(e.time, ContractEventType::PY);
+                if e.event_type == EventType::PP {
+                    let event = Event::new(e.time, EventType::PY);
                     schedule.push(event);
                 }
             }
@@ -282,8 +279,7 @@ impl<T: Trait> Module<T> {
         if terms.fee_rate == Real(None) || terms.fee_rate == Real::from(0) {
         } else {
             let mut s: Time = Time(None);
-            if terms.cycle_anchor_date_of_fee == Time(None) && terms.cycle_of_fee == None
-            {
+            if terms.cycle_anchor_date_of_fee == Time(None) && terms.cycle_of_fee == None {
                 s = Time(None);
             } else if terms.cycle_anchor_date_of_fee == Time(None) {
                 s = utilities::sum_cycle(
@@ -303,17 +299,17 @@ impl<T: Trait> Module<T> {
             )?;
 
             for t in vec {
-                let event = ContractEvent::new(t, ContractEventType::FP);
+                let event = Event::new(t, EventType::FP);
                 schedule.push(event);
             }
         }
 
         // Purchase date event
-        let event = ContractEvent::new(terms.purchase_date, ContractEventType::PRD);
+        let event = Event::new(terms.purchase_date, EventType::PRD);
         schedule.push(event);
 
         // Termination date event
-        let event = ContractEvent::new(terms.termination_date, ContractEventType::TD);
+        let event = Event::new(terms.termination_date, EventType::TD);
         schedule.push(event);
 
         // Interest payment event
@@ -344,7 +340,7 @@ impl<T: Trait> Module<T> {
             )?;
 
             for t in vec {
-                let event = ContractEvent::new(t, ContractEventType::IP);
+                let event = Event::new(t, EventType::IP);
                 schedule.push(event);
             }
         }
@@ -375,14 +371,13 @@ impl<T: Trait> Module<T> {
             )?;
 
             for t in vec {
-                let event = ContractEvent::new(t, ContractEventType::IPCI);
+                let event = Event::new(t, EventType::IPCI);
                 schedule.push(event);
             }
         }
 
         // Rate reset variable event
-        if terms.cycle_anchor_date_of_rate_reset == Time(None)
-            && terms.cycle_of_rate_reset == None
+        if terms.cycle_anchor_date_of_rate_reset == Time(None) && terms.cycle_of_rate_reset == None
         {
         } else {
             let mut s: Time = Time(None);
@@ -413,21 +408,20 @@ impl<T: Trait> Module<T> {
                 }
                 for t in vec {
                     if t != t_rry {
-                        let event = ContractEvent::new(t, ContractEventType::RR);
+                        let event = Event::new(t, EventType::RR);
                         schedule.push(event);
                     }
                 }
             } else {
                 for t in vec {
-                    let event = ContractEvent::new(t, ContractEventType::RR);
+                    let event = Event::new(t, EventType::RR);
                     schedule.push(event);
                 }
             }
         }
 
         // Rate reset fixed event
-        if terms.cycle_anchor_date_of_rate_reset == Time(None)
-            && terms.cycle_of_rate_reset == None
+        if terms.cycle_anchor_date_of_rate_reset == Time(None) && terms.cycle_of_rate_reset == None
         {
         } else {
             let mut s: Time = Time(None);
@@ -450,7 +444,7 @@ impl<T: Trait> Module<T> {
 
             for t in vec {
                 if t > terms.status_date {
-                    let event = ContractEvent::new(t, ContractEventType::RRF);
+                    let event = Event::new(t, EventType::RRF);
                     schedule.push(event);
                     break;
                 }
@@ -483,7 +477,7 @@ impl<T: Trait> Module<T> {
             )?;
 
             for t in vec {
-                let event = ContractEvent::new(t, ContractEventType::SC);
+                let event = Event::new(t, EventType::SC);
                 schedule.push(event);
             }
         }
@@ -505,72 +499,72 @@ impl<T: Trait> Module<T> {
         // Ordering the schedule
         schedule.sort_unstable();
 
-        // Initializing the variables
-        let mut variables = Variables::new();
+        // Initializing the states
+        let mut states = States::new();
 
         // Time At Maturity Date variable
-        variables.time_at_maturity_date = terms.maturity_date;
+        states.time_at_maturity_date = terms.maturity_date;
 
         // Notional Principal variable
         if terms.initial_exchange_date > t0 {
-            variables.notional_principal = Real::from(0);
+            states.notional_principal = Real::from(0);
         } else {
-            variables.notional_principal = utilities::contract_role_sign(terms.contract_role)
-                * terms.notional_principal;
+            states.notional_principal =
+                utilities::contract_role_sign(terms.contract_role) * terms.notional_principal;
         }
 
         // Nominal Interest Rate variable
         if terms.initial_exchange_date > t0 {
-            variables.nominal_interest_rate = Real::from(0);
+            states.nominal_interest_rate = Real::from(0);
         } else {
-            variables.nominal_interest_rate = terms.nominal_interest_rate;
+            states.nominal_interest_rate = terms.nominal_interest_rate;
         }
 
         // Accrued Interest variable
         if terms.nominal_interest_rate == Real(None) {
-            variables.accrued_interest = Real::from(0);
+            states.accrued_interest = Real::from(0);
         } else if terms.accrued_interest != Real(None) {
-            variables.accrued_interest = terms.accrued_interest;
+            states.accrued_interest = terms.accrued_interest;
         } else {
             let mut t_minus = Time(None);
             for e in schedule.clone() {
-                if e.event_type == ContractEventType::IP {
+                if e.event_type == EventType::IP {
                     if e.time >= t0 {
                         break;
                     }
                     t_minus = e.time;
                 }
             }
-            variables.accrued_interest =
+            states.accrued_interest =
                 utilities::year_fraction(t_minus, t0, terms.day_count_convention.unwrap())
-                    * variables.notional_principal
-                    * variables.nominal_interest_rate;
+                    * states.notional_principal
+                    * states.nominal_interest_rate;
         }
 
         // Fee Accrued variable
         if terms.fee_rate == Real(None) {
-            variables.fee_accrued = Real::from(0);
+            states.fee_accrued = Real::from(0);
         } else if terms.fee_accrued != Real(None) {
-            variables.fee_accrued = terms.fee_accrued;
+            states.fee_accrued = terms.fee_accrued;
         } else if terms.fee_basis == Some(FeeBasis::N) {
             let mut t_minus = Time(None);
             for e in schedule.clone() {
-                if e.event_type == ContractEventType::FP {
+                if e.event_type == EventType::FP {
                     if e.time >= t0 {
                         break;
                     }
                     t_minus = e.time;
                 }
             }
-            variables.fee_accrued =
+            states.fee_accrued =
                 utilities::year_fraction(t_minus, t0, terms.day_count_convention.unwrap())
-                    * variables.notional_principal
+                    * states.notional_principal
                     * terms.fee_rate;
         } else {
             let mut t_minus = Time(None);
             let mut t_plus = Time(None);
             for e in schedule.clone() {
-                if e.event_type == ContractEventType::FP {
+                if e.event_type == EventType::FP {
                     if e.time >= t0 {
                         t_plus = e.time;
                         break;
@@ -578,7 +572,7 @@ impl<T: Trait> Module<T> {
                     t_minus = e.time;
                 }
             }
-            variables.fee_accrued =
+            states.fee_accrued =
                 utilities::year_fraction(t_minus, t0, terms.day_count_convention.unwrap())
                     / utilities::year_fraction(
                         t_minus,
@@ -591,29 +585,29 @@ impl<T: Trait> Module<T> {
         // Notional Scaling Multiplier variable
         let temp = terms.scaling_effect.unwrap_or(ScalingEffect::_000);
         if temp == ScalingEffect::_0N0 || temp == ScalingEffect::IN0 {
-            variables.notional_scaling_multiplier = terms.scaling_index_at_status_date;
+            states.notional_scaling_multiplier = terms.scaling_index_at_status_date;
         } else {
-            variables.notional_scaling_multiplier = Real::from(1);
+            states.notional_scaling_multiplier = Real::from(1);
         }
 
         // Interest Scaling Multiplier variable
         let temp = terms.scaling_effect.unwrap_or(ScalingEffect::_000);
         if temp == ScalingEffect::I00 || temp == ScalingEffect::IN0 {
-            variables.interest_scaling_multiplier = terms.scaling_index_at_status_date;
+            states.interest_scaling_multiplier = terms.scaling_index_at_status_date;
         } else {
-            variables.interest_scaling_multiplier = Real::from(1);
+            states.interest_scaling_multiplier = Real::from(1);
         }
 
         // Contract Performance variable
-        variables.contract_performance = terms.contract_performance;
+        states.contract_performance = terms.contract_performance;
 
         // Status Date variable
-        variables.status_date = t0;
+        states.status_date = t0;
 
         // Returning the initialized Contract State
         Ok(ContractState {
             terms: terms,
-            variables: variables,
+            states: states,
             schedule: schedule,
         })
     }

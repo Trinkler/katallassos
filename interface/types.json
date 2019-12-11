@@ -251,7 +251,7 @@
       "_type": "ContractReferenceType",
       "_role": "ContractReferenceRole"
    },
-   "Attributes": {
+   "Terms": {
       "accrued_interest": "Real",
       "amortization_date": "Time",
       "array_cycle_anchor_date_of_interest_payment": "Vec<Time>",
@@ -367,7 +367,7 @@
       "variation_margin": "Real",
       "x_day_notice": "Option<Period>"
    },
-   "Variables": {
+   "States": {
       "accrued_interest": "Real",
       "accrued_interest_2": "Real",
       "contract_performance": "Option<ContractPerformance>",
@@ -386,7 +386,7 @@
       "status_date": "Time",
       "time_at_maturity_date": "Time"
    },
-   "ContractEventType": {
+   "EventType": {
       "_enum": [
          "IED",
          "FP",
@@ -412,13 +412,13 @@
          "AD"
       ]
    },
-   "ContractEvent": {
+   "Event": {
       "time": "Time",
-      "event_type": "ContractEventType"
+      "event_type": "EventType"
    },
    "ContractState": {
-      "attributes": "Attributes",
-      "variables": "Variables",
-      "schedule": "Vec<ContractEvent>"
+      "terms": "Terms",
+      "states": "States",
+      "schedule": "Vec<Event>"
    }
 }

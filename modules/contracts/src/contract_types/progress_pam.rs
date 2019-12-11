@@ -16,89 +16,88 @@ use super::*;
 // TODO: Add support for user-initiated events.
 impl<T: Trait> Module<T> {
     pub fn progress_pam(
-        event: ContractEvent,
-        mut state: ContractState,
+        event: Event,
+        mut contract: ContractState,
     ) -> ContractResult<(ContractState, Real)> {
         // Getting t0 from the status_date attribute since they are equal.
         // (And status_date is not supposed to change)
-        let t0 = state.terms.status_date;
+        let t0 = contract.terms.status_date;
 
         match event.event_type {
-            ContractEventType::IED => {
+            EventType::IED => {
                 // Payoff Function
-                let payoff = utilities::contract_role_sign(state.terms.contract_role)
+                let payoff = utilities::contract_role_sign(contract.terms.contract_role)
                     * Real::from(-1)
-                    * (state.terms.notional_principal
-                        + state.terms.premium_discount_at_ied);
+                    * (contract.terms.notional_principal + contract.terms.premium_discount_at_ied);
                 // State Transition Function
-                state.variables.notional_principal =
-                    utilities::contract_role_sign(state.terms.contract_role)
-                        * state.terms.notional_principal;
-                if state.terms.nominal_interest_rate == Real(None) {
-                    state.variables.nominal_interest_rate = Real::from(0);
+                contract.states.notional_principal =
+                    utilities::contract_role_sign(contract.terms.contract_role)
+                        * contract.terms.notional_principal;
+                if contract.terms.nominal_interest_rate == Real(None) {
+                    contract.states.nominal_interest_rate = Real::from(0);
                 } else {
-                    state.variables.nominal_interest_rate = state.terms.nominal_interest_rate;
+                    contract.states.nominal_interest_rate = contract.terms.nominal_interest_rate;
                 }
-                if state.terms.accrued_interest != Real(None) {
-                    state.variables.accrued_interest = state.terms.accrued_interest;
-                } else if state.terms.cycle_anchor_date_of_interest_payment != Time(None)
-                    && state.terms.cycle_anchor_date_of_interest_payment < event.time
+                if contract.terms.accrued_interest != Real(None) {
+                    contract.states.accrued_interest = contract.terms.accrued_interest;
+                } else if contract.terms.cycle_anchor_date_of_interest_payment != Time(None)
+                    && contract.terms.cycle_anchor_date_of_interest_payment < event.time
                 {
                     let y = utilities::year_fraction(
-                        state.terms.cycle_anchor_date_of_interest_payment,
+                        contract.terms.cycle_anchor_date_of_interest_payment,
                         event.time,
-                        state.terms.day_count_convention.unwrap(), // Unwraping poses no danger since day_count_convention is mandatory for the PAM contract. It will never panic.
+                        contract.terms.day_count_convention.unwrap(), // Unwraping poses no danger since day_count_convention is mandatory for the PAM contract. It will never panic.
                     );
-                    state.variables.accrued_interest = y
-                        * state.variables.notional_principal
-                        * state.variables.nominal_interest_rate;
+                    contract.states.accrued_interest = y
+                        * contract.states.notional_principal
+                        * contract.states.nominal_interest_rate;
                 } else {
-                    state.variables.accrued_interest = Real::from(0);
+                    contract.states.accrued_interest = Real::from(0);
                 }
-                state.variables.status_date = event.time;
-                // Return the contract state and payoff
-                Ok((state, payoff))
+                contract.states.status_date = event.time;
+                // Return the contract contract and payoff
+                Ok((contract, payoff))
             }
-            ContractEventType::MD => {
+            EventType::MD => {
                 // Payoff Function
-                let payoff = state.variables.notional_scaling_multiplier
-                    * state.variables.notional_principal
-                    + state.variables.interest_scaling_multiplier
-                        * state.variables.accrued_interest
-                    + state.variables.fee_accrued;
+                let payoff = contract.states.notional_scaling_multiplier
+                    * contract.states.notional_principal
+                    + contract.states.interest_scaling_multiplier
+                        * contract.states.accrued_interest
+                    + contract.states.fee_accrued;
                 // State Transition Function
-                state.variables.notional_principal = Real::from(0);
-                state.variables.accrued_interest = Real::from(0);
-                state.variables.fee_accrued = Real::from(0);
-                state.variables.status_date = event.time;
-                // Return the contract state and payoff
-                Ok((state, payoff))
+                contract.states.notional_principal = Real::from(0);
+                contract.states.accrued_interest = Real::from(0);
+                contract.states.fee_accrued = Real::from(0);
+                contract.states.status_date = event.time;
+                // Return the contract contract and payoff
+                Ok((contract, payoff))
             }
-            ContractEventType::PP => {
+            EventType::PP => {
                 // Payoff Function
                 // TODO: Add the user-initiated events based on the "PPMO".
                 let payoff = Real::from(0);
                 // State Transition Function
-                state.variables.accrued_interest = state.variables.accrued_interest
+                contract.states.accrued_interest = contract.states.accrued_interest
                     + utilities::year_fraction(
-                        state.variables.status_date,
+                        contract.states.status_date,
                         event.time,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
-                    ) * state.variables.nominal_interest_rate
-                        * state.variables.notional_principal;
-                if state.terms.fee_basis == Some(FeeBasis::N) {
-                    state.variables.fee_accrued = state.variables.fee_accrued
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                    ) * contract.states.nominal_interest_rate
+                        * contract.states.notional_principal;
+                if contract.terms.fee_basis == Some(FeeBasis::N) {
+                    contract.states.fee_accrued = contract.states.fee_accrued
                         + utilities::year_fraction(
-                            state.variables.status_date,
+                            contract.states.status_date,
                             event.time,
-                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
-                        ) * state.variables.notional_principal
-                            * state.terms.fee_rate;
+                            contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        ) * contract.states.notional_principal
+                            * contract.terms.fee_rate;
                 } else {
                     let mut t_minus = Time(None);
                     let mut t_plus = Time(None);
-                    for e in state.schedule.clone() {
-                        if e.event_type == ContractEventType::FP {
+                    for e in contract.schedule.clone() {
+                        if e.event_type == EventType::FP {
                             if e.time >= t0 {
                                 t_plus = e.time;
                                 break;
@@ -106,79 +105,79 @@ impl<T: Trait> Module<T> {
                             t_minus = e.time;
                         }
                     }
-                    state.variables.fee_accrued = utilities::year_fraction(
+                    contract.states.fee_accrued = utilities::year_fraction(
                         t_minus,
                         event.time,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) / year_fraction(
                         t_minus,
                         t_plus,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * utilities::contract_role_sign(
-                        state.terms.contract_role,
-                    ) * state.terms.fee_rate;
+                        contract.terms.contract_role,
+                    ) * contract.terms.fee_rate;
                 }
                 // TODO: Add the user-initiated events based on the "PPMO".
-                state.variables.notional_principal = state.variables.notional_principal;
-                state.variables.status_date = event.time;
-                // Return the contract state and payoff
-                Ok((state, payoff))
+                contract.states.notional_principal = contract.states.notional_principal;
+                contract.states.status_date = event.time;
+                // Return the contract contract and payoff
+                Ok((contract, payoff))
             }
-            ContractEventType::PY => {
+            EventType::PY => {
                 // Payoff Function
                 let mut payoff = Real::from(0);
-                if state.terms.penalty_type == Some(PenaltyType::A) {
-                    payoff = utilities::contract_role_sign(state.terms.contract_role)
-                        * state.terms.penalty_rate;
+                if contract.terms.penalty_type == Some(PenaltyType::A) {
+                    payoff = utilities::contract_role_sign(contract.terms.contract_role)
+                        * contract.terms.penalty_rate;
                 }
-                if state.terms.penalty_type == Some(PenaltyType::N) {
-                    payoff = utilities::contract_role_sign(state.terms.contract_role)
+                if contract.terms.penalty_type == Some(PenaltyType::N) {
+                    payoff = utilities::contract_role_sign(contract.terms.contract_role)
                         * utilities::year_fraction(
-                            state.variables.status_date,
+                            contract.states.status_date,
                             event.time,
-                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                            contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                         )
-                        * state.variables.notional_principal
-                        * state.terms.penalty_rate;
+                        * contract.states.notional_principal
+                        * contract.terms.penalty_rate;
                 }
-                if state.terms.penalty_type == Some(PenaltyType::I) {
-                    payoff = utilities::contract_role_sign(state.terms.contract_role)
+                if contract.terms.penalty_type == Some(PenaltyType::I) {
+                    payoff = utilities::contract_role_sign(contract.terms.contract_role)
                         * utilities::year_fraction(
-                            state.variables.status_date,
+                            contract.states.status_date,
                             event.time,
-                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                            contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                         )
-                        * state.variables.notional_principal
+                        * contract.states.notional_principal
                         * Real::max(
                             Real::from(0),
-                            state.variables.nominal_interest_rate
+                            contract.states.nominal_interest_rate
                                 - <oracle::Module<T>>::oracles(
-                                    state.terms.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
+                                    contract.terms.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
                                 )
                                 .value,
                         );
                 }
                 // State Transition Function
-                state.variables.accrued_interest = state.variables.accrued_interest
+                contract.states.accrued_interest = contract.states.accrued_interest
                     + utilities::year_fraction(
-                        state.variables.status_date,
+                        contract.states.status_date,
                         event.time,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
-                    ) * state.variables.nominal_interest_rate
-                        * state.variables.notional_principal;
-                if state.terms.fee_basis == Some(FeeBasis::N) {
-                    state.variables.fee_accrued = state.variables.fee_accrued
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                    ) * contract.states.nominal_interest_rate
+                        * contract.states.notional_principal;
+                if contract.terms.fee_basis == Some(FeeBasis::N) {
+                    contract.states.fee_accrued = contract.states.fee_accrued
                         + utilities::year_fraction(
-                            state.variables.status_date,
+                            contract.states.status_date,
                             event.time,
-                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
-                        ) * state.variables.notional_principal
-                            * state.terms.fee_rate;
+                            contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        ) * contract.states.notional_principal
+                            * contract.terms.fee_rate;
                 } else {
                     let mut t_minus = Time(None);
                     let mut t_plus = Time(None);
-                    for e in state.schedule.clone() {
-                        if e.event_type == ContractEventType::FP {
+                    for e in contract.schedule.clone() {
+                        if e.event_type == EventType::FP {
                             if e.time >= t0 {
                                 t_plus = e.time;
                                 break;
@@ -186,85 +185,85 @@ impl<T: Trait> Module<T> {
                             t_minus = e.time;
                         }
                     }
-                    state.variables.fee_accrued = utilities::year_fraction(
+                    contract.states.fee_accrued = utilities::year_fraction(
                         t_minus,
                         event.time,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) / year_fraction(
                         t_minus,
                         t_plus,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * utilities::contract_role_sign(
-                        state.terms.contract_role,
-                    ) * state.terms.fee_rate;
+                        contract.terms.contract_role,
+                    ) * contract.terms.fee_rate;
                 }
-                state.variables.status_date = event.time;
-                // Return the contract state and payoff
-                Ok((state, payoff))
+                contract.states.status_date = event.time;
+                // Return the contract contract and payoff
+                Ok((contract, payoff))
             }
-            ContractEventType::FP => {
+            EventType::FP => {
                 // Payoff Function
                 let mut payoff = Real::from(0);
-                if state.terms.fee_basis == Some(FeeBasis::A) {
-                    payoff = utilities::contract_role_sign(state.terms.contract_role)
-                        * state.terms.fee_rate;
+                if contract.terms.fee_basis == Some(FeeBasis::A) {
+                    payoff = utilities::contract_role_sign(contract.terms.contract_role)
+                        * contract.terms.fee_rate;
                 }
-                if state.terms.fee_basis == Some(FeeBasis::N) {
-                    payoff = state.terms.fee_rate
+                if contract.terms.fee_basis == Some(FeeBasis::N) {
+                    payoff = contract.terms.fee_rate
                         * utilities::year_fraction(
-                            state.variables.status_date,
+                            contract.states.status_date,
                             event.time,
-                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                            contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                         )
-                        * state.variables.notional_principal
-                        + state.variables.fee_accrued;
+                        * contract.states.notional_principal
+                        + contract.states.fee_accrued;
                 }
                 // State Transition Function
-                state.variables.accrued_interest = state.variables.accrued_interest
+                contract.states.accrued_interest = contract.states.accrued_interest
                     + utilities::year_fraction(
-                        state.variables.status_date,
+                        contract.states.status_date,
                         event.time,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
-                    ) * state.variables.nominal_interest_rate
-                        * state.variables.notional_principal;
-                state.variables.fee_accrued = Real::from(0);
-                state.variables.status_date = event.time;
-                // Return the contract state and payoff
-                Ok((state, payoff))
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                    ) * contract.states.nominal_interest_rate
+                        * contract.states.notional_principal;
+                contract.states.fee_accrued = Real::from(0);
+                contract.states.status_date = event.time;
+                // Return the contract contract and payoff
+                Ok((contract, payoff))
             }
-            ContractEventType::PRD => {
+            EventType::PRD => {
                 // Payoff Function
-                let payoff = utilities::contract_role_sign(state.terms.contract_role)
+                let payoff = utilities::contract_role_sign(contract.terms.contract_role)
                     * Real::from(-1)
-                    * (state.terms.price_at_purchase_date
-                        + state.variables.accrued_interest
+                    * (contract.terms.price_at_purchase_date
+                        + contract.states.accrued_interest
                         + utilities::year_fraction(
-                            state.variables.status_date,
+                            contract.states.status_date,
                             event.time,
-                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
-                        ) * state.variables.nominal_interest_rate
-                            * state.variables.notional_principal);
+                            contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        ) * contract.states.nominal_interest_rate
+                            * contract.states.notional_principal);
                 // State Transition Function
-                state.variables.accrued_interest = state.variables.accrued_interest
+                contract.states.accrued_interest = contract.states.accrued_interest
                     + utilities::year_fraction(
-                        state.variables.status_date,
+                        contract.states.status_date,
                         event.time,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
-                    ) * state.variables.nominal_interest_rate
-                        * state.variables.notional_principal;
-                if state.terms.fee_basis == Some(FeeBasis::N) {
-                    state.variables.fee_accrued = state.variables.fee_accrued
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                    ) * contract.states.nominal_interest_rate
+                        * contract.states.notional_principal;
+                if contract.terms.fee_basis == Some(FeeBasis::N) {
+                    contract.states.fee_accrued = contract.states.fee_accrued
                         + utilities::year_fraction(
-                            state.variables.status_date,
+                            contract.states.status_date,
                             event.time,
-                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
-                        ) * state.variables.notional_principal
-                            * state.terms.fee_rate;
+                            contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        ) * contract.states.notional_principal
+                            * contract.terms.fee_rate;
                 } else {
                     let mut t_minus = Time(None);
                     let mut t_plus = Time(None);
-                    for e in state.schedule.clone() {
-                        if e.event_type == ContractEventType::FP {
+                    for e in contract.schedule.clone() {
+                        if e.event_type == EventType::FP {
                             if e.time >= t0 {
                                 t_plus = e.time;
                                 break;
@@ -272,67 +271,67 @@ impl<T: Trait> Module<T> {
                             t_minus = e.time;
                         }
                     }
-                    state.variables.fee_accrued = utilities::year_fraction(
+                    contract.states.fee_accrued = utilities::year_fraction(
                         t_minus,
                         event.time,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) / year_fraction(
                         t_minus,
                         t_plus,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * utilities::contract_role_sign(
-                        state.terms.contract_role,
-                    ) * state.terms.fee_rate;
+                        contract.terms.contract_role,
+                    ) * contract.terms.fee_rate;
                 }
-                state.variables.status_date = event.time;
-                // Return the contract state and payoff
-                Ok((state, payoff))
+                contract.states.status_date = event.time;
+                // Return the contract contract and payoff
+                Ok((contract, payoff))
             }
-            ContractEventType::TD => {
+            EventType::TD => {
                 // Payoff Function
-                let payoff = utilities::contract_role_sign(state.terms.contract_role)
-                    * (state.terms.price_at_termination_date
-                        + state.variables.accrued_interest
+                let payoff = utilities::contract_role_sign(contract.terms.contract_role)
+                    * (contract.terms.price_at_termination_date
+                        + contract.states.accrued_interest
                         + utilities::year_fraction(
-                            state.variables.status_date,
+                            contract.states.status_date,
                             event.time,
-                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
-                        ) * state.variables.nominal_interest_rate
-                            * state.variables.notional_principal);
+                            contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        ) * contract.states.nominal_interest_rate
+                            * contract.states.notional_principal);
                 // State Transition Function
-                state.variables.notional_principal = Real::from(0);
-                state.variables.accrued_interest = Real::from(0);
-                state.variables.fee_accrued = Real::from(0);
-                state.variables.nominal_interest_rate = Real::from(0);
-                state.variables.status_date = event.time;
-                // Return the contract state and payoff
-                Ok((state, payoff))
+                contract.states.notional_principal = Real::from(0);
+                contract.states.accrued_interest = Real::from(0);
+                contract.states.fee_accrued = Real::from(0);
+                contract.states.nominal_interest_rate = Real::from(0);
+                contract.states.status_date = event.time;
+                // Return the contract contract and payoff
+                Ok((contract, payoff))
             }
-            ContractEventType::IP => {
+            EventType::IP => {
                 // Payoff Function
-                let payoff = state.variables.interest_scaling_multiplier
-                    * (state.variables.accrued_interest
+                let payoff = contract.states.interest_scaling_multiplier
+                    * (contract.states.accrued_interest
                         + utilities::year_fraction(
-                            state.variables.status_date,
+                            contract.states.status_date,
                             event.time,
-                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
-                        ) * state.variables.nominal_interest_rate
-                            * state.variables.notional_principal);
+                            contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        ) * contract.states.nominal_interest_rate
+                            * contract.states.notional_principal);
                 // State Transition Function
-                state.variables.accrued_interest = Real::from(0);
-                if state.terms.fee_basis == Some(FeeBasis::N) {
-                    state.variables.fee_accrued = state.variables.fee_accrued
+                contract.states.accrued_interest = Real::from(0);
+                if contract.terms.fee_basis == Some(FeeBasis::N) {
+                    contract.states.fee_accrued = contract.states.fee_accrued
                         + utilities::year_fraction(
-                            state.variables.status_date,
+                            contract.states.status_date,
                             event.time,
-                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
-                        ) * state.variables.notional_principal
-                            * state.terms.fee_rate;
+                            contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        ) * contract.states.notional_principal
+                            * contract.terms.fee_rate;
                 } else {
                     let mut t_minus = Time(None);
                     let mut t_plus = Time(None);
-                    for e in state.schedule.clone() {
-                        if e.event_type == ContractEventType::FP {
+                    for e in contract.schedule.clone() {
+                        if e.event_type == EventType::FP {
                             if e.time >= t0 {
                                 t_plus = e.time;
                                 break;
@@ -340,49 +339,49 @@ impl<T: Trait> Module<T> {
                             t_minus = e.time;
                         }
                     }
-                    state.variables.fee_accrued = utilities::year_fraction(
+                    contract.states.fee_accrued = utilities::year_fraction(
                         t_minus,
                         event.time,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) / year_fraction(
                         t_minus,
                         t_plus,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * utilities::contract_role_sign(
-                        state.terms.contract_role,
-                    ) * state.terms.fee_rate;
+                        contract.terms.contract_role,
+                    ) * contract.terms.fee_rate;
                 }
-                state.variables.status_date = event.time;
-                // Return the contract state and payoff
-                Ok((state, payoff))
+                contract.states.status_date = event.time;
+                // Return the contract contract and payoff
+                Ok((contract, payoff))
             }
-            ContractEventType::IPCI => {
+            EventType::IPCI => {
                 // Payoff Function
                 let payoff = Real::from(0);
                 // State Transition Function
-                let notional_principal_minus = state.variables.notional_principal; // Temporary variable.
-                state.variables.notional_principal = state.variables.notional_principal
-                    + state.variables.accrued_interest
+                let notional_principal_minus = contract.states.notional_principal; // Temporary variable.
+                contract.states.notional_principal = contract.states.notional_principal
+                    + contract.states.accrued_interest
                     + utilities::year_fraction(
-                        state.variables.status_date,
+                        contract.states.status_date,
                         event.time,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
-                    ) * state.variables.notional_principal
-                        * state.variables.nominal_interest_rate;
-                state.variables.accrued_interest = Real::from(0);
-                if state.terms.fee_basis == Some(FeeBasis::N) {
-                    state.variables.fee_accrued = state.variables.fee_accrued
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                    ) * contract.states.notional_principal
+                        * contract.states.nominal_interest_rate;
+                contract.states.accrued_interest = Real::from(0);
+                if contract.terms.fee_basis == Some(FeeBasis::N) {
+                    contract.states.fee_accrued = contract.states.fee_accrued
                         + utilities::year_fraction(
-                            state.variables.status_date,
+                            contract.states.status_date,
                             event.time,
-                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                            contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                         ) * notional_principal_minus
-                            * state.terms.fee_rate;
+                            * contract.terms.fee_rate;
                 } else {
                     let mut t_minus = Time(None);
                     let mut t_plus = Time(None);
-                    for e in state.schedule.clone() {
-                        if e.event_type == ContractEventType::FP {
+                    for e in contract.schedule.clone() {
+                        if e.event_type == EventType::FP {
                             if e.time >= t0 {
                                 t_plus = e.time;
                                 break;
@@ -390,46 +389,46 @@ impl<T: Trait> Module<T> {
                             t_minus = e.time;
                         }
                     }
-                    state.variables.fee_accrued = utilities::year_fraction(
+                    contract.states.fee_accrued = utilities::year_fraction(
                         t_minus,
                         event.time,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) / year_fraction(
                         t_minus,
                         t_plus,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * utilities::contract_role_sign(
-                        state.terms.contract_role,
-                    ) * state.terms.fee_rate;
+                        contract.terms.contract_role,
+                    ) * contract.terms.fee_rate;
                 }
-                state.variables.status_date = event.time;
-                // Return the contract state and payoff
-                Ok((state, payoff))
+                contract.states.status_date = event.time;
+                // Return the contract contract and payoff
+                Ok((contract, payoff))
             }
-            ContractEventType::RR => {
+            EventType::RR => {
                 // Payoff Function
                 let payoff = Real::from(0);
                 // State Transition Function
-                state.variables.accrued_interest = state.variables.accrued_interest
+                contract.states.accrued_interest = contract.states.accrued_interest
                     + utilities::year_fraction(
-                        state.variables.status_date,
+                        contract.states.status_date,
                         event.time,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
-                    ) * state.variables.nominal_interest_rate
-                        * state.variables.notional_principal;
-                if state.terms.fee_basis == Some(FeeBasis::N) {
-                    state.variables.fee_accrued = state.variables.fee_accrued
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                    ) * contract.states.nominal_interest_rate
+                        * contract.states.notional_principal;
+                if contract.terms.fee_basis == Some(FeeBasis::N) {
+                    contract.states.fee_accrued = contract.states.fee_accrued
                         + utilities::year_fraction(
-                            state.variables.status_date,
+                            contract.states.status_date,
                             event.time,
-                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
-                        ) * state.variables.notional_principal
-                            * state.terms.fee_rate;
+                            contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        ) * contract.states.notional_principal
+                            * contract.terms.fee_rate;
                 } else {
                     let mut t_minus = Time(None);
                     let mut t_plus = Time(None);
-                    for e in state.schedule.clone() {
-                        if e.event_type == ContractEventType::FP {
+                    for e in contract.schedule.clone() {
+                        if e.event_type == EventType::FP {
                             if e.time >= t0 {
                                 t_plus = e.time;
                                 break;
@@ -437,66 +436,66 @@ impl<T: Trait> Module<T> {
                             t_minus = e.time;
                         }
                     }
-                    state.variables.fee_accrued = utilities::year_fraction(
+                    contract.states.fee_accrued = utilities::year_fraction(
                         t_minus,
                         event.time,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) / year_fraction(
                         t_minus,
                         t_plus,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * utilities::contract_role_sign(
-                        state.terms.contract_role,
-                    ) * state.terms.fee_rate;
+                        contract.terms.contract_role,
+                    ) * contract.terms.fee_rate;
                 }
                 let delta_r = Real::min(
                     Real::max(
                         <oracle::Module<T>>::oracles(
-                            state.terms.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
+                            contract.terms.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
                         )
                         .value
-                            * state.terms.rate_multiplier
-                            + state.terms.rate_spread
-                            - state.variables.nominal_interest_rate,
-                        state.terms.period_floor,
+                            * contract.terms.rate_multiplier
+                            + contract.terms.rate_spread
+                            - contract.states.nominal_interest_rate,
+                        contract.terms.period_floor,
                     ),
-                    state.terms.period_cap,
+                    contract.terms.period_cap,
                 );
-                state.variables.nominal_interest_rate = Real::min(
+                contract.states.nominal_interest_rate = Real::min(
                     Real::max(
-                        state.variables.nominal_interest_rate + delta_r,
-                        state.terms.life_floor,
+                        contract.states.nominal_interest_rate + delta_r,
+                        contract.terms.life_floor,
                     ),
-                    state.terms.life_cap,
+                    contract.terms.life_cap,
                 );
-                state.variables.status_date = event.time;
-                // Return the contract state and payoff
-                Ok((state, payoff))
+                contract.states.status_date = event.time;
+                // Return the contract contract and payoff
+                Ok((contract, payoff))
             }
-            ContractEventType::RRF => {
+            EventType::RRF => {
                 // Payoff Function
                 let payoff = Real::from(0);
                 // State Transition Function
-                state.variables.accrued_interest = state.variables.accrued_interest
+                contract.states.accrued_interest = contract.states.accrued_interest
                     + utilities::year_fraction(
-                        state.variables.status_date,
+                        contract.states.status_date,
                         event.time,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
-                    ) * state.variables.nominal_interest_rate
-                        * state.variables.notional_principal;
-                if state.terms.fee_basis == Some(FeeBasis::N) {
-                    state.variables.fee_accrued = state.variables.fee_accrued
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                    ) * contract.states.nominal_interest_rate
+                        * contract.states.notional_principal;
+                if contract.terms.fee_basis == Some(FeeBasis::N) {
+                    contract.states.fee_accrued = contract.states.fee_accrued
                         + utilities::year_fraction(
-                            state.variables.status_date,
+                            contract.states.status_date,
                             event.time,
-                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
-                        ) * state.variables.notional_principal
-                            * state.terms.fee_rate;
+                            contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        ) * contract.states.notional_principal
+                            * contract.terms.fee_rate;
                 } else {
                     let mut t_minus = Time(None);
                     let mut t_plus = Time(None);
-                    for e in state.schedule.clone() {
-                        if e.event_type == ContractEventType::FP {
+                    for e in contract.schedule.clone() {
+                        if e.event_type == EventType::FP {
                             if e.time >= t0 {
                                 t_plus = e.time;
                                 break;
@@ -504,47 +503,47 @@ impl<T: Trait> Module<T> {
                             t_minus = e.time;
                         }
                     }
-                    state.variables.fee_accrued = utilities::year_fraction(
+                    contract.states.fee_accrued = utilities::year_fraction(
                         t_minus,
                         event.time,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) / year_fraction(
                         t_minus,
                         t_plus,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * utilities::contract_role_sign(
-                        state.terms.contract_role,
-                    ) * state.terms.fee_rate;
+                        contract.terms.contract_role,
+                    ) * contract.terms.fee_rate;
                 }
-                state.variables.nominal_interest_rate = state.terms.next_reset_rate;
-                state.variables.status_date = event.time;
-                // Return the contract state and payoff
-                Ok((state, payoff))
+                contract.states.nominal_interest_rate = contract.terms.next_reset_rate;
+                contract.states.status_date = event.time;
+                // Return the contract contract and payoff
+                Ok((contract, payoff))
             }
-            ContractEventType::SC => {
+            EventType::SC => {
                 // Payoff Function
                 let payoff = Real::from(0);
                 // State Transition Function
-                state.variables.accrued_interest = state.variables.accrued_interest
+                contract.states.accrued_interest = contract.states.accrued_interest
                     + utilities::year_fraction(
-                        state.variables.status_date,
+                        contract.states.status_date,
                         event.time,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
-                    ) * state.variables.nominal_interest_rate
-                        * state.variables.notional_principal;
-                if state.terms.fee_basis == Some(FeeBasis::N) {
-                    state.variables.fee_accrued = state.variables.fee_accrued
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                    ) * contract.states.nominal_interest_rate
+                        * contract.states.notional_principal;
+                if contract.terms.fee_basis == Some(FeeBasis::N) {
+                    contract.states.fee_accrued = contract.states.fee_accrued
                         + utilities::year_fraction(
-                            state.variables.status_date,
+                            contract.states.status_date,
                             event.time,
-                            state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
-                        ) * state.variables.notional_principal
-                            * state.terms.fee_rate;
+                            contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        ) * contract.states.notional_principal
+                            * contract.terms.fee_rate;
                 } else {
                     let mut t_minus = Time(None);
                     let mut t_plus = Time(None);
-                    for e in state.schedule.clone() {
-                        if e.event_type == ContractEventType::FP {
+                    for e in contract.schedule.clone() {
+                        if e.event_type == EventType::FP {
                             if e.time >= t0 {
                                 t_plus = e.time;
                                 break;
@@ -552,66 +551,66 @@ impl<T: Trait> Module<T> {
                             t_minus = e.time;
                         }
                     }
-                    state.variables.fee_accrued = utilities::year_fraction(
+                    contract.states.fee_accrued = utilities::year_fraction(
                         t_minus,
                         event.time,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) / year_fraction(
                         t_minus,
                         t_plus,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
                     ) * utilities::contract_role_sign(
-                        state.terms.contract_role,
-                    ) * state.terms.fee_rate;
+                        contract.terms.contract_role,
+                    ) * contract.terms.fee_rate;
                 }
                 // Unwrap will never panic because of the lazy evaluation.
-                if state.terms.scaling_effect.is_some()
-                    && (state.terms.scaling_effect.unwrap() == ScalingEffect::_000
-                        || state.terms.scaling_effect.unwrap() == ScalingEffect::I00)
+                if contract.terms.scaling_effect.is_some()
+                    && (contract.terms.scaling_effect.unwrap() == ScalingEffect::_000
+                        || contract.terms.scaling_effect.unwrap() == ScalingEffect::I00)
                 {
-                    state.variables.notional_scaling_multiplier =
-                        state.variables.notional_scaling_multiplier;
+                    contract.states.notional_scaling_multiplier =
+                        contract.states.notional_scaling_multiplier;
                 } else {
-                    state.variables.notional_scaling_multiplier = (<oracle::Module<T>>::oracles(
-                        state.terms.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
+                    contract.states.notional_scaling_multiplier = (<oracle::Module<T>>::oracles(
+                        contract.terms.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
                     )
                     .value
-                        - state.terms.scaling_index_at_status_date)
-                        / state.terms.scaling_index_at_status_date;
+                        - contract.terms.scaling_index_at_status_date)
+                        / contract.terms.scaling_index_at_status_date;
                 }
                 // Unwrap will never panic because of the lazy evaluation.
-                if state.terms.scaling_effect.is_some()
-                    && (state.terms.scaling_effect.unwrap() == ScalingEffect::_000
-                        || state.terms.scaling_effect.unwrap() == ScalingEffect::_0N0)
+                if contract.terms.scaling_effect.is_some()
+                    && (contract.terms.scaling_effect.unwrap() == ScalingEffect::_000
+                        || contract.terms.scaling_effect.unwrap() == ScalingEffect::_0N0)
                 {
-                    state.variables.interest_scaling_multiplier =
-                        state.variables.interest_scaling_multiplier;
+                    contract.states.interest_scaling_multiplier =
+                        contract.states.interest_scaling_multiplier;
                 } else {
-                    state.variables.interest_scaling_multiplier = (<oracle::Module<T>>::oracles(
-                        state.terms.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
+                    contract.states.interest_scaling_multiplier = (<oracle::Module<T>>::oracles(
+                        contract.terms.market_object_code_rate_reset.unwrap(), //This unwrap will never panic.
                     )
                     .value
-                        - state.terms.scaling_index_at_status_date)
-                        / state.terms.scaling_index_at_status_date;
+                        - contract.terms.scaling_index_at_status_date)
+                        / contract.terms.scaling_index_at_status_date;
                 }
-                state.variables.status_date = event.time;
-                // Return the contract state and payoff
-                Ok((state, payoff))
+                contract.states.status_date = event.time;
+                // Return the contract contract and payoff
+                Ok((contract, payoff))
             }
-            ContractEventType::CE => {
+            EventType::CE => {
                 // Payoff Function
                 let payoff = Real::from(0);
                 // State Transition Function
-                state.variables.accrued_interest = state.variables.accrued_interest
+                contract.states.accrued_interest = contract.states.accrued_interest
                     + utilities::year_fraction(
-                        state.variables.status_date,
+                        contract.states.status_date,
                         event.time,
-                        state.terms.day_count_convention.unwrap(), // This unwrap will never panic.
-                    ) * state.variables.nominal_interest_rate
-                        * state.variables.notional_principal;
-                state.variables.status_date = event.time;
-                // Return the contract state and payoff
-                Ok((state, payoff))
+                        contract.terms.day_count_convention.unwrap(), // This unwrap will never panic.
+                    ) * contract.states.nominal_interest_rate
+                        * contract.states.notional_principal;
+                contract.states.status_date = event.time;
+                // Return the contract contract and payoff
+                Ok((contract, payoff))
             }
             _ => Err("Event not applicable"),
         }
@@ -679,7 +678,7 @@ mod tests {
     impl Trait for Test {}
     type Contracts = Module<Test>;
 
-    // This function basically just builds a genesis storage key/value store according to
+    // This function basically just builds a genesis contract key/value store according to
     // our desired mockup.
     fn new_test_ext() -> runtime_io::TestExternalities {
         system::GenesisConfig::default()
@@ -710,34 +709,38 @@ mod tests {
             terms.rate_spread = Real::from(0);
             terms.scaling_effect = None;
 
-            let mut state = Contracts::deploy_pam(t0, terms).unwrap();
+            let mut contract = Contracts::deploy_pam(t0, terms).unwrap();
 
             assert_eq!(
-                state.schedule[0],
-                ContractEvent::new(
+                contract.schedule[0],
+                Event::new(
                     Time::from_values(2015, 01, 02, 00, 00, 00),
-                    ContractEventType::IED
+                    EventType::IED
                 )
             );
-            state = Contracts::progress_pam(state.schedule[0], state).unwrap().0;
-            assert_eq!(state.variables.notional_principal, Real::from(1000));
-            assert_eq!(state.variables.nominal_interest_rate, Real::from(0));
-            assert_eq!(state.variables.accrued_interest, Real::from(0));
+            contract = Contracts::progress_pam(contract.schedule[0], contract)
+                .unwrap()
+                .0;
+            assert_eq!(contract.states.notional_principal, Real::from(1000));
+            assert_eq!(contract.states.nominal_interest_rate, Real::from(0));
+            assert_eq!(contract.states.accrued_interest, Real::from(0));
 
             // Event 3 is being used, instead of the next in the sequence 1, because the
             // given test vectors don't mention event 1 (probably because it has no effect
-            // on the state).
+            // on the contract).
             assert_eq!(
-                state.schedule[3],
-                ContractEvent::new(
+                contract.schedule[3],
+                Event::new(
                     Time::from_values(2015, 04, 02, 00, 00, 00),
-                    ContractEventType::MD
+                    EventType::MD
                 )
             );
-            state = Contracts::progress_pam(state.schedule[3], state).unwrap().0;
-            assert_eq!(state.variables.notional_principal, Real::from(0));
-            assert_eq!(state.variables.nominal_interest_rate, Real::from(0));
-            assert_eq!(state.variables.accrued_interest, Real::from(0));
+            contract = Contracts::progress_pam(contract.schedule[3], contract)
+                .unwrap()
+                .0;
+            assert_eq!(contract.states.notional_principal, Real::from(0));
+            assert_eq!(contract.states.nominal_interest_rate, Real::from(0));
+            assert_eq!(contract.states.accrued_interest, Real::from(0));
         });
     }
 }

@@ -15,16 +15,16 @@ use super::*;
 
 // This function creates a new ACTUS contract.
 impl<T: Trait> Module<T> {
-    pub fn progress(event: ContractEvent, contract_id: H256) -> Result {
-        // Getting the state.
-        let mut state = <Self as Store>::ContractStates::get(contract_id);
+    pub fn progress(event: Event, contract_id: H256) -> Result {
+        // Getting the contract.
+        let mut contract = <Self as Store>::ContractStates::get(contract_id);
 
-        // Calculating the resulting contract state.
+        // Calculating the resulting contract contract.
         let mut payoff = Real::from(0);
-        match state.terms.contract_type {
+        match contract.terms.contract_type {
             Some(ContractType::PAM) => {
-                let result = Self::progress_pam(event, state)?;
-                state = result.0;
+                let result = Self::progress_pam(event, contract)?;
+                contract = result.0;
                 payoff = result.1;
             }
             _ => {
@@ -37,24 +37,24 @@ impl<T: Trait> Module<T> {
         // TODO: Real is Option<i64> but use generic_asset T::Balance
         if payoff >= Real::from(0) {
             <assets::Module<T>>::transfer(
-                state.terms.counterparty_id.unwrap(),
-                state.terms.creator_id.unwrap(),
-                state.terms.settlement_currency.unwrap(),
+                contract.terms.counterparty_id.unwrap(),
+                contract.terms.creator_id.unwrap(),
+                contract.terms.settlement_currency.unwrap(),
                 payoff.abs(),
             )?;
         } else {
             <assets::Module<T>>::transfer(
-                state.terms.creator_id.unwrap(),
-                state.terms.counterparty_id.unwrap(),
-                state.terms.settlement_currency.unwrap(),
+                contract.terms.creator_id.unwrap(),
+                contract.terms.counterparty_id.unwrap(),
+                contract.terms.settlement_currency.unwrap(),
                 payoff.abs(),
             )?;
         }
 
         // TODO: Set contract performance variable to something other than `Performant`
 
-        // Storing the contract state.
-        <Self as Store>::ContractStates::insert(contract_id, state);
+        // Storing the contract contract.
+        <Self as Store>::ContractStates::insert(contract_id, contract);
 
         // Return Ok if successful.
         Ok(())
@@ -159,20 +159,20 @@ mod tests {
             terms.scaling_effect = None;
             Assets::mint(creator_id, currency, Real::from(1000));
             Assets::mint(counterparty_id, currency, Real::from(1000));
-            let mut state = Contracts::deploy_pam(t0, terms).unwrap();
-            <Contracts as Store>::ContractStates::insert(id, state.clone());
+            let mut contract = Contracts::deploy_pam(t0, terms).unwrap();
+            <Contracts as Store>::ContractStates::insert(id, contract.clone());
             assert_eq!(
-                state.schedule[0],
-                ContractEvent::new(
+                contract.schedule[0],
+                Event::new(
                     Time::from_values(2015, 01, 02, 00, 00, 00),
-                    ContractEventType::IED
+                    EventType::IED
                 )
             );
-            Contracts::progress(state.schedule[0], id);
-            state = <Contracts as Store>::ContractStates::get(id);
-            assert_eq!(state.variables.notional_principal, Real::from(1000));
-            assert_eq!(state.variables.nominal_interest_rate, Real::from(0));
-            assert_eq!(state.variables.accrued_interest, Real::from(0));
+            Contracts::progress(contract.schedule[0], id);
+            contract = <Contracts as Store>::ContractStates::get(id);
+            assert_eq!(contract.states.notional_principal, Real::from(1000));
+            assert_eq!(contract.states.nominal_interest_rate, Real::from(0));
+            assert_eq!(contract.states.accrued_interest, Real::from(0));
             assert_eq!(Assets::balances((currency, creator_id)), Real::from(5));
             assert_eq!(
                 Assets::balances((currency, counterparty_id)),
@@ -180,19 +180,19 @@ mod tests {
             );
             // Event 3 is being used, instead of the next in the sequence 1, because the
             // given test vectors don't mention event 1 (probably because it has no effect
-            // on the state).
+            // on the contract).
             assert_eq!(
-                state.schedule[3],
-                ContractEvent::new(
+                contract.schedule[3],
+                Event::new(
                     Time::from_values(2015, 04, 02, 00, 00, 00),
-                    ContractEventType::MD
+                    EventType::MD
                 )
             );
-            Contracts::progress(state.schedule[3], id);
-            state = <Contracts as Store>::ContractStates::get(id);
-            assert_eq!(state.variables.notional_principal, Real::from(0));
-            assert_eq!(state.variables.nominal_interest_rate, Real::from(0));
-            assert_eq!(state.variables.accrued_interest, Real::from(0));
+            Contracts::progress(contract.schedule[3], id);
+            contract = <Contracts as Store>::ContractStates::get(id);
+            assert_eq!(contract.states.notional_principal, Real::from(0));
+            assert_eq!(contract.states.nominal_interest_rate, Real::from(0));
+            assert_eq!(contract.states.accrued_interest, Real::from(0));
             assert_eq!(Assets::balances((currency, creator_id)), Real::from(1005));
             assert_eq!(
                 Assets::balances((currency, counterparty_id)),
