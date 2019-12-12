@@ -14,7 +14,7 @@
 use super::*;
 
 impl<T: Trait> Module<T> {
-    pub fn deploy_pam(t0: Time, input: Terms) -> ContractResult<ContractState> {
+    pub fn deploy_pam(t0: Time, input: Terms) -> ContractResult<Contract> {
         // The ContractID, necessary to create any contract.
         let mut terms = Terms::new(input.contract_id);
 
@@ -605,7 +605,7 @@ impl<T: Trait> Module<T> {
         states.status_date = t0;
 
         // Returning the initialized Contract State
-        Ok(ContractState {
+        Ok(Contract {
             terms: terms,
             states: states,
             schedule: schedule,
