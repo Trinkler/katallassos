@@ -36,7 +36,7 @@ pub fn sum_cycle(
         }
         Cycle::Months(int, _) => {
             unchecked_t.year += (unchecked_t.month as u16 + int) / 12;
-            unchecked_t.month = ((unchecked_t.month as u16 - 1 + int) % 12 + 1) as i8;
+            unchecked_t.month = ((unchecked_t.month as u16 - 1 + int) % 12 + 1) as u8;
             return Time::from_unchecked(end_of_month_shift(unchecked_t, end_of_month_convention));
         }
         Cycle::Years(int, _) => {
