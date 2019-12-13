@@ -2,11 +2,11 @@
    "Keys": "SessionKeys2",
    "UncheckedTime": {
       "year": "u16",
-      "month": "i8",
-      "day": "i8",
-      "hour": "i8",
-      "minute": "i8",
-      "second": "i8"
+      "month": "u8",
+      "day": "u8",
+      "hour": "u8",
+      "minute": "u8",
+      "second": "u8"
    },
    "Time": "Option<UncheckedTime>",
    "Real": "Option<i64>",
