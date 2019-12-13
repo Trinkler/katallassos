@@ -72,7 +72,7 @@ pub fn schedule(
             vec.push(s);
             while unchecked_s < unchecked_t {
                 unchecked_s.year += (unchecked_s.month as u16 + int) / 12;
-                unchecked_s.month = ((unchecked_s.month as u16 - 1 + int) % 12 + 1) as i8;
+                unchecked_s.month = ((unchecked_s.month as u16 - 1 + int) % 12 + 1) as u8;
                 vec.push(Time::from_unchecked(end_of_month_shift(
                     unchecked_s,
                     end_of_month_convention,

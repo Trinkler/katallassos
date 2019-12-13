@@ -25,7 +25,7 @@
 //! ## Technical description
 //! In more detail, the data type Time is a struct containing a single Option of the type UncheckedTime,
 //! which is a struct with the fields 'year', 'month', 'day', 'hour', 'minute' and 'second'. All the
-//! fields are i8, except for 'year' which is an u16. Equality and comparison operations are also
+//! fields are u8, except for 'year' which is an u16. Equality and comparison operations are also
 //! implemented and work as is expected, the only quirk being that 'None' is considered smaller
 //! than any time.
 //!
@@ -60,12 +60,11 @@ use super::*;
 #[derive(Copy, Clone, Decode, Debug, Encode, Default, PartialEq, Eq, PartialOrd, Ord)]
 pub struct UncheckedTime {
     pub year: u16,
-    // i8 is used because 'parity_codec' doesn't support u8.
-    pub month: i8,
-    pub day: i8,
-    pub hour: i8,
-    pub minute: i8,
-    pub second: i8,
+    pub month: u8,
+    pub day: u8,
+    pub hour: u8,
+    pub minute: u8,
+    pub second: u8,
 }
 
 /// This struct implements the Time data type. It is a tuple containing a single Option of
@@ -88,11 +87,8 @@ impl Time {
             || month > 12
             || day < 1
             || day > Time::days_in_month(year, month)
-            || hour < 0
             || hour > 23
-            || minute < 0
             || minute > 59
-            || second < 0
             || second > 59
         {
             false
@@ -103,17 +99,14 @@ impl Time {
 
     /// A safe constructor for the Time type. It takes six different values as input, one for each
     /// UncheckedTime field. If the input values do not represent a valid time it returns 'None'.
-    pub fn from_values(year: u16, month: i8, day: i8, hour: i8, minute: i8, second: i8) -> Time {
+    pub fn from_values(year: u16, month: u8, day: u8, hour: u8, minute: u8, second: u8) -> Time {
         if year > 9999
             || month < 1
             || month > 12
             || day < 1
             || day > Time::days_in_month(year, month)
-            || hour < 0
             || hour > 23
-            || minute < 0
             || minute > 59
-            || second < 0
             || second > 59
         {
             Time(None)
@@ -137,11 +130,8 @@ impl Time {
             || input.month > 12
             || input.day < 1
             || input.day > Time::days_in_month(input.year, input.month)
-            || input.hour < 0
             || input.hour > 23
-            || input.minute < 0
             || input.minute > 59
-            || input.second < 0
             || input.second > 59
         {
             Time(None)
@@ -160,22 +150,22 @@ impl Time {
 
         // Initializing the variables with the unix epoch.
         let mut year: u16 = 1970;
-        let mut month: i8 = 01;
-        let mut day: i8 = 01;
-        let mut hour: i8 = 00;
-        let mut minute: i8 = 00;
-        let mut second: i8 = 00;
+        let mut month: u8 = 01;
+        let mut day: u8 = 01;
+        let mut hour: u8 = 00;
+        let mut minute: u8 = 00;
+        let mut second: u8 = 00;
 
         // Converting the seconds.
-        second += (unix_time % 60) as i8;
+        second += (unix_time % 60) as u8;
         unix_time /= 60;
 
         // Converting the minutes.
-        minute += (unix_time % 60) as i8;
+        minute += (unix_time % 60) as u8;
         unix_time /= 60;
 
         // Converting the hours.
-        hour += (unix_time % 24) as i8;
+        hour += (unix_time % 24) as u8;
         unix_time /= 24;
 
         // Converting the years using leap year arithmetic.
@@ -211,7 +201,7 @@ impl Time {
         }
 
         // Converting the days.
-        day += unix_time as i8;
+        day += unix_time as u8;
 
         // Create and return the Time instance.
         Time(Some(UncheckedTime {
@@ -259,7 +249,7 @@ impl Time {
         }
 
         // Converting the days.
-        time.day += days as i8;
+        time.day += days as u8;
 
         // Create and return the Time instance.
         Time::from_unchecked(time)
@@ -282,9 +272,7 @@ impl Time {
         let mut month_2 = end.0.unwrap().month;
         let day_2 = end.0.unwrap().day;
 
-        let mut diff: i64 = 0;
-
-        diff += (day_2 - day_1) as i64;
+        let mut diff: i64 = day_2 as i64 - day_1 as i64;
 
         while month_1 != 0 {
             diff -= Time::days_in_month(year_1, month_1) as i64;
@@ -318,7 +306,7 @@ impl Time {
     }
 
     /// For a given year and month, it returns the number of days in that month.
-    pub fn days_in_month(year: u16, month: i8) -> i8 {
+    pub fn days_in_month(year: u16, month: u8) -> u8 {
         if month == 1
             || month == 3
             || month == 5
@@ -340,7 +328,7 @@ impl Time {
     /// It returns the day of the week for a given date. The output is 1=Monday, 2=Tuesday, ... ,
     /// 7=Sunday (which is the ISO week date). The calculation is done using Zeller's congruence
     /// algorithm.
-    pub fn day_of_week(year: u16, month: i8, day: i8) -> i8 {
+    pub fn day_of_week(year: u16, month: u8, day: u8) -> u8 {
         let q = day as u16;
         let mut m = month as u16;
         let mut y = year;
@@ -349,7 +337,7 @@ impl Time {
             y -= 1;
         }
         let h = (q + 13 * (m + 1) / 5 + y + y / 4 - y / 100 + y / 400) % 7;
-        (((h + 5) % 7) + 1) as i8
+        (((h + 5) % 7) + 1) as u8
     }
 }
 
