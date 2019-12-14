@@ -109,7 +109,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
     // is and increment impl_version.
     // Spec version is also needed for transaction signing.
     spec_version: 2,
-    impl_version: 2,
+    impl_version: 3,
     apis: RUNTIME_API_VERSIONS,
 };
 
