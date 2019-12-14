@@ -13,7 +13,7 @@
 
 //! # Structures module
 //!
-//! This module implements several composite data types, or _structures_, necessary for Katal's
+//! This module implements several composite data types, or _structures_, necessary for Katal Chain's
 //! runtime. The data types are:
 //! 1. **Reals**: does safe fixed-point arithmetic.
 //! 2. **Time**: represents time in the ISO8601 format.
@@ -30,10 +30,10 @@ use core::ops::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Neg, Sub, SubAss
 
 mod contract_result;
 mod min_heap;
-mod reals;
+mod real;
 mod time;
 
 pub use contract_result::*;
 pub use min_heap::*;
-pub use reals::*;
+pub use real::*;
 pub use time::*;
