@@ -35,7 +35,7 @@ where
     E: IntoExit,
 {
     type Config<T> = Configuration<(), T>;
-    match parse_and_prepare::<NoCustom, NoCustom, _>(&version, "substrate-node", args) {
+    match parse_and_prepare::<NoCustom, NoCustom, _>(&version, "katalchain", args) {
         ParseAndPrepare::Run(cmd) => cmd.run(
             load_spec,
             exit,
