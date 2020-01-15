@@ -1,5 +1,5 @@
 // Copyright 2019 by Trinkler Software AG (Switzerland).
-// This file is part of the Katal Chain.
+// This file is part of Katal Chain.
 //
 // Katal Chain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -109,7 +109,7 @@ pub const VERSION: RuntimeVersion = RuntimeVersion {
     // is and increment impl_version.
     // Spec version is also needed for transaction signing.
     spec_version: 2,
-    impl_version: 2,
+    impl_version: 3,
     apis: RUNTIME_API_VERSIONS,
 };
 
