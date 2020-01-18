@@ -230,16 +230,17 @@ pub enum CreditEventTypeCovered {
     DL,
     DQ,
     DF,
+    WC, // <wildcard>
 }
 
 // The boolean represents the stub, true = long stub, false = short stub.
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum Cycle {
     Days(u16, bool),
-    // Weeks(u16, bool),
+    Weeks(u16, bool),
     Months(u16, bool),
-    // Quarters(u16, bool),
-    // Halfyears(u16, bool),
+    Quarters(u16, bool),
+    Halfyears(u16, bool),
     Years(u16, bool),
 }
 
