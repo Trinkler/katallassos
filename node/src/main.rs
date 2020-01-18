@@ -1,5 +1,5 @@
 // Copyright 2019 by Trinkler Software AG (Switzerland).
-// This file is part of the Katal Chain.
+// This file is part of Katal Chain.
 //
 // Katal Chain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -30,8 +30,8 @@ fn main() -> Result<(), cli::error::Error> {
         commit: env!("VERGEN_SHA_SHORT"),
         version: env!("CARGO_PKG_VERSION"),
         executable_name: "katalchain",
-        author: "brunoffranca, sophieraderm, retotrinkler",
-        description: "Cryptocurrency Movement, Standardized.",
+        author: "sophieraderm, retotrinkler",
+        description: "Standard Framework for Finance",
         support_url: "https://github.com/katalchain/blockchain/issues/new",
     };
 

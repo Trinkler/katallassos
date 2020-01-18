@@ -1,5 +1,5 @@
-// Copyright 2019 by Trinkler Software AG (Switzerland).
-// This file is part of the Katal Chain.
+// Copyright 2020 by Trinkler Software AG (Switzerland).
+// This file is part of Katal Chain.
 //
 // Katal Chain is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -29,23 +29,23 @@ impl<T: Trait> Module<T> {
         let t0 = Time::from_unix(<timestamp::Module<T>>::get().saturated_into::<u64>());
 
         // Calculating the initial contract state.
-        let state;
+        let mut contract;
         match terms.contract_type {
             Some(ContractType::PAM) => {
-                state = Self::deploy_pam(t0, terms)?;
+                contract = Self::deploy_pam(t0, terms)?;
             }
             Some(ContractType::ANN) => {
-                state = Self::deploy_ann(t0, terms)?;
+                contract = Self::deploy_ann(t0, terms)?;
             }
             _ => {
-                state = Err("Contract type not supported")?;
+                contract = Err("Contract type not supported")?;
             }
         }
 
         // Adding first event to the heap.
         let mut heap = <Self as Store>::Scheduler::get();
         let event = ScheduledEvent {
-            time: state.schedule[0].time,
+            time: contract.schedule[0].time,
             contract_id: id,
             index: 0,
         };
@@ -53,7 +53,7 @@ impl<T: Trait> Module<T> {
         <Self as Store>::Scheduler::put(heap);
 
         // Storing the contract state.
-        <Self as Store>::Contracts::insert(id, state);
+        <Self as Store>::Contracts::insert(id, contract);
 
         // Return Ok if successful.
         Ok(())
@@ -160,9 +160,9 @@ mod tests {
 
             // Checks if scheduler was correctly updated.
             let event = <Contracts as Store>::Scheduler::get().pop().unwrap();
-            let state = <Contracts as Store>::Contracts::get(id);
-            assert_eq!(event.time, state.schedule[0].time);
-            assert_eq!(event.contract_id, state.terms.contract_id);
+            let contract = <Contracts as Store>::Contracts::get(id);
+            assert_eq!(event.time, contract.schedule[0].time);
+            assert_eq!(event.contract_id, contract.terms.contract_id);
             assert_eq!(event.index, 0);
         });
     }
