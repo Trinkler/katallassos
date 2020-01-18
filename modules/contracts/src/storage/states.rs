@@ -32,7 +32,7 @@ pub struct States {
     pub notional_principal_2: Real,
     pub notional_scaling_multiplier: Real,
     pub status_date: Time,
-    pub time_at_maturity_date: Time,
+    pub time_at_maturity_date: Time, // Note: Not included in latest ACTUS dictionary states.json file
 }
 
 impl States {

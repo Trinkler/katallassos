@@ -25,28 +25,28 @@ pub struct Event {
 /// lowest priority.
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq, Eq, PartialOrd, Ord)]
 pub enum EventType {
-    IED,
-    FP,
-    PR,
-    PD,
-    PRF,
-    PY,
-    PP,
-    IP,
-    IPCI,
-    CE,
-    RRF,
-    RR,
-    DV,
-    PRD,
-    MR,
-    TD,
-    SC,
-    IPCB,
-    MD,
-    XD,
-    STD,
-    // AD, // This event is for analysis only, it has no effect on the state.
+    // analysis, // This event is for analysis only, it has no effect on the state.
+    credit_event,
+    dividend_payment,
+    execution,
+    fee_payment,
+    initial_exchange,
+    interest_calcualtion_base_fixing,
+    interest_capitalization,
+    interest_payment,
+    margin_call_payment,
+    maturity,
+    penalty_payment,
+    principal_drawing,
+    principal_payment_amount_fixing,
+    principal_prepayment,
+    principal_redemption,
+    purchase,
+    rate_reset_fixed,
+    rate_reset_variable,
+    scaling_index_revision,
+    settlement,
+    termination,
 }
 
 impl Event {
@@ -67,8 +67,8 @@ mod tests {
     fn can_be_sorted() {
         let t1 = Time::from_values(2016, 11, 8, 19, 00, 00);
         let t2 = Time::from_values(2017, 1, 20, 12, 00, 00);
-        let e1 = EventType::PR;
-        let e2 = EventType::CE;
+        let e1 = EventType::principal_redemption;
+        let e2 = EventType::credit_event;
 
         let x1 = Event::new(t1, e1);
         let x2 = Event::new(t1, e2);

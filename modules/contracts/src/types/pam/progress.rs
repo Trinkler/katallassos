@@ -21,55 +21,55 @@ impl<T: Trait> Module<T> {
         let t0 = contract.terms.status_date;
 
         match event.event_type {
-            EventType::IED => Ok((
+            EventType::initial_exchange => Ok((
                 functions::pof_ied_pam(event, &contract),
                 functions::stf_ied_pam(event, &t0, contract),
             )),
-            EventType::MD => Ok((
+            EventType::maturity => Ok((
                 functions::pof_md_pam(event, &contract),
                 functions::stf_md_pam(event, &t0, contract),
             )),
-            EventType::PP => Ok((
+            EventType::principal_prepayment => Ok((
                 functions::pof_pp_pam(event, &contract),
                 functions::stf_pp_pam(event, &t0, contract),
             )),
-            EventType::PY => Ok((
+            EventType::penalty_payment => Ok((
                 Self::pof_py_pam(event, &contract),
                 functions::stf_py_pam(event, &t0, contract),
             )),
-            EventType::FP => Ok((
+            EventType::fee_payment => Ok((
                 functions::pof_fp_pam(event, &contract),
                 functions::stf_fp_pam(event, &t0, contract),
             )),
-            EventType::PRD => Ok((
+            EventType::purchase => Ok((
                 functions::pof_prd_pam(event, &contract),
                 functions::stf_prd_pam(event, &t0, contract),
             )),
-            EventType::TD => Ok((
+            EventType::termination => Ok((
                 functions::pof_td_pam(event, &contract),
                 functions::stf_td_pam(event, &t0, contract),
             )),
-            EventType::IP => Ok((
+            EventType::interest_payment => Ok((
                 functions::pof_ip_pam(event, &contract),
                 functions::stf_ip_pam(event, &t0, contract),
             )),
-            EventType::IPCI => Ok((
+            EventType::interest_capitalization => Ok((
                 functions::pof_ipci_pam(event, &contract),
                 functions::stf_ipci_pam(event, &t0, contract),
             )),
-            EventType::RR => Ok((
+            EventType::rate_reset_variable => Ok((
                 functions::pof_rr_pam(event, &contract),
                 Self::stf_rr_pam(event, &t0, contract),
             )),
-            EventType::RRF => Ok((
+            EventType::rate_reset_fixed => Ok((
                 functions::pof_rrf_pam(event, &contract),
                 functions::stf_rrf_pam(event, &t0, contract),
             )),
-            EventType::SC => Ok((
+            EventType::scaling_index_revision => Ok((
                 functions::pof_sc_pam(event, &contract),
                 Self::stf_sc_pam(event, &t0, contract),
             )),
-            EventType::CE => Ok((
+            EventType::credit_event => Ok((
                 functions::pof_ce_pam(event, &contract),
                 functions::stf_ce_pam(event, &t0, contract),
             )),
@@ -174,7 +174,7 @@ mod tests {
 
             assert_eq!(
                 contract.schedule[0],
-                Event::new(Time::from_values(2015, 01, 02, 00, 00, 00), EventType::IED)
+                Event::new(Time::from_values(2015, 01, 02, 00, 00, 00), EventType::initial_exchange)
             );
             contract = Contracts::progress_pam(contract.schedule[0], contract)
                 .unwrap()
@@ -188,7 +188,7 @@ mod tests {
             // on the contract).
             assert_eq!(
                 contract.schedule[3],
-                Event::new(Time::from_values(2015, 04, 02, 00, 00, 00), EventType::MD)
+                Event::new(Time::from_values(2015, 04, 02, 00, 00, 00), EventType::maturity)
             );
             contract = Contracts::progress_pam(contract.schedule[3], contract)
                 .unwrap()
