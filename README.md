@@ -53,7 +53,7 @@ All done you are now able to for example deploy a contract under the [Extrinsics
 -   [Oracle](https://github.com/katalchain/blockchain/tree/master/modules/oracle)
 
 ### Additional Resources
-
+-   [Read our Whitepaper](https://notes.trinkler.software/blockchain)
 -   [Subscribe to Newsletter](https://software.us19.list-manage.com/subscribe?u=48964a7b4b5e9480604838bf2&id=982968577c)
 -   [Follow on Twitter](https://twitter.com/katalchain)
 -   [Follow on Medium](https://medium.com/@katalchain)
