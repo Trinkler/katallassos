@@ -34,7 +34,7 @@ impl<T: Trait> Module<T> {
             let mut t_minus = Time(None);
             let mut t_plus = Time(None);
             for e in contract.schedule.clone() {
-                if e.event_type == EventType::FP {
+                if e.event_type == EventType::fee_payment {
                     if e.time >= *t0 {
                         t_plus = e.time;
                         break;

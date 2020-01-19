@@ -23,20 +23,20 @@
    },
    "BusinessDayConvention": {
       "_enum": [
-         "SCF",
-         "SCMF",
          "CSF",
          "CSMF",
-         "SCP",
-         "SCMP",
+         "CSMP",
          "CSP",
-         "CSMP"
+         "SCF",
+         "SCMF",
+         "SCMP",
+         "SCP"
       ]
    },
    "Calendar": {
       "_enum": [
-         "NC",
-         "MTF"
+         "MTF",
+         "NC"
       ]
    },
    "ClearingHouse": {
@@ -47,10 +47,10 @@
    },
    "ContractPerformance": {
       "_enum": [
-         "PF",
+         "DF",
          "DL",
          "DQ",
-         "DF"
+         "PF"
       ]
    },
    "ContractReferenceRole": {
@@ -73,46 +73,47 @@
    },
    "ContractRole": {
       "_enum": [
-         "RPA",
-         "RPL",
-         "LG",
-         "ST",
          "BUY",
-         "SEL",
-         "RFL",
-         "PFL",
          "COL",
          "GUA",
-         "OBL"
+         "LG",
+         "OBL",
+         "PFL",
+         "RFL",
+         "RPA",
+         "RPL",
+         "SEL",
+         "ST"
       ]
    },
    "ContractType": {
       "_enum": [
-         "PAM",
          "ANN",
-         "NAM",
+         "CAPFL",
+         "CEC",
+         "CEG",
+         "CLM",
+         "COM",
+         "CSH",
+         "FUTUR",
+         "FXOUT",
          "LAM",
          "LAX",
-         "CLM",
-         "UMP",
-         "CSH",
+         "NAM",
+         "OPTNS",
+         "PAM",
          "STK",
-         "COM",
          "SWAPS",
          "SWPPV",
-         "FXOUT",
-         "CAPFL",
-         "FUTUR",
-         "OPTNS",
-         "CEG",
-         "CEC"
+         "UMP"
       ]
    },
    "CreditEventTypeCovered": {
       "_enum": [
+         "DF",
          "DL",
          "DQ",
-         "DF"
+         "WC"
       ]
    },
    "Cycle": {
@@ -147,8 +148,8 @@
    },
    "DeliverySettlement": {
       "_enum": [
-         "S",
-         "D"
+         "D",
+         "S"
       ]
    },
    "EndOfMonthConvention": {
@@ -165,15 +166,15 @@
    },
    "GuaranteedExposure": {
       "_enum": [
-         "NO",
+         "MV",
          "NI",
-         "MV"
+         "NO"
       ]
    },
    "IncreaseDecrease": {
       "_enum": [
-         "INC",
-         "DEC"
+         "DEC",
+         "INC"
       ]
    },
    "InterestCalculationBase": {
@@ -185,24 +186,24 @@
    },
    "OptionExecutionType": {
       "_enum": [
-         "E",
+         "A",
          "B",
-         "A"
+         "E"
       ]
    },
    "OptionType": {
       "_enum": [
          "C",
-         "P",
-         "CP"
+         "CP",
+         "P"
       ]
    },
    "PenaltyType": {
       "_enum": [
-         "O",
          "A",
+         "I",
          "N",
-         "I"
+         "O"
       ]
    },
    "Period": {
@@ -214,9 +215,9 @@
    },
    "PrepaymentEffect": {
       "_enum": [
-         "N",
          "A",
-         "M"
+         "M",
+         "N"
       ]
    },
    "ScalingEffect": {
@@ -229,16 +230,16 @@
    },
    "Seniority": {
       "_enum": [
-         "S",
-         "J"
+         "J",
+         "S"
       ]
    },
    "Unit": {
       "_enum": [
          "BRL",
          "BSH",
-         "GLN",
          "CUU",
+         "GLN",
          "MWH",
          "PND",
          "STN",
@@ -261,7 +262,7 @@
       "array_cycle_of_principal_redemption": "Vec<Option<Cycle>>",
       "array_cycle_of_rate_reset": "Vec<Option<Cycle>>",
       "array_fixed_variable": "Vec<Option<ArrayFixedVariable>>",
-      "array_increase_decrease": "Vec<Option<IncreaseDecrease>>",
+      "array_increase_decrease": "Vec<Option<ArrayIncreaseDecrease>>",
       "array_next_principal_redemption_payment": "Vec<Real>",
       "array_rate": "Vec<Real>",
       "business_day_convention": "Option<BusinessDayConvention>",
@@ -388,28 +389,27 @@
    },
    "EventType": {
       "_enum": [
-         "IED",
-         "FP",
-         "PR",
-         "PD",
-         "PRF",
-         "PY",
-         "PP",
-         "IP",
-         "IPCI",
-         "CE",
-         "RRF",
-         "RR",
-         "DV",
-         "PRD",
-         "MR",
-         "TD",
-         "SC",
-         "IPCB",
-         "MD",
-         "XD",
-         "STD",
-         "AD"
+        "credit_event",
+        "dividend_payment",
+        "execution",
+        "fee_payment",
+        "initial_exchange",
+        "interest_calculation_base_fixing",
+        "interest_capitalization",
+        "interest_payment",
+        "margin_call_payment",
+        "maturity",
+        "penalty_payment",
+        "principal_drawing",
+        "principal_payment_amount_fixing",
+        "principal_prepayment",
+        "principal_redemption",
+        "purchase",
+        "rate_reset_fixed",
+        "rate_reset_variable",
+        "scaling_index_revision",
+        "settlement",
+        "termination"
       ]
    },
    "Event": {

@@ -261,7 +261,7 @@ impl<T: Trait> Module<T> {
         let mut schedule: Vec<Event> = Vec::new();
 
         // Inital exchange date event
-        let event = Event::new(terms.initial_exchange_date, EventType::IED);
+        let event = Event::new(terms.initial_exchange_date, EventType::initial_exchange);
         schedule.push(event);
 
         // Principal Redemption event
@@ -289,12 +289,12 @@ impl<T: Trait> Module<T> {
 
         // Note: The last entry in vec is supposed to not enter the schedule.
         for i in 0..vec.len() - 2 {
-            let event = Event::new(vec[i], EventType::PR);
+            let event = Event::new(vec[i], EventType::principal_redemption);
             schedule.push(event);
         }
 
         // Maturity date event
-        let event = Event::new(terms.maturity_date, EventType::MD);
+        let event = Event::new(terms.maturity_date, EventType::maturity);
         schedule.push(event);
 
         // Principal prepayment event
@@ -323,7 +323,7 @@ impl<T: Trait> Module<T> {
             )?;
 
             for t in vec {
-                let event = Event::new(t, EventType::PP);
+                let event = Event::new(t, EventType::principal_prepayment);
                 schedule.push(event);
             }
         }
@@ -332,8 +332,8 @@ impl<T: Trait> Module<T> {
         if terms.penalty_type == Some(PenaltyType::O) {
         } else {
             for e in schedule.clone() {
-                if e.event_type == EventType::PP {
-                    let event = Event::new(e.time, EventType::PY);
+                if e.event_type == EventType::principal_prepayment {
+                    let event = Event::new(e.time, EventType::penalty_payment);
                     schedule.push(event);
                 }
             }
@@ -363,17 +363,17 @@ impl<T: Trait> Module<T> {
             )?;
 
             for t in vec {
-                let event = Event::new(t, EventType::FP);
+                let event = Event::new(t, EventType::fee_payment);
                 schedule.push(event);
             }
         }
 
         // Purchase date event
-        let event = Event::new(terms.purchase_date, EventType::PRD);
+        let event = Event::new(terms.purchase_date, EventType::purchase);
         schedule.push(event);
 
         // Termination date event
-        let event = Event::new(terms.termination_date, EventType::TD);
+        let event = Event::new(terms.termination_date, EventType::termination);
         schedule.push(event);
 
         // Interest payment event
@@ -428,7 +428,7 @@ impl<T: Trait> Module<T> {
                 {
                     break;
                 }
-                let event = Event::new(t, EventType::IP);
+                let event = Event::new(t, EventType::interest_payment);
                 schedule.push(event);
             }
         }
@@ -441,7 +441,7 @@ impl<T: Trait> Module<T> {
         )?;
 
         for t in vec {
-            let event = Event::new(t, EventType::IP);
+            let event = Event::new(t, EventType::interest_payment);
             schedule.push(event);
         }
 
@@ -471,7 +471,7 @@ impl<T: Trait> Module<T> {
             )?;
 
             for t in vec {
-                let event = Event::new(t, EventType::IPCI);
+                let event = Event::new(t, EventType::interest_capitalization);
                 schedule.push(event);
             }
         }
@@ -502,7 +502,7 @@ impl<T: Trait> Module<T> {
             )?;
 
             for t in vec {
-                let event = Event::new(t, EventType::IPCB);
+                let event = Event::new(t, EventType::interest_calcualtion_base_fixing);
                 schedule.push(event);
             }
         }
@@ -539,13 +539,13 @@ impl<T: Trait> Module<T> {
                 }
                 for t in vec {
                     if t != t_rry {
-                        let event = Event::new(t, EventType::RR);
+                        let event = Event::new(t, EventType::rate_reset_variable);
                         schedule.push(event);
                     }
                 }
             } else {
                 for t in vec {
-                    let event = Event::new(t, EventType::RR);
+                    let event = Event::new(t, EventType::rate_reset_variable);
                     schedule.push(event);
                 }
             }
@@ -575,7 +575,7 @@ impl<T: Trait> Module<T> {
 
             for t in vec {
                 if t > terms.status_date {
-                    let event = Event::new(t, EventType::RRF);
+                    let event = Event::new(t, EventType::rate_reset_fixed);
                     schedule.push(event);
                     break;
                 }
@@ -608,7 +608,7 @@ impl<T: Trait> Module<T> {
             )?;
 
             for t in vec {
-                let event = Event::new(t, EventType::SC);
+                let event = Event::new(t, EventType::scaling_index_revision);
                 schedule.push(event);
             }
         }
@@ -659,7 +659,7 @@ impl<T: Trait> Module<T> {
         } else {
             let mut t_minus = Time(None);
             for e in schedule.clone() {
-                if e.event_type == EventType::IP {
+                if e.event_type == EventType::interest_payment {
                     if e.time >= t0 {
                         break;
                     }
@@ -680,7 +680,7 @@ impl<T: Trait> Module<T> {
         } else if terms.fee_basis == Some(FeeBasis::N) {
             let mut t_minus = Time(None);
             for e in schedule.clone() {
-                if e.event_type == EventType::FP {
+                if e.event_type == EventType::fee_payment {
                     if e.time >= t0 {
                         break;
                     }
@@ -695,7 +695,7 @@ impl<T: Trait> Module<T> {
             let mut t_minus = Time(None);
             let mut t_plus = Time(None);
             for e in schedule.clone() {
-                if e.event_type == EventType::FP {
+                if e.event_type == EventType::fee_payment {
                     if e.time >= t0 {
                         t_plus = e.time;
                         break;

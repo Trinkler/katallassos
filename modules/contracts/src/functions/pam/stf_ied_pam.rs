@@ -14,14 +14,19 @@
 use super::*;
 
 pub fn stf_ied_pam(event: Event, t0: &Time, mut contract: Contract) -> Contract {
+    // Notional Principal (Nt)
     contract.states.notional_principal =
         utilities::contract_role_sign(contract.terms.contract_role)
             * contract.terms.notional_principal;
+
+    // Nominal Interest Rate (Ipnr)
     if contract.terms.nominal_interest_rate == Real(None) {
         contract.states.nominal_interest_rate = Real::from(0);
     } else {
         contract.states.nominal_interest_rate = contract.terms.nominal_interest_rate;
     }
+
+    // Accrued Interest (Ipac)
     if contract.terms.accrued_interest != Real(None) {
         contract.states.accrued_interest = contract.terms.accrued_interest;
     } else if contract.terms.cycle_anchor_date_of_interest_payment != Time(None)
@@ -37,7 +42,10 @@ pub fn stf_ied_pam(event: Event, t0: &Time, mut contract: Contract) -> Contract 
     } else {
         contract.states.accrued_interest = Real::from(0);
     }
+
+    // Status Date (Sd)
     contract.states.status_date = event.time;
+
     // Return the progressed contract state
     contract
 }
