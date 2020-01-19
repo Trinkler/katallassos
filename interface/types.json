@@ -23,20 +23,20 @@
    },
    "BusinessDayConvention": {
       "_enum": [
-         "SCF",
-         "SCMF",
          "CSF",
          "CSMF",
-         "SCP",
-         "SCMP",
+         "CSMP",
          "CSP",
-         "CSMP"
+         "SCF",
+         "SCMF",
+         "SCMP",
+         "SCP"
       ]
    },
    "Calendar": {
       "_enum": [
-         "NC",
-         "MTF"
+         "MTF",
+         "NC"
       ]
    },
    "ClearingHouse": {
@@ -47,10 +47,10 @@
    },
    "ContractPerformance": {
       "_enum": [
-         "PF",
+         "DF",
          "DL",
          "DQ",
-         "DF"
+         "PF"
       ]
    },
    "ContractReferenceRole": {
@@ -73,46 +73,46 @@
    },
    "ContractRole": {
       "_enum": [
-         "RPA",
-         "RPL",
-         "LG",
-         "ST",
          "BUY",
-         "SEL",
-         "RFL",
-         "PFL",
          "COL",
          "GUA",
-         "OBL"
+         "LG",
+         "OBL",
+         "PFL",
+         "RFL",
+         "RPA",
+         "RPL",
+         "SEL",
+         "ST"
       ]
    },
    "ContractType": {
       "_enum": [
-         "PAM",
          "ANN",
-         "NAM",
+         "CAPFL",
+         "CEC",
+         "CEG",
+         "CLM",
+         "COM",
+         "CSH",
+         "FUTUR",
+         "FXOUT",
          "LAM",
          "LAX",
-         "CLM",
-         "UMP",
-         "CSH",
+         "NAM",
+         "OPTNS",
+         "PAM",
          "STK",
-         "COM",
          "SWAPS",
          "SWPPV",
-         "FXOUT",
-         "CAPFL",
-         "FUTUR",
-         "OPTNS",
-         "CEG",
-         "CEC"
+         "UMP"
       ]
    },
    "CreditEventTypeCovered": {
       "_enum": [
+         "DF",
          "DL",
          "DQ",
-         "DF",
          "WC"
       ]
    },
@@ -148,8 +148,8 @@
    },
    "DeliverySettlement": {
       "_enum": [
-         "S",
-         "D"
+         "D",
+         "S"
       ]
    },
    "EndOfMonthConvention": {
@@ -166,15 +166,15 @@
    },
    "GuaranteedExposure": {
       "_enum": [
-         "NO",
+         "MV",
          "NI",
-         "MV"
+         "NO"
       ]
    },
    "IncreaseDecrease": {
       "_enum": [
-         "INC",
-         "DEC"
+         "DEC",
+         "INC"
       ]
    },
    "InterestCalculationBase": {
@@ -186,24 +186,24 @@
    },
    "OptionExecutionType": {
       "_enum": [
-         "E",
+         "A",
          "B",
-         "A"
+         "E"
       ]
    },
    "OptionType": {
       "_enum": [
          "C",
-         "P",
-         "CP"
+         "CP",
+         "P"
       ]
    },
    "PenaltyType": {
       "_enum": [
-         "O",
          "A",
+         "I",
          "N",
-         "I"
+         "O"
       ]
    },
    "Period": {
@@ -215,9 +215,9 @@
    },
    "PrepaymentEffect": {
       "_enum": [
-         "N",
          "A",
-         "M"
+         "M",
+         "N"
       ]
    },
    "ScalingEffect": {
@@ -230,16 +230,16 @@
    },
    "Seniority": {
       "_enum": [
-         "S",
-         "J"
+         "J",
+         "S"
       ]
    },
    "Unit": {
       "_enum": [
          "BRL",
          "BSH",
-         "GLN",
          "CUU",
+         "GLN",
          "MWH",
          "PND",
          "STN",

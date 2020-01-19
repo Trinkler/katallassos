@@ -140,20 +140,20 @@ pub enum ArrayFixedVariable {
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum BusinessDayConvention {
-    SCF,
-    SCMF,
     CSF,
     CSMF,
-    SCP,
-    SCMP,
-    CSP,
     CSMP,
+    CSP,
+    SCF,
+    SCMF,
+    SCMP,
+    SCP,
 }
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum Calendar {
-    NC,
     MTF,
+    NC,
 }
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
@@ -164,10 +164,10 @@ pub enum ClearingHouse {
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum ContractPerformance {
-    PF,
+    DF,
     DL,
     DQ,
-    DF,
+    PF,
 }
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
@@ -190,46 +190,46 @@ pub enum ContractReferenceType {
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum ContractRole {
-    RPA,
-    RPL,
-    LG,
-    ST,
     BUY,
-    SEL,
-    RFL,
-    PFL,
     COL,
     GUA,
+    LG,
     OBL,
+    PFL,
+    RFL,
+    RPA,
+    RPL,
+    SEL,
+    ST,
 }
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum ContractType {
-    PAM,
     ANN,
-    NAM,
+    CAPFL,
+    CEC,
+    CEG,
+    CLM,
+    COM,
+    CSH,
+    FUTUR,
+    FXOUT,
     LAM,
     LAX,
-    CLM,
-    UMP,
-    CSH,
+    NAM,
+    OPTNS,
+    PAM,
     STK,
-    COM,
     SWAPS,
     SWPPV,
-    FXOUT,
-    CAPFL,
-    FUTUR,
-    OPTNS,
-    CEG,
-    CEC,
+    UMP,
 }
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum CreditEventTypeCovered {
+    DF,
     DL,
     DQ,
-    DF,
     WC, // <wildcard>
 }
 
@@ -268,8 +268,8 @@ pub enum DayCountConvention {
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum DeliverySettlement {
-    S,
     D,
+    S,
 }
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
@@ -286,15 +286,15 @@ pub enum FeeBasis {
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum GuaranteedExposure {
-    NO,
-    NI,
     MV,
+    NI,
+    NO,
 }
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum IncreaseDecrease {
-    INC,
     DEC,
+    INC,
 }
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
@@ -306,24 +306,24 @@ pub enum InterestCalculationBase {
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum OptionExecutionType {
-    E,
-    B,
     A,
+    B,
+    E,
 }
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum OptionType {
     C,
-    P,
     CP,
+    P,
 }
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum PenaltyType {
-    O,
     A,
-    N,
     I,
+    N,
+    O,
 }
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
@@ -338,9 +338,9 @@ pub enum Period {
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum PrepaymentEffect {
-    N,
     A,
     M,
+    N,
 }
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
@@ -353,21 +353,21 @@ pub enum ScalingEffect {
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum Seniority {
-    S,
     J,
+    S,
 }
 
 #[derive(Clone, Copy, Decode, Debug, Encode, PartialEq)]
 pub enum Unit {
     BRL,
     BSH,
-    GLN,
     CUU,
+    GLN,
     MWH,
     PND,
     STN,
     TON,
-    TRO,
+    TRO
 }
 
 // The underscore is necessary because 'type' is a reserved word.
