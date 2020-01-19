@@ -25,7 +25,7 @@ pub struct Terms {
     pub array_cycle_of_principal_redemption: Vec<Option<Cycle>>,
     pub array_cycle_of_rate_reset: Vec<Option<Cycle>>,
     pub array_fixed_variable: Vec<Option<ArrayFixedVariable>>,
-    pub array_increase_decrease: Vec<Option<IncreaseDecrease>>,
+    pub array_increase_decrease: Vec<Option<ArrayIncreaseDecrease>>,
     pub array_next_principal_redemption_payment: Vec<Real>,
     pub array_rate: Vec<Real>,
     pub business_day_convention: Option<BusinessDayConvention>,
